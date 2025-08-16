@@ -17,27 +17,27 @@ class SearchCubit extends Cubit<CubitStates> {
       final firebase = FirebaseFirestore.instance;
       query = query.toLowerCase();
 
-      final usersSnapshot = await firebase
-          .collection('users')
-          .get();
+      final usersSnapshot = await firebase.collection('users').get();
+      final List<UserModel> searchResults = [];
 
-      final results = await Future.wait(usersSnapshot.docs.map((userDoc) async {
+      await Future.wait(usersSnapshot.docs.map((userDoc) async {
         final userAccountSnapshot = await firebase
-            .collection('accounts').doc(userDoc.id)
+            .collection('accounts')
+            .where('fullName', isGreaterThanOrEqualTo: query)
+            .where('fullName', isLessThanOrEqualTo: '$query\uf8ff')
             .get();
 
-        if (!userAccountSnapshot.exists) return null;
+        for (final userAccount in userAccountSnapshot.docs) {
+          final userData = await getAccountMap(userDoc: userAccount);
+          final fullName = userData['fullName']?.toString().toLowerCase() ?? '';
 
-        final userData = await getAccountMap(userDoc: userAccountSnapshot);
-
-        final fullName = userData['fullName']?.toString().toLowerCase() ?? '';
-
-        return fullName.contains(query)
-            ? UserModel.fromJson(userData)
-            : null;
+          if (fullName.contains(query)) {
+            searchResults.add(UserModel.fromJson(userData));
+          }
+        }
       }));
 
-      searchDataList = results.whereType<UserModel>().toList();
+      searchDataList = searchResults;
       emit(SuccessState());
     } catch (e) {
       emit(ErrorState(error: e.toString()));
