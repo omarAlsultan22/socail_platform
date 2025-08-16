@@ -11,7 +11,7 @@ class AppModelCubit extends Cubit<CubitStates> {
   static AppModelCubit get(context) => BlocProvider.of(context);
 
   Future<void> getAccount(String uId) async {
-    emit(LoadingState());
+    emit(LoadingState(key: 'getAccount'));
     DocumentReference docRef = FirebaseFirestore.instance.collection(
         'accounts').doc(uId);
     try {
@@ -20,13 +20,13 @@ class AppModelCubit extends Cubit<CubitStates> {
         Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
         UserAccount userAccount = UserAccount.fromJson(data);
         print('Document data: $data');
-        emit(ModelSuccessState<UserAccount>(model: userAccount));
+        emit(ModelSuccessState<UserAccount>(model: userAccount, key: 'getAccount'));
       } else {
         print('Document does not exist');
       }
     } catch (error) {
       print('Error fetching document: $error');
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString(), key: 'getAccount'));
     }
   }
 
@@ -35,7 +35,7 @@ class AppModelCubit extends Cubit<CubitStates> {
     required String lastName,
     required String phone,
   }) async {
-    emit(LoadingState());
+    emit(LoadingState(key: 'updateAccount'));
     try {
       UserAccount userModel = UserAccount(
           userId: UserDetails.uId,
@@ -46,10 +46,10 @@ class AppModelCubit extends Cubit<CubitStates> {
       );
       await FirebaseFirestore.instance.collection('accounts').doc(UserDetails.uId).update(
           userModel.toMap());
-      emit(SuccessState());
+      emit(SuccessState(key: 'updateAccount'));
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString(), key: 'updateAccount'));
     }
   }
 
@@ -58,7 +58,7 @@ class AppModelCubit extends Cubit<CubitStates> {
     required String currentPassword,
     required String newPassword,
   }) async {
-    emit(LoadingState());
+    emit(LoadingState(key: 'changeEmailAndPassword'));
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       AuthCredential credential = EmailAuthProvider.credential(
@@ -69,14 +69,14 @@ class AppModelCubit extends Cubit<CubitStates> {
         await user.reauthenticateWithCredential(credential);
         await user.updateEmail(newEmail).then((_) {
           user.updatePassword(newPassword).then((_) {
-            emit(SuccessState());
+            emit(SuccessState(key: 'changeEmailAndPassword'));
           });
         });
       } on FirebaseAuthException catch (e) {
-        emit(ErrorState(e.toString()));
+        emit(ErrorState(error: e.toString(), key: 'changeEmailAndPassword'));
       }
     } else {
-      emit(ErrorState('No user is currently logged in'));
+      emit(ErrorState(error: 'No user is currently logged in', key: 'changeEmailAndPassword'));
     }
   }
 }

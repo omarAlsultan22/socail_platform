@@ -44,7 +44,7 @@ class SignUpCubit extends Cubit<CubitStates> {
       await _saveUserData(uId, userModel);
       emit(SuccessState());
     } catch (error) {
-      emit(ErrorState(_parseFirebaseError(error)));
+      emit(ErrorState(error: _parseFirebaseError(error)));
     }
   }
 
@@ -81,7 +81,7 @@ class SignUpCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(_parseFirebaseError(error.toString)));
+      emit(ErrorState(error: _parseFirebaseError(error.toString)));
     }
   }
 
@@ -99,7 +99,7 @@ class SignUpCubit extends Cubit<CubitStates> {
       }
     }
     catch (error) {
-      emit(ErrorState(_parseFirebaseError(error.toString)));
+      emit(ErrorState(error: _parseFirebaseError(error.toString)));
     }
   }
 

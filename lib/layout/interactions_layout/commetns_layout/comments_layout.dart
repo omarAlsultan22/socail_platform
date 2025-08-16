@@ -45,9 +45,7 @@ class _CommentsModelState extends State<CommentsModel> {
       isActive = !isActive;
       likes += isActive ? 1 : -1;
     });
-    /*
-     widget.onTap!(isActive);
-     */
+    widget.onTap(isActive);
   }
 
   void deleteComment() {

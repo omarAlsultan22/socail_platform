@@ -32,11 +32,11 @@ class FriendsCubit extends Cubit<CubitStates> {
         .collection(
         'requests').doc(friendInfo.userId)
         .set(friendInfo.toMap()).then((_) {
-      emit(SuggestSuccessState());
+      emit(SuccessState(key: 'addFriendRequest'));
     }).catchError((error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     });
-    emit(SuggestSuccessState());
+    emit(SuccessState(key: 'addFriendRequest'));
   }
 
 
@@ -57,26 +57,26 @@ class FriendsCubit extends Cubit<CubitStates> {
             'friends').doc(UserDetails.uId).set({'uId': UserDetails.uId})
       ]);
       declineFriendRequest(index: index, context: context);
-      emit(RequestSuccessState());
+      emit(SuccessState(key: 'confirmNewFriend'));
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
   void getFriendsRequests() {
-    emit(SuccessState());
+    emit(LoadingState());
     try {
       _conversationsSubscription?.cancel();
       _conversationsSubscription =
           getConversationsStream(userId: UserDetails.uId).listen(
                   (groupedConversations) async {
                 friendsRequestsList = groupedConversations;
-                emit(SuccessState());
+                emit(SuccessState(key: 'getFriendsRequests'));
               });
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -111,10 +111,10 @@ class FriendsCubit extends Cubit<CubitStates> {
           .collection(
           'requests').doc(uId).delete();
       MainLayoutCubit.get(context).deleteRequest();
-      emit(SuccessState());
+      emit(SuccessState(key: 'declineFriendRequest'));
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -141,9 +141,9 @@ class FriendsCubit extends Cubit<CubitStates> {
           suggests
       );
       friendsSuggestsList = friendsInfo.data;
-      emit(SuccessState());
+      emit(SuccessState(key: 'getFriendsSuggests'));
     } catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -156,7 +156,7 @@ class FriendsCubit extends Cubit<CubitStates> {
 
   void deleteFriendSuggest({required int index}) {
     friendsSuggestsList.removeAt(index);
-    emit(DeleteSuccessState());
+    emit(SuccessState(key: 'deleteFriendSuggest'));
   }
 }
 

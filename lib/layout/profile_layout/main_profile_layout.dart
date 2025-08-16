@@ -282,9 +282,6 @@ class BuildCameraIcon extends StatelessWidget {
   }
 }
 
-
-
-
 Widget _buildProfileImage(InfoModel profileInfo, BuildContext context, ProfileCubit profileCubit) {
   return Padding(
     padding: const EdgeInsets.only(left: 10.0, top: 100.0),

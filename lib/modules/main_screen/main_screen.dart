@@ -74,119 +74,122 @@ class _MainLayoutState extends State<MainLayout> with TickerProviderStateMixin {
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            elevation: 0.0,
-            scrolledUnderElevation: 0.0,
-            title: Row(
-              children: [
-                const Text(
-                  'Social',
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 10.0),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: Theme
-                        .of(context)
-                        .brightness == Brightness.light
-                        ? Colors.black
-                        : Colors.white,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 0.9,
-                      horizontal: 5.0,
-                    ),
-                    child: Text(
-                      'Platform',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Theme
-                            .of(context)
-                            .brightness == Brightness.light
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              IconButton(
-                onPressed: () =>
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SearchScreen()),
-                    ),
-                icon: const Icon(Icons.search, size: 30.0),
-              ),
-              IconButton(
-                onPressed: () =>
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MenuScreen()),
-                    ),
-                icon: const Icon(Icons.menu_outlined),
-              ),
-            ],
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: [
-                _buildTabIcon(
-                  0,
-                  Icons.public,
-                  Icons.public_outlined,
-                  cubit: _cubit,
-                ),
-                _buildTabIcon(
-                  1,
-                  Icons.notifications,
-                  Icons.notifications_outlined,
-                  count: _cubit.notificationsCount['counter'],
-                  cubit: _cubit,
-                ),
-                _buildTabIcon(
-                  2,
-                  Icons.group,
-                  Icons.group_outlined,
-                  count: _cubit.friendRequestsCount['counter'],
-                  cubit: _cubit,
-                ),
-                _buildTabIcon(
-                  3,
-                  CupertinoIcons.chat_bubble_2_fill,
-                  CupertinoIcons.chat_bubble_2,
-                  count: _cubit.messagesCount['counter'],
-                  cubit: _cubit,
-                ),
-                _buildTabIcon(
-                  4,
-                  Icons.home,
-                  Icons.home_outlined,
-                  cubit: _cubit,
-                ),
-              ],
-              indicatorSize: TabBarIndicatorSize.tab,
-              labelStyle: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-              unselectedLabelStyle: const TextStyle(fontSize: 12),
-              splashBorderRadius: BorderRadius.circular(10.0),
-            ),
-          ),
-          body: _cubit.mainScreens[_cubit.currentScreen],
-        );
+        return _buildMainLayout();
       },
     );
   }
+
+  Widget _buildMainLayout() =>
+      Scaffold(
+        appBar: AppBar(
+          elevation: 0.0,
+          scrolledUnderElevation: 0.0,
+          title: Row(
+            children: [
+              const Text(
+                'Social',
+                style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 10.0),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5.0),
+                  color: Theme
+                      .of(context)
+                      .brightness == Brightness.light
+                      ? Colors.black
+                      : Colors.white,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 0.9,
+                    horizontal: 5.0,
+                  ),
+                  child: Text(
+                    'Platform',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: Theme
+                          .of(context)
+                          .brightness == Brightness.light
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              onPressed: () =>
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SearchScreen()),
+                  ),
+              icon: const Icon(Icons.search, size: 30.0),
+            ),
+            IconButton(
+              onPressed: () =>
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const MenuScreen()),
+                  ),
+              icon: const Icon(Icons.menu_outlined),
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: [
+              _buildTabIcon(
+                0,
+                Icons.public,
+                Icons.public_outlined,
+                cubit: _cubit,
+              ),
+              _buildTabIcon(
+                1,
+                Icons.notifications,
+                Icons.notifications_outlined,
+                count: _cubit.notificationsCount['counter'],
+                cubit: _cubit,
+              ),
+              _buildTabIcon(
+                2,
+                Icons.group,
+                Icons.group_outlined,
+                count: _cubit.friendRequestsCount['counter'],
+                cubit: _cubit,
+              ),
+              _buildTabIcon(
+                3,
+                CupertinoIcons.chat_bubble_2_fill,
+                CupertinoIcons.chat_bubble_2,
+                count: _cubit.messagesCount['counter'],
+                cubit: _cubit,
+              ),
+              _buildTabIcon(
+                4,
+                Icons.home,
+                Icons.home_outlined,
+                cubit: _cubit,
+              ),
+            ],
+            indicatorSize: TabBarIndicatorSize.tab,
+            labelStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+            unselectedLabelStyle: const TextStyle(fontSize: 12),
+            splashBorderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        body: _cubit.mainScreens[_cubit.currentScreen],
+      );
 }

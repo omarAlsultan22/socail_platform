@@ -34,7 +34,7 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -82,7 +82,7 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
         }
         emit(ListSuccessState<UserModel>(modelsList: validUsers));
       }, onError: (e) {
-        emit(ErrorState(e.toString()));
+        emit(ErrorState(error: e.toString()));
       });
     });
   }

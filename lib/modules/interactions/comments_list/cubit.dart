@@ -68,7 +68,7 @@ class CommentsCubit extends Cubit<CubitStates> {
 
       emit(ListSuccessState<CommentModel>(modelsList: validUsers));
     }, onError: (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     });
   }
 
@@ -105,7 +105,7 @@ class CommentsCubit extends Cubit<CubitStates> {
       });
       await docRef.set(actionModel.toMap());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
       rethrow;
     }
   }
@@ -120,7 +120,7 @@ class CommentsCubit extends Cubit<CubitStates> {
           .doc(comment.postId).collection('commentsList').doc(comment.docId);
       await docRef.delete();
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
       rethrow;
     }
   }
@@ -159,7 +159,7 @@ class CommentsCubit extends Cubit<CubitStates> {
       await docRef.set(userModel.toMap());
       emit(SuccessState());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
       rethrow;
     }
   }
@@ -180,7 +180,7 @@ class CommentsCubit extends Cubit<CubitStates> {
       await docRef.delete();
       emit(SuccessState());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
       rethrow;
     }
   }

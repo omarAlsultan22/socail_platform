@@ -30,7 +30,7 @@ class LikesScreen extends StatelessWidget {
                 scrolledUnderElevation: 0.0,
               ),
               body: ListBuilder(
-                list: state.modelsList,
+                list: state.modelsList!,
                 object: (like) =>
                     LikesModel(
                       like: like,

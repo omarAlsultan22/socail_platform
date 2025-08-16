@@ -21,7 +21,8 @@ class LikesModel extends StatelessWidget {
     if (like.userId == null) return;
 
     if (userId != null && userId == like.userId) {
-      Navigator.of(context).popUntil((route) => route.settings.name == '/user_profile');
+      Navigator.of(context).popUntil((route) =>
+      route.settings.name == '/user_profile');
     }
     else if (like.userId != UserDetails.uId) {
       navigator(context, UserProfile(userId: like.userId!));
@@ -52,7 +53,8 @@ class LikesModel extends StatelessWidget {
                     radius: 25.0,
                     backgroundImage: like.userImage != null
                         ? NetworkImage(like.userImage!)
-                        : const AssetImage('assets/default_avatar.png') as ImageProvider,
+                        : const AssetImage(
+                        'assets/default_avatar.png') as ImageProvider,
                   ),
                 ),
                 const SizedBox(width: 8.0),

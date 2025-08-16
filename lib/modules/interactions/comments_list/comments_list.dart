@@ -33,7 +33,7 @@ class CommentsScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ListBuilder(
-                      list: state.modelsList,
+                      list: state.modelsList!,
                       object: (comment) =>
                           CommentsModel(
                             userId: userId,

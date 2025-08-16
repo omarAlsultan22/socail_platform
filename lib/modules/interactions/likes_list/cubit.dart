@@ -34,7 +34,7 @@ class LikesCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -126,7 +126,7 @@ class LikesCubit extends Cubit<CubitStates> {
         validUsers.sort((a, b) => b.dateTime!.compareTo(a.dateTime!));
         emit(ListSuccessState<UserModel>(modelsList: validUsers));
       }, onError: (e) {
-        emit(ErrorState(e.toString()));
+        emit(ErrorState(error: e.toString()));
       });
     });
   }

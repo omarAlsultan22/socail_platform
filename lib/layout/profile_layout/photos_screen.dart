@@ -33,7 +33,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
         final profileImages = widget.profileCubit.profileImagesList;
         final postsImages = widget.profileCubit.postsDataList;
 
-        if (state is LoadingState) {
+        if (state is LoadingState && state.key == 'getProfileImages' || state.key == 'getCoverImages') {
           return const Center(child: CircularProgressIndicator());
         }
 

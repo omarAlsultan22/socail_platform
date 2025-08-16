@@ -39,26 +39,26 @@ class NotificationsCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
   void getNotificationsRequests({required String userId}) {
-    emit(LoadingState());
+    emit(LoadingState(key: 'getNotificationsRequests'));
     try {
       _notificationsSubscription?.cancel();
       _notificationsSubscription =
           getNotificationsStream(userId: userId).listen(
                 (notifications) {
               notificationsList = notifications;
-              emit(SuccessState());
+              emit(SuccessState(key: 'getNotificationsRequests'));
             },
             onError: (error) {
-              emit(ErrorState(error.toString()));
+              emit(ErrorState(error: error.toString()));
             },
           );
     } catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString(), key: 'getNotificationsRequests'));
     }
   }
 
@@ -101,7 +101,7 @@ class NotificationsCubit extends Cubit<CubitStates> {
     required String userId,
     required String postId,
   }) async {
-    emit(LoadingState());
+    emit(LoadingState(key: 'getPostData'));
     try {
       final firestore = FirebaseFirestore.instance;
       final data = firestore.collection('posts').doc(postId);
@@ -117,7 +117,7 @@ class NotificationsCubit extends Cubit<CubitStates> {
       final commentsDocs = results[2] as QuerySnapshot;
 
       if (!postDoc.exists || !userDoc.exists) {
-        emit(ErrorState('Post or user not found'));
+        emit(ErrorState(error: 'Post or user not found', key: 'getPostData'));
         return;
       }
 
@@ -161,9 +161,9 @@ class NotificationsCubit extends Cubit<CubitStates> {
         'commentsNumber': commentsCount
       });
 
-      emit(SuccessState());
+      emit(SuccessState(key: 'getPostData'));
     } catch (e) {
-      emit(ErrorState('Failed to load post: ${e.toString()}'));
+      emit(ErrorState(error: 'Failed to load post: ${e.toString()}', key: 'getPostData'));
     }
   }
 
@@ -176,7 +176,7 @@ class NotificationsCubit extends Cubit<CubitStates> {
       {'isRead': true},
     );
     MainLayoutCubit.get(context).deleteNotification();
-    emit(SuccessState());
+    emit(SuccessState(key: 'updateNotificationsCounter'));
   }
 }
 

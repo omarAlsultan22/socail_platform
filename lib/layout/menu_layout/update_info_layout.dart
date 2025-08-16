@@ -22,8 +22,8 @@ class _UpdateInfoState extends State<UpdateInfo> {
   late ProfileCubit _cubit;
   bool result = false;
 
-  Future <void> getData()async{
-    if(_cubit.profileInfoList == null){
+  Future <void> getData() async {
+    if (_cubit.profileInfoList == null) {
       await _cubit.getInfo(uid: UserDetails.uId);
     }
   }
@@ -48,8 +48,8 @@ class _UpdateInfoState extends State<UpdateInfo> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, CubitStates>(
-      listener: (BuildContext context, CubitStates state) {
-        if (state is ModelSuccessState) {
+      listener: (context, state) {
+        if (state is SuccessState && state.key == 'updateAccount') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Updated successfully'),
                 backgroundColor: Colors.green[800]!),
@@ -59,7 +59,7 @@ class _UpdateInfoState extends State<UpdateInfo> {
           });
         }
       },
-      builder: (BuildContext context, CubitStates state) {
+      builder: (context, state) {
         final info = _cubit.profileInfoList;
         _stateController.text = info?.userState ?? '';
         _workController.text = info?.userWork ?? '';
@@ -172,7 +172,7 @@ class _UpdateInfoState extends State<UpdateInfo> {
                                       ).whenComplete(() {
                                         if (mounted) {
                                           setState(() =>
-                                        result = false);
+                                          result = false);
                                         }
                                       });
                                     }

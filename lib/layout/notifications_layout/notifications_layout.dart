@@ -177,27 +177,17 @@ class _ShowPostState extends State<ShowPost> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<NotificationsCubit, CubitStates>(
-      listener: (context, state) {
-        if (state is ErrorState && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.error),
-              backgroundColor: Colors.red.shade700,
-            ),
-          );
-        }
-      },
+    return BlocBuilder<NotificationsCubit, CubitStates>(
       builder: (context, state) {
         final notificationsCubit = NotificationsCubit.get(context);
 
-        if (state is LoadingState) {
+        if (state is LoadingState && state.key == 'getPostData') {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (state is ErrorState) {
+        if (state is ErrorState && state.key == 'getPostData') {
           return Scaffold(
             appBar: AppBar(
               leading: IconButton(
@@ -209,7 +199,7 @@ class _ShowPostState extends State<ShowPost> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(state.error),
+                  Text(state.error!),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _loadPostData,

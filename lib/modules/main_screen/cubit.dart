@@ -104,7 +104,7 @@ class MainLayoutCubit extends Cubit<CubitStates> {
 
       emit(SuccessState());
     } catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -124,7 +124,7 @@ class MainLayoutCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     } catch (error) {
       isMessage = true;
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 

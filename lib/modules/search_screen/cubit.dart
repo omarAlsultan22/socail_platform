@@ -40,7 +40,7 @@ class SearchCubit extends Cubit<CubitStates> {
       searchDataList = results.whereType<UserModel>().toList();
       emit(SuccessState());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 

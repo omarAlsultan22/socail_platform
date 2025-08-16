@@ -34,7 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_isLoadingMore || !_cubit.hasMorePosts) return;
 
     final double scrollPosition = _scrollControllerPosts.position.pixels;
-    final double maxScrollExtent = _scrollControllerPosts.position.maxScrollExtent;
+    final double maxScrollExtent = _scrollControllerPosts.position
+        .maxScrollExtent;
     final double scrollThreshold = maxScrollExtent * 0.8;
 
     if (scrollPosition >= scrollThreshold) {
@@ -82,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 deleteStatus: (statusModel) {
                   _cubit.deleteStatus(
-                    statusModel: statusModel);
+                      statusModel: statusModel);
                 },
                 loadMoreStatus: () => _cubit.getHomeStatus(),
                 hasMoreStatus: _cubit.hasMoreStatus,

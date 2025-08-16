@@ -26,19 +26,22 @@ class _FriendsScreenState extends State<FriendsScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<FriendsCubit, CubitStates>(
         listener: (context, state) {
-          if (state is RequestSuccessState) {
+          if (state is SuccessState && state.key == 'confirmNewFriend') {
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Your friend request has been approved'), backgroundColor: Colors.green.shade700));
+                SnackBar(content: Text('Your friend request has been approved'),
+                    backgroundColor: Colors.green.shade700));
           }
-          if (state is SuggestSuccessState) {
+          if (state is SuccessState && state.key == 'addFriendRequest') {
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('The request has been sent successfully'), backgroundColor: Colors.green.shade700));
+                SnackBar(
+                    content: Text('The request has been sent successfully'),
+                    backgroundColor: Colors.green.shade700));
           }
-          if (state is DeleteSuccessState) {
+          if (state is SuccessState && state.key == 'deleteFriendSuggest') {
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Deleted Successfully'), backgroundColor: Colors.green.shade700));
+                SnackBar(content: Text('Deleted Successfully'),
+                    backgroundColor: Colors.green.shade700));
           }
-
         },
         builder: (context, state) {
           final cubit = FriendsCubit.get(context);
@@ -57,7 +60,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
                     acceptButton: (index) =>
                         cubit.confirmNewFriend(index: index, context: context),
                     refuseButton: (index) =>
-                        cubit.declineFriendRequest(index: index, context: context),
+                        cubit.declineFriendRequest(
+                            index: index, context: context),
                     isActive: false
                 ),
                 sizedBox(),

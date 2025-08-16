@@ -142,7 +142,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -158,7 +158,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -178,7 +178,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -205,7 +205,7 @@ class ProfileCubit extends Cubit<CubitStates> {
           .set(profileInfo.toMap(), SetOptions(merge: true));
       emit(SuccessState());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 
@@ -233,7 +233,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       setUserId(uid);
       emit(SuccessState());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 
@@ -258,7 +258,7 @@ class ProfileCubit extends Cubit<CubitStates> {
         emit(SuccessState());
       }
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 
@@ -283,7 +283,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -322,7 +322,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       emit(SuccessState());
     } catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -420,7 +420,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       emit(SuccessState());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 
@@ -428,7 +428,7 @@ class ProfileCubit extends Cubit<CubitStates> {
   Future<void> getProfileImages({
     required String userId
   }) async {
-    emit(LoadingState());
+    emit(LoadingState(key: 'getProfileImages'));
 
     try {
       final firebase = FirebaseFirestore.instance;
@@ -495,14 +495,14 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       emit(SuccessState());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 
   Future<void> getCoverImages({
     required String userId,
   }) async {
-    emit(LoadingState());
+    emit(LoadingState(key: 'getCoverImages'));
 
     try {
       final firebase = FirebaseFirestore.instance;
@@ -568,7 +568,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       emit(SuccessState());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 
@@ -636,7 +636,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       emit(SuccessState());
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 
@@ -657,7 +657,7 @@ class ProfileCubit extends Cubit<CubitStates> {
         .then((_) {
       emit(SuccessState());
     }).catchError((e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     });
   }
 
@@ -676,7 +676,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       friendsList = friends;
       emit(SuccessState());
     }).catchError((e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     });
   }
 
@@ -694,7 +694,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 
@@ -712,7 +712,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString()));
     }
   }
 

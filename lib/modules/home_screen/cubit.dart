@@ -79,7 +79,7 @@ class HomeCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -100,7 +100,7 @@ class HomeCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -123,7 +123,7 @@ class HomeCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     } catch (error) {
       debugPrint('Error loading posts: $error');
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -220,7 +220,7 @@ class HomeCubit extends Cubit<CubitStates> {
       emit(SuccessState());
     } catch (error, stackTrace) {
       debugPrint('Error in getHomeStatus: $error\n$stackTrace');
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 
@@ -356,7 +356,7 @@ class HomeCubit extends Cubit<CubitStates> {
       emit(SuccessState());
 
     } catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
   @override

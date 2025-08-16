@@ -18,7 +18,7 @@ class AddNewFriendsCubit extends Cubit<CubitStates> {
   }
 
   Future<void> getSuggestsUsers() async {
-    emit(LoadingState());
+    emit(LoadingState(key: 'getSuggestsUsers'));
     try {
       final firebase = FirebaseFirestore.instance;
       final getData = await firebase.collection('users').get();
@@ -45,17 +45,17 @@ class AddNewFriendsCubit extends Cubit<CubitStates> {
           .toList();
       dataList.addAll(nonNullData);
 
-      emit(SuccessState());
+      emit(SuccessState(key: 'getSuggestsUsers'));
     }
     catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(ErrorState(error: e.toString(), key: 'getSuggestsUsers'));
     }
   }
 
   Future<void> confirmNewFriend({
     required String uId
   }) async {
-    emit(LoadingState());
+    emit(LoadingState(key: 'confirmNewFriend'));
 
     try {
       await Future.wait([
@@ -67,10 +67,10 @@ class AddNewFriendsCubit extends Cubit<CubitStates> {
             .collection(
             'friends').doc(UserDetails.uId).set({'uId': UserDetails.uId})
       ]);
-      emit(SuccessState());
+      emit(SuccessState(key: 'confirmNewFriend'));
     }
     catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString(), key: 'confirmNewFriend'));
     }
   }
 }
