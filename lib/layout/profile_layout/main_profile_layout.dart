@@ -36,7 +36,6 @@ class _ProfileItemsInfoBuilderState extends State<ProfileItemsInfoBuilder> {
     }
   }
 
-
   @override
   void dispose() {
     _scrollController.dispose();

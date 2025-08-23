@@ -49,7 +49,7 @@ class _UpdateInfoState extends State<UpdateInfo> {
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, CubitStates>(
       listener: (context, state) {
-        if (state is SuccessState && state.key == 'updateAccount') {
+        if (state is SuccessState && state.stateKey == StatesKeys.updateInfo) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Updated successfully'),
                 backgroundColor: Colors.green[800]!),

@@ -181,13 +181,13 @@ class _ShowPostState extends State<ShowPost> {
       builder: (context, state) {
         final notificationsCubit = NotificationsCubit.get(context);
 
-        if (state is LoadingState && state.key == 'getPostData') {
+        if (state is LoadingState && state.stateKey == StatesKeys.getPostData) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (state is ErrorState && state.key == 'getPostData') {
+        if (state is ErrorState && state.stateKey == StatesKeys.getPostData) {
           return Scaffold(
             appBar: AppBar(
               leading: IconButton(

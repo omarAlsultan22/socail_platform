@@ -203,9 +203,9 @@ class ProfileCubit extends Cubit<CubitStates> {
           .collection('info')
           .doc(UserDetails.uId)
           .set(profileInfo.toMap(), SetOptions(merge: true));
-      emit(SuccessState());
+      emit(SuccessState(stateKey: StatesKeys.updateInfo));
     } catch (e) {
-      emit(ErrorState(error: e.toString()));
+      emit(ErrorState(error: e.toString(), stateKey: StatesKeys.updateInfo));
     }
   }
 
@@ -428,7 +428,7 @@ class ProfileCubit extends Cubit<CubitStates> {
   Future<void> getProfileImages({
     required String userId
   }) async {
-    emit(LoadingState(key: 'getProfileImages'));
+    emit(LoadingState(stateKey: StatesKeys.getProfileImages));
 
     try {
       final firebase = FirebaseFirestore.instance;
@@ -502,7 +502,7 @@ class ProfileCubit extends Cubit<CubitStates> {
   Future<void> getCoverImages({
     required String userId,
   }) async {
-    emit(LoadingState(key: 'getCoverImages'));
+    emit(LoadingState(stateKey: StatesKeys.getCoverImages));
 
     try {
       final firebase = FirebaseFirestore.instance;

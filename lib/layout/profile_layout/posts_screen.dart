@@ -227,7 +227,7 @@ Row showFriends({
     mainAxisAlignment: MainAxisAlignment.center,
     children: List.generate(displayCount, (index) {
       int friendIndex = startIndex + index;
-      if (friendIndex >= len) return SizedBox(); // احتياطي إضافي
+      if (friendIndex >= len) return SizedBox();
 
       return friendImage(
         image: friends[friendIndex].userImage!,
