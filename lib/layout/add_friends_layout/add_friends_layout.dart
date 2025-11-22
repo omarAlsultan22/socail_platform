@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../modules/main_screen/main_screen.dart';
 import '../../modules/new_friends_screen/cubit.dart';
+import '../interactions_layout/like_model_layout.dart';
 import '../../shared/componentes/public_components.dart';
 import '../../shared/networks/local/shared_preferences.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../layout/interactions_layout/likes_layout/likes_layout.dart';
-import '../main_layout/main_layout.dart';
 
 
 class AddNewFriendsLayout extends StatefulWidget {
@@ -52,7 +52,7 @@ class _AddNewFriendsLayoutState extends State<AddNewFriendsLayout> {
                     child: ListBuilder(
                         list: dataList,
                         object: (object) =>
-                            LikesModel(
+                            LikeModelLayout(
                               like: object,
                               onPressed: () =>
                               cubit
@@ -71,7 +71,7 @@ class _AddNewFriendsLayoutState extends State<AddNewFriendsLayout> {
                     onPressed: checkButtonIsActive(addsNumber) ? () =>
                     {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => MainLayout()))
+                          builder: (context) => MainScreen()))
                     } : null,
                     child: Text('Finish'),
                   ),

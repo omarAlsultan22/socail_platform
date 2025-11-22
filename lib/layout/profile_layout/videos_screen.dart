@@ -57,11 +57,11 @@ class _VideosScreenState extends State<VideosScreen> {
                   physics: NeverScrollableScrollPhysics(),
                   children: videosList.map((e) =>
                       buildVideoContent(
-                          postModel: e,
-                          fullScreenVideoController: _fullScreenVideoController,
-                          context: context,
-                          height: 200.0,
-                          width: 200.0,
+                        postModel: e,
+                        fullScreenVideoController: _fullScreenVideoController,
+                        context: context,
+                        height: 200.0,
+                        width: 200.0,
                       ))
                       .toList(),
                 ),

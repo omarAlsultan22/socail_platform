@@ -3,7 +3,7 @@ import 'package:social_app/models/user_model.dart';
 
 
 class CommentModel extends UserModel{
-  late final String userAction;
+  late final String? userAction;
   late int? likesNumber;
   final List<UserModel>? likesList;
   final String docId;

@@ -17,7 +17,7 @@ class LoadingState<T> extends CubitStates<T>{
   LoadingState({super.stateKey});
 }
 
-class SuccessState<T> extends CubitStates<T>{
+class SuccessState<T> extends CubitStates<T> {
   final T? model;
   final List<T>? modelsList;
 
@@ -30,11 +30,6 @@ class SuccessState<T> extends CubitStates<T>{
 
   SuccessState.withList({required List<T> this.modelsList, super.stateKey})
       : model = null;
-
-  // محددات للمساعدة
-  bool get hasModel => model != null;
-  bool get hasList => modelsList != null;
-  bool get isEmpty => model == null && modelsList == null;
 }
 
 class ErrorState<T> extends CubitStates<T>{

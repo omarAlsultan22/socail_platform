@@ -32,6 +32,7 @@ class AppModelCubit extends Cubit<CubitStates> {
     }
   }
 
+
   Future updateAccount({
     required String firstName,
     required String lastName,
@@ -54,6 +55,7 @@ class AppModelCubit extends Cubit<CubitStates> {
       emit(ErrorState(error: error.toString(), stateKey: StatesKeys.getAccount));
     }
   }
+
 
   Future<void> changeEmailAndPassword({
     required String newEmail,

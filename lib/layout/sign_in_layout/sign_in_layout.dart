@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../modules/sign_up/sign_up_screen.dart';
+import '../../modules/main_screen/main_screen.dart';
 import '../../../shared/constants/user_details.dart';
 import '../../../shared/componentes/public_components.dart';
-import 'package:social_app/layout/main_layout/main_layout.dart';
 import '../../../shared/networks/local/shared_preferences.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
 
@@ -30,7 +30,7 @@ class _SignInScreenState extends State<SignInLayout> {
       UserDetails.uId = value;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const MainLayout()),
+        MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     }
   }

@@ -3,9 +3,9 @@ import '../../models/post_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../shared/constants/user_details.dart';
+import '../../services/online_status_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../shared/componentes/public_components.dart';
-import '../../services/online_status_service.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
 
 
@@ -13,7 +13,6 @@ class HomeCubit extends Cubit<CubitStates> {
 
   bool hasMoreStatus = true;
   bool hasMorePosts = true;
-
   bool isLoadingPosts = false;
 
   DocumentSnapshot? lastPostDoc;

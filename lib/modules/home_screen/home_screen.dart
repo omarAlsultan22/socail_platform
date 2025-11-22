@@ -1,5 +1,5 @@
 import 'cubit.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../shared/constants/user_details.dart';
 import '../../layout/home_layout/home_layout.dart';
@@ -72,7 +72,11 @@ class _HomeScreenState extends State<HomeScreen> {
               postInput(
                 context: context,
               ),
-              container(),
+
+              Container(
+                height: 1.0,
+                color: Colors.grey,
+              ),
               HomeBuilder(
                 homeStatus: _cubit.homeStatusList,
                 homeData: _cubit.homeDataList,

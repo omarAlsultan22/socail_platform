@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 import '../../shared/constants/user_details.dart';
+import '../../services/online_status_service.dart';
 import 'package:social_app/models/post_model.dart';
 import '../../shared/cubit_states/cubit_states.dart';
 import '../../shared/componentes/post_components.dart';
-import '../../modules/profile_screen/user_profile_screen.dart';
 import '../../shared/componentes/public_components.dart';
 import 'package:social_app/modules/home_screen/cubit.dart';
 import 'package:social_app/modules/main_screen/cubit.dart';
-import '../../services/online_status_service.dart';
+import '../../modules/profile_screen/user_profile_screen.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 
@@ -31,21 +31,23 @@ class StatusScreen extends StatefulWidget {
 class _StatusScreenState extends State<StatusScreen> with TickerProviderStateMixin {
 
   int timeLeft = 2;
-  Timer? timer;
-  bool isPaused = false;
   int currentIndex = 0;
-  double startLine = 0.0;
+  int remainingFrames = 0;
+
+  bool isPaused = false;
   bool isOpen = false;
   bool _isExiting = false;
   bool _isDisposed = false;
-  bool _isCompleting = false;
+
   double value = 35.0;
-  late Animation<double> animation;
-  late AnimationController controller;
-  int remainingFrames = 0;
+  double startLine = 0.0;
   double totalDuration = 5.0;
   static double framesPerSecond = 60.0;
   double totalFrames = 5.0 * framesPerSecond;
+
+  Timer? timer;
+  late Animation<double> animation;
+  late AnimationController controller;
   final onlineStatusService = OnlineStatusService();
 
 
@@ -755,6 +757,7 @@ Widget stateLine({
     ),
   );
 }
+
 
 class HomeBuilder extends StatefulWidget {
   final List<List<PostModel>> homeStatus;

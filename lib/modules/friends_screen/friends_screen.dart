@@ -28,18 +28,21 @@ class _FriendsScreenState extends State<FriendsScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<FriendsCubit, CubitStates>(
         listener: (context, state) {
-          if (state is SuccessState && state.stateKey == StatesKeys.confirmNewFriend) {
+          if (state is SuccessState &&
+              state.stateKey == StatesKeys.confirmNewFriend) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Your friend request has been approved'),
                     backgroundColor: Colors.green.shade700));
           }
-          if (state is SuccessState && state.stateKey == StatesKeys.addFriendRequest) {
+          if (state is SuccessState &&
+              state.stateKey == StatesKeys.addFriendRequest) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                     content: Text('The request has been sent successfully'),
                     backgroundColor: Colors.green.shade700));
           }
-          if (state is SuccessState && state.stateKey == StatesKeys.deleteFriendSuggest) {
+          if (state is SuccessState &&
+              state.stateKey == StatesKeys.deleteFriendSuggest) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Deleted Successfully'),
                     backgroundColor: Colors.green.shade700));

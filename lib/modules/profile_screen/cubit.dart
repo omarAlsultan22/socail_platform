@@ -1,9 +1,9 @@
-import '../../helpers/Info_data_converter.dart';
 import '../../models/post_model.dart';
 import '../../models/info_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../shared/constants/state_keys.dart';
+import '../../helpers/Info_data_converter.dart';
 import '../../shared/constants/user_details.dart';
 import 'package:social_app/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -53,6 +53,7 @@ class ProfileCubit extends Cubit<CubitStates> {
   bool _hasMoreProfileImages = false;
   bool _hasMoreCoverImages = false;
 
+
   void setProfileCubit(ProfileCubit cubit){
     profileCubit = cubit;
     emit(SuccessState.empty());
@@ -101,7 +102,6 @@ class ProfileCubit extends Cubit<CubitStates> {
     ButtonModel(id: 1, label: 'photos'),
     ButtonModel(id: 2, label: 'videos')
   ];
-
 
   List<ImagesScreen> albumsScreens = [
     ImagesScreen(postModelList: [], titleName: 'Posts Images'),
@@ -163,6 +163,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(ErrorState(error: error.toString()));
     }
   }
+
 
   Future<void> deleteFriendship({
     required String userId
@@ -239,6 +240,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     }
   }
 
+
   Future<void> getInfo({
     required String uid
   }) async {
@@ -264,6 +266,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     }
   }
 
+
   Future<void> insertAndUpdatePosts({
     required PostModel postModel
   }) async {
@@ -288,6 +291,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(ErrorState(error: error.toString()));
     }
   }
+
 
   Future<void> uploadImage({
     required PostModel postModel,
@@ -327,6 +331,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(ErrorState(error: error.toString()));
     }
   }
+
 
   Future<void> insertImage({
     required PostModel postModel,
@@ -501,6 +506,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     }
   }
 
+
   Future<void> getCoverImages({
     required String userId,
   }) async {
@@ -574,6 +580,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     }
   }
 
+
   Future<void> getVideosPosts({
     required String userId
   }) async {
@@ -642,6 +649,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     }
   }
 
+
   Future<void> addFriend({
     required final String userImage,
     required final String userName,
@@ -663,6 +671,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     });
   }
 
+
   Future<void> getFriends({
     required String userId
   }) async {
@@ -682,6 +691,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     });
   }
 
+
   Future<void> checkIsRequest({
     required String userId
   }) async {
@@ -699,6 +709,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       emit(ErrorState(error: e.toString()));
     }
   }
+
 
   Future<void> checkIsFriend({
     required final String userId
@@ -718,6 +729,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     }
   }
 
+
   Future<void> deletePost({
     required PostModel postModel
   }) async {
@@ -728,6 +740,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     emit(SuccessState.empty());
   }
 }
+
 
 class ButtonModel {
   final int id;

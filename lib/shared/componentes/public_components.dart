@@ -297,13 +297,6 @@ class CommentForm extends StatelessWidget {
 }
 
 
-Container container() =>
-    Container(
-      height: 1.0,
-      color: Colors.grey,
-    );
-
-
 Widget iconButton({
   required VoidCallback onPressed,
   required Icon icon,

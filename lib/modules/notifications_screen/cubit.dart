@@ -65,6 +65,7 @@ class NotificationsCubit extends Cubit<CubitStates> {
     }
   }
 
+
   Stream<List<NotificationsModel>> getNotificationsStream({
     required String userId,
   }) {

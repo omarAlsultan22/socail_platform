@@ -5,6 +5,8 @@ import 'modules/menu_screen/cubit.dart';
 import 'package:provider/provider.dart';
 import 'modules/search_screen/cubit.dart';
 import 'modules/friends_screen/cubit.dart';
+import 'services/notification_service.dart';
+import 'modules/main_screen/main_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,11 +15,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_app/modules/profile_screen/cubit.dart';
 import 'package:social_app/shared/constants/user_details.dart';
-import 'services/notification_service.dart';
-import 'package:social_app/layout/main_layout/main_layout.dart';
 import 'package:social_app/modules/notifications_screen/cubit.dart';
-import 'package:social_app/shared/networks/local/shared_preferences.dart';
 import 'package:social_app/shared/networks/remote/firebase_options.dart';
+import 'package:social_app/shared/networks/local/shared_preferences.dart';
 
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -190,14 +190,14 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
               navigatorKey: navigatorKey,
               routes: {
-                '/friends_screen': (context) => MainLayout(targetScreen: 2),
-                '/notifications_screen': (context) => MainLayout(targetScreen: 1),
+                '/friends_screen': (context) => MainScreen(targetScreen: 2),
+                '/notifications_screen': (context) => MainScreen(targetScreen: 1),
               },
               theme: getLightTheme(),
               darkTheme: getDarkTheme(),
               themeMode: themeNotifier.themeMode,
               debugShowCheckedModeBanner: false,
-              home: MainLayout()
+              home: MainScreen()
           );
         },
       ),

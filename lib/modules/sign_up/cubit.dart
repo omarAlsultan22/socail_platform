@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../shared/constants/user_details.dart';
 import '../../shared/cubit_states/cubit_states.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/helpers/account_converter.dart';
 import '../../shared/networks/local/shared_preferences.dart';
+import 'package:social_app/helpers/account_model_converter.dart';
 
 
 class SignUpCubit extends Cubit<CubitStates> {
@@ -57,7 +57,7 @@ class SignUpCubit extends Cubit<CubitStates> {
         .set({
       ...userModel.toMap(),
       'userImage': null
-        });
+    });
   }
 
   Future<void> updateAccount({

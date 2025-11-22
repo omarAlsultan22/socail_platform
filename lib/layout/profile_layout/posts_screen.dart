@@ -6,10 +6,10 @@ import '../../shared/constants/user_details.dart';
 import 'package:social_app/models/info_model.dart';
 import 'package:social_app/models/user_model.dart';
 import '../../shared/cubit_states/cubit_states.dart';
+import '../interactions_layout/like_model_layout.dart';
 import '../../shared/componentes/post_components.dart';
 import '../../shared/componentes/public_components.dart';
 import 'package:social_app/modules/profile_screen/cubit.dart';
-import '../interactions_layout/likes_layout/likes_layout.dart';
 import 'package:social_app/modules/profile_screen/user_profile_screen.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
@@ -145,7 +145,7 @@ class PostsScreen extends StatelessWidget {
         body: ListBuilder(
             list: cubit.friendsList,
             object: (friend) =>
-                LikesModel(like: friend),
+                LikeModelLayout(like: friend),
             fallback: Text('There no any friends yet')
         ),
       );

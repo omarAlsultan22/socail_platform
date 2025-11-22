@@ -26,9 +26,9 @@ class SignInCubit extends Cubit<CubitStates> {
     } on FirebaseAuthException catch (e) {
       print('Firebase Auth Error: ${e.code} - ${e.message}');
       if (e.code == 'invalid-credential') {
-        emit(ErrorState(error: 'البريد الإلكتروني أو كلمة المرور غير صحيحة'));
+        emit(ErrorState(error: 'Incorrect email or password'));
       } else {
-        emit(ErrorState(error: e.message ?? 'حدث خطأ غير متوقع'));
+        emit(ErrorState(error: e.message ?? 'An unexpected error occurred'));
       }
     } catch (e) {
       print('General Error: $e');

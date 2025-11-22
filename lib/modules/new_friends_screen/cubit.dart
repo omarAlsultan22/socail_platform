@@ -19,6 +19,7 @@ class AddNewFriendsCubit extends Cubit<CubitStates> {
     emit(SuccessState.empty());
   }
 
+
   Future<void> getSuggestsUsers() async {
     emit(LoadingState(stateKey: StatesKeys.getSuggestsUsers));
     try {
@@ -53,6 +54,7 @@ class AddNewFriendsCubit extends Cubit<CubitStates> {
       emit(ErrorState(error: e.toString(), stateKey: StatesKeys.getSuggestsUsers));
     }
   }
+
 
   Future<void> confirmNewFriend({
     required String uId

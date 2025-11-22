@@ -1,5 +1,5 @@
-import '../../modules/sign_up/cubit.dart';
 import 'package:flutter/material.dart';
+import '../../modules/sign_up/cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../shared/componentes/public_components.dart';
 import 'package:social_app/modules/sign_in/sign_in_screen.dart';

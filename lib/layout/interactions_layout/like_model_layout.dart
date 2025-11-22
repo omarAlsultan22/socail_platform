@@ -1,17 +1,17 @@
+import '../../models/user_model.dart';
 import 'package:flutter/material.dart';
-import '../../../models/user_model.dart';
-import '../../../modules/main_screen/cubit.dart';
-import '../../../shared/constants/user_details.dart';
-import '../../../modules/profile_screen/user_profile_screen.dart';
-import '../../../shared/componentes/public_components.dart';
+import '../../modules/main_screen/cubit.dart';
+import '../../shared/constants/user_details.dart';
+import '../../shared/componentes/public_components.dart';
+import '../../modules/profile_screen/user_profile_screen.dart';
 
 
-class LikesModel extends StatelessWidget {
+class LikeModelLayout extends StatelessWidget {
   final UserModel like;
   final VoidCallback? onPressed;
   final String? userId;
 
-  const LikesModel({
+  const LikeModelLayout({
     required this.like,
     this.onPressed,
     this.userId,

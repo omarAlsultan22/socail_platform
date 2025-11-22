@@ -1,10 +1,8 @@
+import 'package:social_app/layout/interactions_layout/likes_layout.dart';
+
 import 'cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../shared/constants/user_details.dart';
-import '../../../shared/componentes/public_components.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../../layout/interactions_layout/likes_layout/likes_layout.dart';
 
 
 class LikesScreen extends StatelessWidget {
@@ -20,42 +18,10 @@ class LikesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-      LikesCubit()
-        ..listenToLikes(docId),
-      child: BlocBuilder<LikesCubit, CubitStates>(
-        builder: (context, state) {
-          if (state is SuccessState) {
-            return Scaffold(
-              appBar: AppBar(
-                scrolledUnderElevation: 0.0,
-              ),
-              body: ListBuilder(
-                list: state.modelsList!,
-                object: (like) =>
-                    LikesModel(
-                      like: like,
-                      userId: userId,
-                      onPressed: () =>
-                          LikesCubit.get(context).insertFriendsRequests(
-                            userId: UserDetails.uId,
-                          ),
-                    ),
-                fallback: Center(
-                  child: Text(
-                    'There are no any likes',
-                  ),
-                ),
-              ),
-            );
-          }
-          return Scaffold(
-            body: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        },
-      ),
+        create: (context) =>
+        LikesCubit()
+          ..listenToLikes(docId),
+        child: LikesLayout(userId: userId ?? '')
     );
   }
 }

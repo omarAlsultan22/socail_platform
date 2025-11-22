@@ -1021,7 +1021,7 @@ String getTimeAgo(DateTime date) {
 
   if (diff.inSeconds < 60) return 'now';
 
-  //if (diff.inSeconds < 60) return '${diff.inSeconds}s';
+  if (diff.inSeconds < 60) return '${diff.inSeconds}s';
 
   if (diff.inMinutes < 60) return '${diff.inMinutes}m';
 

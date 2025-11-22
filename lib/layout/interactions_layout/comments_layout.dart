@@ -1,21 +1,78 @@
 import 'package:flutter/material.dart';
-import '../../../modules/main_screen/cubit.dart';
-import '../../../shared/constants/user_details.dart';
-import 'package:social_app/models/comment_model.dart';
-import '../../../shared/componentes/post_components.dart';
-import '../../../modules/profile_screen/user_profile_screen.dart';
-import '../../../shared/componentes/public_components.dart';
-import 'package:social_app/modules/interactions/comments_likes_list/comments_likes_list.dart';
+import '../../models/comment_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../modules/main_screen/cubit.dart';
+import '../../shared/constants/user_details.dart';
+import '../../shared/cubit_states/cubit_states.dart';
+import '../../shared/componentes/post_components.dart';
+import '../../shared/componentes/public_components.dart';
+import '../../modules/interactions/comments_list/cubit.dart';
+import '../../modules/profile_screen/user_profile_screen.dart';
+import '../../modules/interactions/comments_likes_screen/comments_likes_screen.dart';
 
 
-class CommentsModel extends StatefulWidget {
+class CommentsLayout extends StatelessWidget {
+  final String docId;
+  final String userId;
+
+  const CommentsLayout({
+    required this.docId,
+    required this.userId,
+    super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CommentsCubit, CubitStates>(
+      builder: (context, state) {
+        final cubit = CommentsCubit.get(context);
+        if (state is SuccessState) {
+          return Scaffold(
+            appBar: AppBar(
+              scrolledUnderElevation: 0.0,
+            ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: ListBuilder(
+                    list: state.modelsList!,
+                    object: (comment) =>
+                        CommentModelLayout(
+                          userId: userId,
+                          comment: comment,
+                          onTap: (value) =>
+                              cubit.chickLike(
+                                  isLike: value, comment: comment),
+                          onLongPressed: (value) =>
+                              cubit.deleteComment(comment: comment),
+                        ),
+                    fallback: Text('There are no any comments'),
+                  ),
+                ),
+                CommentForm(onPressed: (comment) =>
+                    cubit.addComment(postId: docId, comment: comment))
+              ],
+            ),
+          );
+        }
+        return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            )
+        );
+      },
+    );
+  }
+}
+
+
+class CommentModelLayout extends StatefulWidget {
   final CommentModel comment;
   final GlobalKey? targetKey;
   final String? userId;
   final void Function(bool) onTap;
   final void Function(bool) onLongPressed;
 
-  const CommentsModel({
+  const CommentModelLayout({
     this.userId,
     this.targetKey,
     required this.onTap,
@@ -25,10 +82,10 @@ class CommentsModel extends StatefulWidget {
   });
 
   @override
-  State<CommentsModel> createState() => _CommentsModelState();
+  State<CommentModelLayout> createState() => _CommentModelLayoutState();
 }
 
-class _CommentsModelState extends State<CommentsModel> {
+class _CommentModelLayoutState extends State<CommentModelLayout> {
   bool isActive = false;
   late int likes;
   final commentController = TextEditingController();
@@ -120,7 +177,7 @@ class _CommentsModelState extends State<CommentsModel> {
                               ),
                             ),
                             if (widget.comment.userAction != null)
-                              Text(widget.comment.userAction),
+                              Text(widget.comment.userAction!),
                           ],
                         ),
                       ),
