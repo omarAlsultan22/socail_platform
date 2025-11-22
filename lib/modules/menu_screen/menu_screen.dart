@@ -1,12 +1,13 @@
+import '../../main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:social_app/layout/menu_layout/update_info_layout.dart';
-import 'package:social_app/shared/local/shared_preferences.dart';
-import '../../main.dart';
-import '../../shared/componentes/public_components.dart';
-import '../sign_in/sign_in/sign_in.dart';
 import '../../layout/menu_layout/update_account.dart';
+import '../../shared/componentes/public_components.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../shared/networks/local/shared_preferences.dart';
+import 'package:social_app/modules/sign_in/sign_in_screen.dart';
+import 'package:social_app/layout/menu_layout/update_info_layout.dart';
+
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -101,7 +102,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   onTap: () {
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => const SignIn()),
+                      MaterialPageRoute(builder: (context) => const SignInScreen()),
                           (Route<dynamic> route) => false,
                     );
                     CacheHelper.deleteStringValue(key: 'isLoggedIn');
@@ -115,6 +116,7 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 }
+
 
 Widget menuButton({
   required String text,

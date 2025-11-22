@@ -1,10 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models/account_model.dart';
-import '../../shared/componentes/constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../shared/constants/user_details.dart';
 import '../../shared/cubit_states/cubit_states.dart';
-import '../../shared/local/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/helpers/account_converter.dart';
+import '../../shared/networks/local/shared_preferences.dart';
+
 
 class SignUpCubit extends Cubit<CubitStates> {
   SignUpCubit() : super(InitialState());
@@ -42,7 +44,7 @@ class SignUpCubit extends Cubit<CubitStates> {
       );
 
       await _saveUserData(uId, userModel);
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (error) {
       emit(ErrorState(error: _parseFirebaseError(error)));
     }
@@ -78,7 +80,7 @@ class SignUpCubit extends Cubit<CubitStates> {
       await FirebaseFirestore.instance
           .collection('accounts').doc(UserDetails.uId)
           .update(userModel.toMap());
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (error) {
       emit(ErrorState(error: _parseFirebaseError(error.toString)));
@@ -93,9 +95,9 @@ class SignUpCubit extends Cubit<CubitStates> {
         .get();
     try {
       if (snapshot.exists) {
-        final userData = AccountModel.fromDocumentSnapshot(snapshot);
+        final userData = AccountModelConverter.fromDocumentSnapshot(snapshot);
         userDataList = userData.modelMap;
-        emit(SuccessState());
+        emit(SuccessState.empty());
       }
     }
     catch (error) {

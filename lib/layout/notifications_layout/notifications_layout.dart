@@ -1,14 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
+import '../../shared/constants/state_keys.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/models/notification_model.dart';
-import 'package:social_app/modules/interactions/comments_list/cubit.dart';
-import 'package:social_app/modules/notifications_screen/cubit.dart';
+import '../../shared/cubit_states/cubit_states.dart';
 import '../../shared/componentes/post_components.dart';
 import '../../shared/componentes/public_components.dart';
-import '../../shared/cubit_states/cubit_states.dart';
+import 'package:social_app/models/notification_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:social_app/modules/notifications_screen/cubit.dart';
 import '../interactions_layout/commetns_layout/comments_layout.dart';
+import 'package:social_app/modules/interactions/comments_list/cubit.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 
 Widget notificationItemsBuilder(NotificationsModel notificationsModel, BuildContext context) {
@@ -69,6 +70,8 @@ Widget notificationItemsBuilder(NotificationsModel notificationsModel, BuildCont
     ),
   );
 }
+
+
 class NotificationListBuilder extends StatelessWidget {
   final List<NotificationsModel> notificationData;
 

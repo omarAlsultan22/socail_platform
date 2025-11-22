@@ -1,0 +1,18 @@
+enum StatesKeys{
+  updateAccount,
+  getAccount,
+  updateInfo,
+  getNotificationsRequests,
+  getPostData,
+  updateNotificationsCounter,
+  getProfileImages,
+  getCoverImages,
+  addFriendRequest,
+  confirmNewFriend,
+  getFriendsRequests,
+  declineFriendRequest,
+  getFriendsSuggests,
+  deleteFriendSuggest,
+  changeEmailAndPassword,
+  getSuggestsUsers,
+}

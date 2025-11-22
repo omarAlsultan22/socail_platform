@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/models/friend_model.dart';
 import 'package:social_app/models/user_model.dart';
 import 'package:video_player/video_player.dart';
 import 'comment_model.dart';
+import 'dart:io';
 
 
 class PostModel extends UserData{

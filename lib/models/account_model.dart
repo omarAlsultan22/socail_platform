@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/models/map_model.dart';
 
-class UserAccount {
+
+class UserAccount implements MapModel{
   final String userId;
   final String firstName;
   final String lastName;
@@ -31,6 +33,7 @@ class UserAccount {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
@@ -42,18 +45,5 @@ class UserAccount {
   }
 }
 
-class AccountModel {
-  Map<String, dynamic> modelMap;
-
-  AccountModel({required this.modelMap});
-
-  factory AccountModel.fromDocumentSnapshot(DocumentSnapshot snapshot){
-    Map <String, dynamic> modelMap = {};
-    if (snapshot.data() != null) {
-      modelMap = snapshot.data() as Map<String, dynamic>;
-    }
-    return AccountModel(modelMap: modelMap);
-  }
-}
 
 

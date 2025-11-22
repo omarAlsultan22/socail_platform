@@ -1,10 +1,11 @@
 import 'dart:async';
+import '../../models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/layout/search_layout/search_layout.dart';
 import 'package:social_app/modules/search_screen/cubit.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../models/user_model.dart';
+import 'package:social_app/layout/search_layout/search_layout.dart';
+
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});

@@ -1,17 +1,18 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/models/user_model.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../shared/componentes/constants.dart';
-import '../../shared/componentes/public_components.dart';
-import '../chat_screen/chat_screen.dart';
-import '../notification_service/notification_service.dart';
-import '../notifications_screen/notifications_screen.dart';
-import '../profile_screen/profile_screen.dart';
-import '../friends_screen/friends_screen.dart';
 import '../home_screen/home_screen.dart';
+import '../chat_screen/chat_screen.dart';
+import '../friends_screen/friends_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../services/notification_service.dart';
+import '../profile_screen/my_profile_screen.dart';
+import '../../shared/constants/user_details.dart';
+import 'package:social_app/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../shared/componentes/public_components.dart';
+import '../notifications_screen/notifications_screen.dart';
+import 'package:social_app/shared/cubit_states/cubit_states.dart';
+
 
 class MainLayoutCubit extends Cubit<CubitStates> {
   MainLayoutCubit() : super(InitialState());
@@ -60,21 +61,21 @@ class MainLayoutCubit extends Cubit<CubitStates> {
   void deleteRequest() {
     if (friendRequestsCount['counter'] > 0) {
       friendRequestsCount['counter'] = friendRequestsCount['counter'] - 1;
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
   }
 
   void deleteNotification() {
     if (notificationsCount['counter'] > 0) {
       notificationsCount['counter'] = notificationsCount['counter'] - 1;
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
   }
 
   void deleteMessage() {
     if (messagesCount['counter'] > 0) {
       messagesCount['counter'] = messagesCount['counter'] - 1;
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
   }
 
@@ -102,7 +103,7 @@ class MainLayoutCubit extends Cubit<CubitStates> {
             .toList();
       }
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (error) {
       emit(ErrorState(error: error.toString()));
     }
@@ -121,7 +122,7 @@ class MainLayoutCubit extends Cubit<CubitStates> {
       ]);
 
       isMessage = true;
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (error) {
       isMessage = true;
       emit(ErrorState(error: error.toString()));
@@ -273,7 +274,7 @@ class MainLayoutCubit extends Cubit<CubitStates> {
 
   void changeIsMessage() {
     isMessage = false;
-    emit(SuccessState());
+    emit(SuccessState.empty());
   }
 
   @override

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../modules/menu_screen/cubit.dart';
-import '../../modules/sign_in/sign_in/sign_in.dart';
-import '../../shared/componentes/public_components.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../modules/sign_in/sign_in_screen.dart';
 import '../../shared/cubit_states/cubit_states.dart';
-import '../../shared/local/shared_preferences.dart';
+import '../../shared/componentes/public_components.dart';
+import '../../shared/networks/local/shared_preferences.dart';
 
 
 class ChangeEmailAndPassword extends StatefulWidget {
@@ -66,7 +66,7 @@ class _ChangeEmailAndPasswordState extends State<ChangeEmailAndPassword> {
       }).whenComplete(() {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) =>  SignIn()),
+          MaterialPageRoute(builder: (context) =>  SignInScreen()),
         );
       });
     } catch (error) {

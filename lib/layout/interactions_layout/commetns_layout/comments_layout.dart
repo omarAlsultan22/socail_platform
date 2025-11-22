@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:social_app/models/comment_model.dart';
-import 'package:social_app/modules/interactions/comments_likes_list/comments_likes_list.dart';
 import '../../../modules/main_screen/cubit.dart';
-import '../../../modules/profile_screen/user_profile.dart';
-import '../../../shared/componentes/constants.dart';
+import '../../../shared/constants/user_details.dart';
+import 'package:social_app/models/comment_model.dart';
 import '../../../shared/componentes/post_components.dart';
+import '../../../modules/profile_screen/user_profile_screen.dart';
 import '../../../shared/componentes/public_components.dart';
+import 'package:social_app/modules/interactions/comments_likes_list/comments_likes_list.dart';
 
 
 class CommentsModel extends StatefulWidget {

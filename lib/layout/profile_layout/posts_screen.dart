@@ -1,29 +1,29 @@
+import '../../models/post_model.dart';
 import 'package:flutter/material.dart';
+import '../../modules/home_screen/cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../shared/constants/user_details.dart';
 import 'package:social_app/models/info_model.dart';
 import 'package:social_app/models/user_model.dart';
-import 'package:social_app/modules/profile_screen/cubit.dart';
-import 'package:social_app/modules/profile_screen/user_profile.dart';
-import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import '../../models/post_model.dart';
-import '../../modules/home_screen/cubit.dart';
-import '../../shared/componentes/constants.dart';
+import '../../shared/cubit_states/cubit_states.dart';
 import '../../shared/componentes/post_components.dart';
 import '../../shared/componentes/public_components.dart';
-import '../../shared/cubit_states/cubit_states.dart';
+import 'package:social_app/modules/profile_screen/cubit.dart';
 import '../interactions_layout/likes_layout/likes_layout.dart';
+import 'package:social_app/modules/profile_screen/user_profile_screen.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 
 class PostsScreen extends StatelessWidget {
   final ProfileCubit profileCubit;
+
   const PostsScreen({
     required this.profileCubit,
     super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProfileCubit, CubitStates>(
-        listener: (context, state) {},
+    return BlocBuilder<ProfileCubit, CubitStates>(
         builder: (context, state) {
           InfoModel? profileData = profileCubit.profileInfoList;
           var friends = profileCubit.friendsList;
@@ -40,16 +40,16 @@ class PostsScreen extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
-                  row(icon: Icons.work,
+                  personalDetails(icon: Icons.work,
                       textAddress: 'Works at',
                       textValue: profileData!.userWork),
-                  row(icon: Icons.home_filled,
+                  personalDetails(icon: Icons.home_filled,
                       textAddress: 'Lives in',
                       textValue: profileData.userLive),
-                  row(icon: Icons.location_on_sharp,
+                  personalDetails(icon: Icons.location_on_sharp,
                       textAddress: 'From',
                       textValue: profileData.userFrom),
-                  row(icon: Icons.favorite,
+                  personalDetails(icon: Icons.favorite,
                       textAddress: profileData.userRelational),
                   Container(height: 1.0, color: Colors.grey),
                   Padding(
@@ -83,7 +83,7 @@ class PostsScreen extends StatelessWidget {
                   Container(height: 1.0, color: Colors.grey),
                   profileData.userId == UserDetails.uId ?
                   postInput(
-                      context: context,
+                    context: context,
                   ) : SizedBox(),
                   Container(height: 1.0, color: Colors.grey),
                   profileBuilder(
@@ -102,6 +102,7 @@ class PostsScreen extends StatelessWidget {
     );
   }
 
+
   Widget profileBuilder({
     required List<PostModel> homeData,
     required void Function (PostModel) deletePost
@@ -118,7 +119,10 @@ class PostsScreen extends StatelessWidget {
                     postModel: homeData[index],
                     length: (homeData.length + 1).toString(),
                     index: index.toString(),
-                    deletePost: (val) => val? deletePost(homeData[index]) : null,
+                    deletePost: (val) =>
+                    val
+                        ? deletePost(homeData[index])
+                        : null,
                     userId: profileCubit.userId,
                   ),
               separatorBuilder: (context, index) => const SizedBox(height: 1.0),
@@ -131,6 +135,7 @@ class PostsScreen extends StatelessWidget {
       ),
     );
   }
+
 
   Widget friendsScreen(ProfileCubit cubit) =>
       Scaffold(
@@ -146,7 +151,8 @@ class PostsScreen extends StatelessWidget {
       );
 }
 
-Padding row({
+
+Padding personalDetails({
   required IconData icon,
   required String textAddress,
   String? textValue
@@ -171,6 +177,7 @@ Padding row({
           ]
       ),
     );
+
 
 Widget friendImage({
   required String image,
@@ -210,6 +217,7 @@ Widget friendImage({
         ),
       ),
     );
+
 
 Row showFriends({
   required List<UserModel> friends,

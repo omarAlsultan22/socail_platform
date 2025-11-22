@@ -1,15 +1,18 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/models/comment_model.dart';
-import '../../models/notification_model.dart';
+import '../main_screen/cubit.dart';
 import '../../models/post_model.dart';
 import '../../models/user_model.dart';
-import '../../shared/componentes/constants.dart';
-import '../../shared/componentes/public_components.dart';
+import 'package:flutter/cupertino.dart';
+import '../../models/notification_model.dart';
+import '../../shared/constants/state_keys.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../shared/constants/user_details.dart';
 import '../../shared/cubit_states/cubit_states.dart';
-import '../main_screen/cubit.dart';
+import 'package:social_app/models/comment_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../shared/componentes/public_components.dart';
+import 'package:social_app/helpers/notification_data_converter.dart';
+
 
 class NotificationsCubit extends Cubit<CubitStates> {
   NotificationsCubit() : super(InitialState());
@@ -36,7 +39,7 @@ class NotificationsCubit extends Cubit<CubitStates> {
       await FirebaseFirestore.instance.collection(
           'notifications').doc(notificationsData.userId)
           .set(notificationsData.toMap());
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -51,7 +54,7 @@ class NotificationsCubit extends Cubit<CubitStates> {
           getNotificationsStream(userId: userId).listen(
                 (notifications) {
               notificationsList = notifications;
-              emit(SuccessState(stateKey: StatesKeys.getNotificationsRequests));
+              emit(SuccessState.empty(stateKey: StatesKeys.getNotificationsRequests));
             },
             onError: (error) {
               emit(ErrorState(error: error.toString()));
@@ -84,7 +87,7 @@ class NotificationsCubit extends Cubit<CubitStates> {
               .doc(userId)
               .get();
 
-          final notificationData = await NotificationsData.fromDocumentSnapshot(
+          final notificationData = await NotificationsDataConverter.fromDocumentSnapshot(
               userAccount, notificationDoc);
           result.add(notificationData.notificationsModel);
         } catch (error) {
@@ -161,7 +164,7 @@ class NotificationsCubit extends Cubit<CubitStates> {
         'commentsNumber': commentsCount
       });
 
-      emit(SuccessState(stateKey: StatesKeys.getPostData));
+      emit(SuccessState.empty(stateKey: StatesKeys.getPostData));
     } catch (e) {
       emit(ErrorState(error: 'Failed to load post: ${e.toString()}', stateKey: StatesKeys.getPostData));
     }
@@ -176,7 +179,7 @@ class NotificationsCubit extends Cubit<CubitStates> {
       {'isRead': true},
     );
     MainLayoutCubit.get(context).deleteNotification();
-    emit(SuccessState(stateKey: StatesKeys.updateNotificationsCounter));
+    emit(SuccessState.empty(stateKey: StatesKeys.updateNotificationsCounter));
   }
 }
 

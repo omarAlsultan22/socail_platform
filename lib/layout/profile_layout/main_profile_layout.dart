@@ -1,13 +1,13 @@
-import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../modules/profile_screen/cubit.dart';
+import '../../shared/constants/user_details.dart';
 import 'package:social_app/models/info_model.dart';
 import 'package:social_app/models/post_model.dart';
-import '../../modules/profile_screen/cubit.dart';
-import '../../shared/componentes/constants.dart';
+import '../../shared/cubit_states/cubit_states.dart';
 import '../../shared/componentes/post_components.dart';
 import '../../shared/componentes/public_components.dart';
-import '../../shared/cubit_states/cubit_states.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 
 class ProfileItemsInfoBuilder extends StatefulWidget {
@@ -133,6 +133,7 @@ class _BuildButtonsListState extends State<BuildButtonsList> {
   }
 }
 
+
 class ButtonItem extends StatelessWidget {
   final ButtonModel button;
   final bool isActive;
@@ -173,6 +174,7 @@ class ButtonItem extends StatelessWidget {
   }
 }
 
+
 Future<void> createPost(String folderName ,String titleName, BuildContext context, ProfileCubit cubit)async {
   final file = await pickImage();
 
@@ -192,6 +194,7 @@ Future<void> createPost(String folderName ,String titleName, BuildContext contex
     )
   );
 }
+
 
 Widget _buildProfileHeader(
     InfoModel profileInfo,
@@ -247,6 +250,7 @@ Widget _buildProfileHeader(
   );
 }
 
+
 class BuildCameraIcon extends StatelessWidget {
   final double left;
   final double top;
@@ -281,6 +285,7 @@ class BuildCameraIcon extends StatelessWidget {
   }
 }
 
+
 Widget _buildProfileImage(InfoModel profileInfo, BuildContext context, ProfileCubit profileCubit) {
   return Padding(
     padding: const EdgeInsets.only(left: 10.0, top: 100.0),
@@ -308,6 +313,7 @@ Widget _buildProfileImage(InfoModel profileInfo, BuildContext context, ProfileCu
         ),
   );
 }
+
 
 Widget _buildUserInfo({
   required InfoModel profileInfo,
@@ -344,6 +350,7 @@ Widget _buildUserInfo({
   );
 }
 
+
 Widget friendshipButton({
   required ProfileCubit cubit
 }) {
@@ -373,12 +380,37 @@ Widget friendshipButton({
 }
 
 
+class MainProfileLayout extends StatelessWidget {
+  const MainProfileLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProfileCubit, CubitStates>(
+        builder: (context, localState) {
+          final profileCubit = ProfileCubit
+              .get(context, key: const ValueKey('otherProfile'));
+          profileCubit.setProfileCubit(profileCubit);
+          return Scaffold(
+              appBar: AppBar(
+                elevation: 0.0,
+                scrolledUnderElevation: 0.0,
+              ),
+              body: profileListInfoBuilder(
+                profileCubit: profileCubit,
+              )
+          );
+        }
+    );
+  }
+}
+
+
 Widget profileListInfoBuilder({
-  required ProfileCubit profileInfo,
+  required ProfileCubit profileCubit,
 }) {
   return ConditionalBuilder(
-    condition: profileInfo.profileInfoList != null,
-    builder: (context) => ProfileItemsInfoBuilder(cubit: profileInfo),
+    condition: profileCubit.profileInfoList != null,
+    builder: (context) => ProfileItemsInfoBuilder(cubit: profileCubit),
     fallback: (context) => SizedBox()
   );
 }

@@ -1,13 +1,15 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../shared/constants/state_keys.dart';
+import '../../shared/constants/user_details.dart';
 import 'package:social_app/models/user_model.dart';
-import 'package:social_app/modules/main_screen/cubit.dart';
-import '../../models/friend_model.dart';
-import '../../shared/componentes/constants.dart';
-import '../../shared/componentes/public_components.dart';
+import '../../helpers/friends_info_converter.dart';
 import '../../shared/cubit_states/cubit_states.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../shared/componentes/public_components.dart';
+import 'package:social_app/modules/main_screen/cubit.dart';
+
 
 class FriendsCubit extends Cubit<CubitStates> {
   FriendsCubit() : super(InitialState());
@@ -32,11 +34,11 @@ class FriendsCubit extends Cubit<CubitStates> {
         .collection(
         'requests').doc(friendInfo.userId)
         .set(friendInfo.toMap()).then((_) {
-      emit(SuccessState(stateKey: StatesKeys.addFriendRequest));
+      emit(SuccessState.empty(stateKey: StatesKeys.addFriendRequest));
     }).catchError((error) {
       emit(ErrorState(error: error.toString()));
     });
-    emit(SuccessState(stateKey: StatesKeys.addFriendRequest));
+    emit(SuccessState.empty(stateKey: StatesKeys.addFriendRequest));
   }
 
 
@@ -57,7 +59,7 @@ class FriendsCubit extends Cubit<CubitStates> {
             'friends').doc(UserDetails.uId).set({'uId': UserDetails.uId})
       ]);
       declineFriendRequest(index: index, context: context);
-      emit(SuccessState(stateKey: StatesKeys.confirmNewFriend));
+      emit(SuccessState.empty(stateKey: StatesKeys.confirmNewFriend));
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -72,7 +74,8 @@ class FriendsCubit extends Cubit<CubitStates> {
           getConversationsStream(userId: UserDetails.uId).listen(
                   (groupedConversations) async {
                 friendsRequestsList = groupedConversations;
-                emit(SuccessState(stateKey: StatesKeys.getFriendsRequests));
+                emit(SuccessState.empty(
+                    stateKey: StatesKeys.getFriendsRequests));
               });
     }
     catch (error) {
@@ -111,7 +114,7 @@ class FriendsCubit extends Cubit<CubitStates> {
           .collection(
           'requests').doc(uId).delete();
       MainLayoutCubit.get(context).deleteRequest();
-      emit(SuccessState(stateKey: StatesKeys.declineFriendRequest));
+      emit(SuccessState.empty(stateKey: StatesKeys.declineFriendRequest));
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -141,7 +144,7 @@ class FriendsCubit extends Cubit<CubitStates> {
           suggests
       );
       friendsSuggestsList = friendsInfo.data;
-      emit(SuccessState(stateKey: StatesKeys.getFriendsSuggests));
+      emit(SuccessState.empty(stateKey: StatesKeys.getFriendsSuggests));
     } catch (error) {
       emit(ErrorState(error: error.toString()));
     }
@@ -156,7 +159,7 @@ class FriendsCubit extends Cubit<CubitStates> {
 
   void deleteFriendSuggest({required int index}) {
     friendsSuggestsList.removeAt(index);
-    emit(SuccessState(stateKey: StatesKeys.deleteFriendSuggest));
+    emit(SuccessState.empty(stateKey: StatesKeys.deleteFriendSuggest));
   }
 }
 

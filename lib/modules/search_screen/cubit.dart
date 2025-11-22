@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/models/user_model.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../shared/componentes/public_components.dart';
+import 'package:social_app/shared/cubit_states/cubit_states.dart';
+
 
 class SearchCubit extends Cubit<CubitStates> {
   SearchCubit() : super(InitialState());
@@ -38,7 +39,7 @@ class SearchCubit extends Cubit<CubitStates> {
       }));
 
       searchDataList = searchResults;
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (e) {
       emit(ErrorState(error: e.toString()));
     }

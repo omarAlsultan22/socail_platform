@@ -1,8 +1,9 @@
-import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:flutter/material.dart';
-import 'package:social_app/modules/profile_screen/user_profile.dart';
 import '../../models/user_model.dart';
+import 'package:flutter/material.dart';
 import '../../shared/componentes/public_components.dart';
+import 'package:social_app/modules/profile_screen/user_profile_screen.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+
 
 Widget buildFriendListSection({
   required Map<String, String> map,

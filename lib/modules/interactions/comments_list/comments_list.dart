@@ -1,9 +1,10 @@
+import 'cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../shared/componentes/public_components.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
 import '../../../layout/interactions_layout/commetns_layout/comments_layout.dart';
-import '../../../shared/componentes/public_components.dart';
-import 'cubit.dart';
+
 
 class CommentsScreen extends StatelessWidget {
   final String docId;
@@ -24,7 +25,7 @@ class CommentsScreen extends StatelessWidget {
       child: BlocBuilder<CommentsCubit, CubitStates>(
         builder: (context, state) {
           final cubit = CommentsCubit.get(context);
-          if (state is ListSuccessState) {
+          if (state is SuccessState) {
             return Scaffold(
               appBar: AppBar(
                 scrolledUnderElevation: 0.0,

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/layout/notifications_layout/notifications_layout.dart';
-import 'package:social_app/modules/notifications_screen/cubit.dart';
+import '../../shared/constants/user_details.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../shared/componentes/constants.dart';
+import 'package:social_app/modules/notifications_screen/cubit.dart';
+import 'package:social_app/layout/notifications_layout/notifications_layout.dart';
+
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});

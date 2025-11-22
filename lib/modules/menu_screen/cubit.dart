@@ -1,9 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../shared/constants/state_keys.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../shared/constants/user_details.dart';
 import 'package:social_app/models/account_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../shared/componentes/constants.dart';
+
 
 class AppModelCubit extends Cubit<CubitStates> {
   AppModelCubit() : super((InitialState()));
@@ -20,7 +22,7 @@ class AppModelCubit extends Cubit<CubitStates> {
         Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
         UserAccount userAccount = UserAccount.fromJson(data);
         print('Document data: $data');
-        emit(ModelSuccessState<UserAccount>(model: userAccount, stateKey: StatesKeys.getAccount));
+        emit(SuccessState<UserAccount>.withModel(model: userAccount, stateKey: StatesKeys.getAccount));
       } else {
         print('Document does not exist');
       }
@@ -46,7 +48,7 @@ class AppModelCubit extends Cubit<CubitStates> {
       );
       await FirebaseFirestore.instance.collection('accounts').doc(UserDetails.uId).update(
           userModel.toMap());
-      emit(SuccessState(stateKey: StatesKeys.getAccount));
+      emit(SuccessState.empty(stateKey: StatesKeys.getAccount));
     }
     catch (error) {
       emit(ErrorState(error: error.toString(), stateKey: StatesKeys.getAccount));
@@ -69,7 +71,7 @@ class AppModelCubit extends Cubit<CubitStates> {
         await user.reauthenticateWithCredential(credential);
         await user.updateEmail(newEmail).then((_) {
           user.updatePassword(newPassword).then((_) {
-            emit(SuccessState(stateKey: StatesKeys.changeEmailAndPassword));
+            emit(SuccessState.empty(stateKey: StatesKeys.changeEmailAndPassword));
           });
         });
       } on FirebaseAuthException catch (e) {

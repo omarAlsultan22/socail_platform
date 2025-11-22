@@ -1,11 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../modules/sign_in/sign_in/sign_in.dart';
-import '../../modules/menu_screen/cubit.dart';
-import '../../shared/componentes/constants.dart';
-import '../../shared/componentes/public_components.dart';
-import '../../shared/cubit_states/cubit_states.dart';
 import 'change_email_&_password.dart';
+import 'package:flutter/material.dart';
+import '../../modules/menu_screen/cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../shared/constants/state_keys.dart';
+import '../../shared/constants/user_details.dart';
+import '../../shared/cubit_states/cubit_states.dart';
+import '../../shared/componentes/public_components.dart';
+import 'package:social_app/modules/sign_in/sign_in_screen.dart';
+
 
 class UpdateAccount extends StatefulWidget {
   const UpdateAccount({super.key});
@@ -48,7 +50,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
         Future.delayed(const Duration(seconds: 1), () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const SignIn()),
+            MaterialPageRoute(builder: (context) => const SignInScreen()),
           );
         });
       }
@@ -80,7 +82,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
           );
         }
 
-        if (state is ModelSuccessState && state.stateKey == StatesKeys.getAccount) {
+        if (state is SuccessState && state.stateKey == StatesKeys.getAccount) {
            _firstNameController.text = state.model.firstName;
            _lastNameController.text = state.model.lastName;
            _phoneNumberController.text = state.model.userPhone!;

@@ -1,19 +1,20 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'public_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/modules/interactions/likes_list/cubit.dart';
-import 'package:video_player/video_player.dart';
+import '../constants/user_details.dart';
 import '../../../models/post_model.dart';
+import '../cubit_states/cubit_states.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_player/video_player.dart';
 import '../../../modules/home_screen/cubit.dart';
-import '../../../modules/interactions/comments_list/comments_list.dart';
-import '../../../modules/interactions/likes_list/likes_list.dart';
 import '../../../modules/main_screen/cubit.dart';
 import '../../../modules/profile_screen/cubit.dart';
-import '../../../modules/profile_screen/user_profile.dart';
-import '../cubit_states/cubit_states.dart';
-import 'constants.dart';
-import 'public_components.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../modules/profile_screen/user_profile_screen.dart';
+import '../../../modules/interactions/likes_list/likes_list.dart';
+import 'package:social_app/modules/interactions/likes_list/cubit.dart';
+import '../../../modules/interactions/comments_list/comments_list.dart';
+
 
 Widget smallMenu({
   required String buttonName,

@@ -1,17 +1,18 @@
 import 'dart:async';
-import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_player/video_player.dart';
+import '../../shared/constants/user_details.dart';
 import 'package:social_app/models/post_model.dart';
+import '../../shared/cubit_states/cubit_states.dart';
+import '../../shared/componentes/post_components.dart';
+import '../../modules/profile_screen/user_profile_screen.dart';
+import '../../shared/componentes/public_components.dart';
 import 'package:social_app/modules/home_screen/cubit.dart';
 import 'package:social_app/modules/main_screen/cubit.dart';
-import 'package:video_player/video_player.dart';
-import '../../modules/online_status_service/online_status_service.dart';
-import '../../modules/profile_screen/user_profile.dart';
-import '../../shared/componentes/constants.dart';
-import '../../shared/componentes/post_components.dart';
-import '../../shared/componentes/public_components.dart';
-import '../../shared/cubit_states/cubit_states.dart';
+import '../../services/online_status_service.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+
 
 class StatusScreen extends StatefulWidget {
   final List<PostModel> status;
@@ -996,7 +997,7 @@ class _HomeBuilderState extends State<HomeBuilder> with WidgetsBindingObserver {
                               val? widget.deletePost(widget.homeData[index]) : null
                           );
                         }
-                        else if (state is ListSuccessState){
+                        else if (state is SuccessState){
                           return HomeItem(
                             postModel: widget.homeData[0],
                             deletePost: (val) =>

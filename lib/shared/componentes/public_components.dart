@@ -1,16 +1,17 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
-import 'package:social_app/models/post_model.dart';
-import '../../../models/user_model.dart';
-import '../../../modules/home_screen/cubit.dart';
-import '../../../modules/profile_screen/cubit.dart';
-import 'constants.dart';
 import 'post_components.dart';
+import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
+import '../constants/user_details.dart';
+import '../../../models/user_model.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../modules/home_screen/cubit.dart';
+import 'package:social_app/models/post_model.dart';
+import '../../../modules/profile_screen/cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+
 
 Future<Map<String, dynamic>> getUserAccount({
   required Map<String, dynamic> userAccount,
@@ -34,6 +35,7 @@ Future<Map<String, dynamic>> getUserAccount({
     return {};
   }
 }
+
 
 Future<Map<String, dynamic>> getAccountMap({
   required DocumentSnapshot userDoc,
@@ -70,6 +72,7 @@ Future<UserModel>getUserAccountData()async {
   UserModel userModel = UserModel.fromJson(userAccount);
   return userModel;
 }
+
 
 Future<File?> pickImage() async {
   try {
@@ -292,7 +295,6 @@ class CommentForm extends StatelessWidget {
     );
   }
 }
-
 
 
 Container container() =>

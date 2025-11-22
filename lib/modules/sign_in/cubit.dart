@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../shared/networks/local/shared_preferences.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import 'package:social_app/shared/local/shared_preferences.dart';
 
 
 class SignInCubit extends Cubit<CubitStates> {
@@ -22,7 +22,7 @@ class SignInCubit extends Cubit<CubitStates> {
       print('User UID: ${userCredential.user?.uid}');
       await CacheHelper.setStringValue(key: 'friendsCount', value: '0');
       await CacheHelper.setStringValue(key: 'isLoggedIn', value: userCredential.user!.uid);
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } on FirebaseAuthException catch (e) {
       print('Firebase Auth Error: ${e.code} - ${e.message}');
       if (e.code == 'invalid-credential') {

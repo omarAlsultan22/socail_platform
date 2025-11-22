@@ -1,18 +1,19 @@
+import '../../modules/sign_up/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
 import '../../shared/componentes/public_components.dart';
-import '../sign_in/sign_in/sign_in.dart';
-import 'cubit.dart';
+import 'package:social_app/modules/sign_in/sign_in_screen.dart';
+import 'package:social_app/shared/cubit_states/cubit_states.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+
+class SignUpLayout extends StatefulWidget {
+  const SignUpLayout({super.key});
 
   @override
-  State<SignUp> createState() => _SignUpState();
+  State<SignUpLayout> createState() => _SignUpScreenState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpScreenState extends State<SignUpLayout> {
   bool _isObscure = false;
   final formKey = GlobalKey<FormState>();
   final firstNameController = TextEditingController();
@@ -23,14 +24,12 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => SignUpCubit(),
-      child: BlocConsumer<SignUpCubit, CubitStates>(
+    return BlocConsumer<SignUpCubit, CubitStates>(
         listener: (BuildContext context, CubitStates state) {
           if (state is SuccessState) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const SignIn()),
+              MaterialPageRoute(builder: (context) => const SignInScreen()),
             );
           }
         },
@@ -214,7 +213,7 @@ class _SignUpState extends State<SignUp> {
                                           onPressed: () =>
                                               Navigator.pushReplacement(context,
                                                   MaterialPageRoute(builder: (
-                                                      context) => const SignIn())),
+                                                      context) => const SignInScreen())),
                                           child: RichText(
                                             text: TextSpan(
                                               text: 'Already have an account? ',
@@ -248,7 +247,7 @@ class _SignUpState extends State<SignUp> {
               )
           );
         },
-      ),
     );
   }
 }
+

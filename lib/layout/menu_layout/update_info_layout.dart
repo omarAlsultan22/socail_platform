@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../shared/constants/state_keys.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/shared/componentes/constants.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
 import '../../modules/profile_screen/cubit.dart';
+import '../../shared/constants/user_details.dart';
 import '../../shared/componentes/public_components.dart';
+import 'package:social_app/shared/cubit_states/cubit_states.dart';
+
 
 class UpdateInfo extends StatefulWidget {
   const UpdateInfo({super.key});

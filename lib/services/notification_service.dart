@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import '../main.dart';
+import '../modules/main_screen/cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../shared/constants/user_details.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/models/notification_model.dart';
-import 'package:social_app/modules/main_screen/main_screen.dart';
-import '../../layout/notifications_layout/notifications_layout.dart';
-import '../../main.dart';
-import '../../shared/componentes/constants.dart';
-import '../main_screen/cubit.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:social_app/layout/main_layout/main_layout.dart';
+import '../layout/notifications_layout/notifications_layout.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();

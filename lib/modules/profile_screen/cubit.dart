@@ -1,15 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/models/user_model.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../layout/profile_layout/photos_screen.dart';
-import '../../layout/profile_layout/posts_screen.dart';
-import '../../layout/profile_layout/videos_screen.dart';
+import '../../helpers/Info_data_converter.dart';
 import '../../models/post_model.dart';
 import '../../models/info_model.dart';
-import '../../shared/componentes/constants.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../shared/constants/state_keys.dart';
+import '../../shared/constants/user_details.dart';
+import 'package:social_app/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../layout/profile_layout/posts_screen.dart';
+import '../../layout/profile_layout/videos_screen.dart';
+import '../../layout/profile_layout/photos_screen.dart';
 import '../../shared/componentes/public_components.dart';
+import 'package:social_app/shared/cubit_states/cubit_states.dart';
 
 
 class ProfileCubit extends Cubit<CubitStates> {
@@ -53,11 +55,11 @@ class ProfileCubit extends Cubit<CubitStates> {
 
   void setProfileCubit(ProfileCubit cubit){
     profileCubit = cubit;
-    emit(SuccessState());
+    emit(SuccessState.empty());
   }
   void setUserId(String uId){
     userId = uId;
-    emit(SuccessState());
+    emit(SuccessState.empty());
   }
 
   void _loadMorePosts() {
@@ -121,7 +123,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
   void addPost(PostModel postModel){
     postsDataList.insert(0, postModel);
-    emit(SuccessState());
+    emit(SuccessState.empty());
   }
 
   Future<void> insertFriendsRequests({
@@ -139,7 +141,7 @@ class ProfileCubit extends Cubit<CubitStates> {
           'requests').doc(friendsInfo.userId)
           .set(friendsInfo.toMap());
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -155,7 +157,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       await FirebaseFirestore.instance.collection('users').doc(userId)
           .collection(
           'requests').doc(UserDetails.uId).delete();
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -175,7 +177,7 @@ class ProfileCubit extends Cubit<CubitStates> {
             .collection(
             'friends').doc(UserDetails.uId).delete()
       ]);
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -203,7 +205,7 @@ class ProfileCubit extends Cubit<CubitStates> {
           .collection('info')
           .doc(UserDetails.uId)
           .set(profileInfo.toMap(), SetOptions(merge: true));
-      emit(SuccessState(stateKey: StatesKeys.updateInfo));
+      emit(SuccessState.empty(stateKey: StatesKeys.updateInfo));
     } catch (e) {
       emit(ErrorState(error: e.toString(), stateKey: StatesKeys.updateInfo));
     }
@@ -226,12 +228,12 @@ class ProfileCubit extends Cubit<CubitStates> {
             .get(),
       ]);
 
-      InfoData profileInfoInstance = await InfoData
+      InfoDataConverter profileInfoInstance = await InfoDataConverter
           .fromDocumentSnapshot(
           userInfo as DocumentSnapshot, userAccount as DocumentSnapshot);
       profileInfoList = profileInfoInstance.infoModel;
       setUserId(uid);
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (e) {
       emit(ErrorState(error: e.toString()));
     }
@@ -255,7 +257,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
         print(profileInfoList!.userRelational);
         print(profileInfoList!.userState);
-        emit(SuccessState());
+        emit(SuccessState.empty());
       }
     } catch (e) {
       emit(ErrorState(error: e.toString()));
@@ -280,7 +282,7 @@ class ProfileCubit extends Cubit<CubitStates> {
         }
       }
       postsDataList.insert(0, postModel);
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -320,7 +322,7 @@ class ProfileCubit extends Cubit<CubitStates> {
         );
       }
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (error) {
       emit(ErrorState(error: error.toString()));
     }
@@ -364,7 +366,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       if (postsRef.docs.isEmpty) {
         _hasMorePosts = true;
-        emit(SuccessState());
+        emit(SuccessState.empty());
         return;
       }
 
@@ -418,7 +420,7 @@ class ProfileCubit extends Cubit<CubitStates> {
         albumsScreens[0].postModelList = postsDataList;
       }
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (e) {
       emit(ErrorState(error: e.toString()));
     }
@@ -435,7 +437,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       final accountDoc = await firebase.collection('accounts').doc(userId).get();
       if (!accountDoc.exists) {
-        emit(SuccessState());
+        emit(SuccessState.empty());
         return;
       }
 
@@ -454,7 +456,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       if (postsSnapshot.docs.isEmpty) {
         _hasMoreProfileImages = true;
-        emit(SuccessState());
+        emit(SuccessState.empty());
         return;
       }
 
@@ -463,7 +465,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       for (final postDoc in postsSnapshot.docs) {
         try {
-          final postFields = postDoc.data() as Map<String, dynamic>;
+          final postFields = postDoc.data();
           final docRef = firebase.collection('posts').doc(postDoc.id);
 
           final likesNumber = (await docRef.collection('likesList').count().get()).count;
@@ -493,7 +495,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       print(profileImagesList.length);
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (e) {
       emit(ErrorState(error: e.toString()));
     }
@@ -509,7 +511,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       final accountDoc = await firebase.collection('accounts').doc(userId).get();
       if (!accountDoc.exists) {
-        emit(SuccessState());
+        emit(SuccessState.empty());
         return;
       }
 
@@ -528,7 +530,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       if (coversSnapshot.docs.isEmpty) {
         _hasMoreCoverImages = true;
-        emit(SuccessState());
+        emit(SuccessState.empty());
         return;
       }
 
@@ -566,7 +568,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       }
       print(coverImagesList.length);
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (e) {
       emit(ErrorState(error: e.toString()));
     }
@@ -582,7 +584,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       final accountDoc = await firebase.collection('accounts').doc(userId).get();
       if (!accountDoc.exists) {
-        emit(SuccessState());
+        emit(SuccessState.empty());
         return;
       }
 
@@ -601,7 +603,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       final videosSnapshot = await query.get();
 
       if (videosSnapshot.docs.isEmpty) {
-        emit(SuccessState());
+        emit(SuccessState.empty());
         return;
       }
 
@@ -610,7 +612,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       for (final videoDoc in videosSnapshot.docs) {
         try {
-          final postFields = videoDoc.data() as Map<String, dynamic>;
+          final postFields = videoDoc.data();
           final docRef = firebase.collection('posts').doc(videoDoc.id);
 
           final likesNumber = (await docRef.collection('likesList').count().get()).count;
@@ -634,7 +636,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       videosList.addAll(nonNullPosts);
 
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (e) {
       emit(ErrorState(error: e.toString()));
     }
@@ -655,7 +657,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     await FirebaseFirestore.instance.collection('users').doc(userUid)
         .collection('friends').doc(docUid).set(friendsInfo.toMap())
         .then((_) {
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }).catchError((e) {
       emit(ErrorState(error: e.toString()));
     });
@@ -674,7 +676,7 @@ class ProfileCubit extends Cubit<CubitStates> {
         friends.add(userModel);
       }));
       friendsList = friends;
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }).catchError((e) {
       emit(ErrorState(error: e.toString()));
     });
@@ -691,7 +693,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       final doc = await docRef.get();
       isRequest = doc.exists;
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (e) {
       emit(ErrorState(error: e.toString()));
@@ -709,7 +711,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       final doc = await docRef.get();
       isFriend = doc.exists;
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (e) {
       emit(ErrorState(error: e.toString()));
@@ -723,7 +725,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
     final firebase = FirebaseFirestore.instance;
     firebase.collection('posts').doc(postModel.docId).delete();
-    emit(SuccessState());
+    emit(SuccessState.empty());
   }
 }
 

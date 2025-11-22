@@ -1,21 +1,5 @@
-enum StatesKeys{
-  updateAccount,
-  getAccount,
-  updateInfo,
-  getNotificationsRequests,
-  getPostData,
-  updateNotificationsCounter,
-  getProfileImages,
-  getCoverImages,
-  addFriendRequest,
-  confirmNewFriend,
-  getFriendsRequests,
-  declineFriendRequest,
-  getFriendsSuggests,
-  deleteFriendSuggest,
-  changeEmailAndPassword,
-  getSuggestsUsers,
-}
+import '../constants/state_keys.dart';
+
 
 abstract class CubitStates<T>{
   final List<T>? modelsList;
@@ -24,6 +8,7 @@ abstract class CubitStates<T>{
   final StatesKeys? stateKey;
   CubitStates({this.modelsList, this.model, this.error, this.stateKey});
 }
+
 class InitialState<T> extends CubitStates<T>{
   InitialState() : super();
 }
@@ -33,22 +18,27 @@ class LoadingState<T> extends CubitStates<T>{
 }
 
 class SuccessState<T> extends CubitStates<T>{
-  SuccessState({StatesKeys? stateKey}) : super(stateKey: stateKey);
-}
+  final T? model;
+  final List<T>? modelsList;
 
-class ListSuccessState<T> extends CubitStates<T>{
-  ListSuccessState({required List<T> modelsList, StatesKeys? stateKey})
-      : super(modelsList: modelsList, stateKey: stateKey);
-}
+  SuccessState.empty({super.stateKey})
+      : model = null,
+        modelsList = null;
 
-class ModelSuccessState<T> extends CubitStates<T>{
-  ModelSuccessState({required T model, StatesKeys? stateKey})
-      : super(model: model, stateKey: stateKey);
+  SuccessState.withModel({required T this.model, super.stateKey})
+      : modelsList = null;
+
+  SuccessState.withList({required List<T> this.modelsList, super.stateKey})
+      : model = null;
+
+  // محددات للمساعدة
+  bool get hasModel => model != null;
+  bool get hasList => modelsList != null;
+  bool get isEmpty => model == null && modelsList == null;
 }
 
 class ErrorState<T> extends CubitStates<T>{
-  ErrorState({String? error, StatesKeys? stateKey})
-      : super(error: error, stateKey: stateKey);
+  ErrorState({super.error, super.stateKey});
 }
 
 class ChangeIndexState<T> extends CubitStates<T>{

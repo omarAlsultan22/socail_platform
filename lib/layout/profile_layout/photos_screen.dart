@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../shared/constants/state_keys.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/models/post_model.dart';
+import '../../shared/componentes/post_components.dart';
 import 'package:social_app/modules/profile_screen/cubit.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../shared/componentes/post_components.dart';
+
 
 class PhotosScreen extends StatefulWidget {
   final ProfileCubit profileCubit;
@@ -84,6 +86,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
   }
 }
 
+
 Widget myPhotos(PostModel data, BuildContext context) => InkWell(
   onTap: () {
     Navigator.push(
@@ -109,14 +112,6 @@ Widget myPhotos(PostModel data, BuildContext context) => InkWell(
         );
       },
     ),
-  ),
-);
-
-Text title({required String title}) => Text(
-  title,
-  style: const TextStyle(
-    fontSize: 18.0,
-    fontWeight: FontWeight.bold,
   ),
 );
 
@@ -155,6 +150,7 @@ class AlbumsList extends StatelessWidget {
     );
   }
 }
+
 
 class AlbumLayout extends StatelessWidget {
   final AlbumsButtons albumIButtons;
@@ -219,6 +215,7 @@ class AlbumLayout extends StatelessWidget {
   }
 }
 
+
 class ImagesScreen extends StatelessWidget {
   late List<PostModel> postModelList;
   final String titleName;
@@ -237,6 +234,7 @@ class ImagesScreen extends StatelessWidget {
     );
   }
 }
+
 
 class ViewImages extends StatelessWidget {
   final List<PostModel> postModelList;

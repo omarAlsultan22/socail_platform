@@ -1,12 +1,13 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../models/post_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../models/post_model.dart';
-import '../../shared/componentes/constants.dart';
+import '../../shared/constants/user_details.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../shared/componentes/public_components.dart';
-import '../online_status_service/online_status_service.dart';
+import '../../services/online_status_service.dart';
+import 'package:social_app/shared/cubit_states/cubit_states.dart';
+
 
 class HomeCubit extends Cubit<CubitStates> {
 
@@ -32,7 +33,7 @@ class HomeCubit extends Cubit<CubitStates> {
 
   void changeIsLoadingPosts(bool value) {
     isLoadingPosts = value;
-    emit(SuccessState());
+    emit(SuccessState.empty());
   }
 
   void getUserOnlineStatus(OnlineStatusService onlineStatusService,
@@ -76,7 +77,7 @@ class HomeCubit extends Cubit<CubitStates> {
       final docRef = firestore.collection('status').doc(statusModel.docId) ;
       await docRef.set(statusModel.toMap(), SetOptions(merge: true));
       }
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -97,7 +98,7 @@ class HomeCubit extends Cubit<CubitStates> {
           ..postType = postModel.postType ?? 'post';
       }
       addPost(postModel);
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -120,7 +121,7 @@ class HomeCubit extends Cubit<CubitStates> {
       final newPosts = await _fetchPosts();
       homeDataList.addAll(newPosts);
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (error) {
       debugPrint('Error loading posts: $error');
       emit(ErrorState(error: error.toString()));
@@ -217,7 +218,7 @@ class HomeCubit extends Cubit<CubitStates> {
     try {
       final newStatus = await _fetchStatus();
       homeStatusList.addAll(newStatus);
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (error, stackTrace) {
       debugPrint('Error in getHomeStatus: $error\n$stackTrace');
       emit(ErrorState(error: error.toString()));
@@ -321,11 +322,11 @@ class HomeCubit extends Cubit<CubitStates> {
           .collection('deleted_posts')
           .doc(postModel.docId)
           .set({});
-      emit(SuccessState());
+      emit(SuccessState.empty());
       return;
     }
     firestore.collection('posts').doc(postModel.docId).delete();
-    emit(SuccessState());
+    emit(SuccessState.empty());
   }
 
 
@@ -353,7 +354,7 @@ class HomeCubit extends Cubit<CubitStates> {
         await firebase.collection('status').doc(statusModel.docId).delete();
       }
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
 
     } catch (error) {
       emit(ErrorState(error: error.toString()));

@@ -1,12 +1,13 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import '../../../models/comment_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/models/user_model.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../../models/comment_model.dart';
-import '../../../shared/componentes/constants.dart';
+import '../../../shared/constants/user_details.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../shared/componentes/public_components.dart';
+import 'package:social_app/shared/cubit_states/cubit_states.dart';
+
 
 class CommentsLikesCubit extends Cubit<CubitStates> {
 
@@ -31,7 +32,7 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
           'requests').doc(friendsInfo.userId)
           .set(friendsInfo.toMap());
 
-      emit(SuccessState());
+      emit(SuccessState.empty());
     }
     catch (error) {
       emit(ErrorState(error: error.toString()));
@@ -42,7 +43,7 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
     _likesSubscription?.cancel();
 
     if (comment == null) {
-      emit(ListSuccessState<UserModel>(modelsList: []));
+      emit(SuccessState<UserModel>.withList(modelsList: []));
       return;
     }
 
@@ -59,7 +60,7 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
           .snapshots()
           .listen((likesSnapshot) async {
         if (likesSnapshot.docs.isEmpty) {
-          emit(ListSuccessState<UserModel>(modelsList: []));
+          emit(SuccessState<UserModel>.withList(modelsList: []));
           return;
         }
 
@@ -80,7 +81,7 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
             debugPrint('Error processing like from user ${like.id}: $e');
           }
         }
-        emit(ListSuccessState<UserModel>(modelsList: validUsers));
+        emit(SuccessState<UserModel>.withList(modelsList: validUsers));
       }, onError: (e) {
         emit(ErrorState(error: e.toString()));
       });

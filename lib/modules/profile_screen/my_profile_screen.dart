@@ -1,9 +1,10 @@
+import 'cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
+import '../../shared/constants/user_details.dart';
 import '../../layout/profile_layout/main_profile_layout.dart';
-import '../../shared/componentes/constants.dart';
-import 'cubit.dart';
+import 'package:social_app/shared/cubit_states/cubit_states.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -30,15 +31,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocBuilder<ProfileCubit, CubitStates>(
         builder: (context, state) {
           final profileCubit = ProfileCubit
-              .get(context,  key: const ValueKey('myProfile'));
+              .get(context, key: const ValueKey('myProfile'));
           profileCubit.setProfileCubit(profileCubit);
           return profileListInfoBuilder(
-                profileInfo: profileCubit,
-              );
+            profileCubit: profileCubit,
+          );
         }
     );
   }
 }
-
 
 

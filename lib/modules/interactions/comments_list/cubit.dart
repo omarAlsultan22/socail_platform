@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/models/comment_model.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
 import '../../../models/user_model.dart';
-import '../../../shared/componentes/constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../shared/constants/user_details.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/models/comment_model.dart';
 import '../../../shared/componentes/public_components.dart';
+import 'package:social_app/shared/cubit_states/cubit_states.dart';
+
 
 class CommentsCubit extends Cubit<CubitStates> {
 
@@ -19,7 +20,7 @@ class CommentsCubit extends Cubit<CubitStates> {
     _commentsSubscription?.cancel();
 
     if (docId == null || docId.isEmpty) {
-      emit(ListSuccessState<CommentModel>(modelsList: []));
+      emit(SuccessState<CommentModel>.withList(modelsList: []));
       return;
     }
 
@@ -30,7 +31,7 @@ class CommentsCubit extends Cubit<CubitStates> {
 
     _commentsSubscription = commentsRef.snapshots().listen((snapshot) async {
       if (snapshot.docs.isEmpty) {
-        emit(ListSuccessState<CommentModel>(modelsList: []));
+        emit(SuccessState<CommentModel>.withList(modelsList: []));
         return;
       }
       final List<CommentModel> validUsers = [];
@@ -66,7 +67,7 @@ class CommentsCubit extends Cubit<CubitStates> {
       }
       validUsers.sort((a, b) => b.dateTime!.compareTo(a.dateTime!));
 
-      emit(ListSuccessState<CommentModel>(modelsList: validUsers));
+      emit(SuccessState<CommentModel>.withList(modelsList: validUsers));
     }, onError: (e) {
       emit(ErrorState(error: e.toString()));
     });
@@ -157,7 +158,7 @@ class CommentsCubit extends Cubit<CubitStates> {
           dateTime: DateTime.now()
       );
       await docRef.set(userModel.toMap());
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (e) {
       emit(ErrorState(error: e.toString()));
       rethrow;
@@ -178,7 +179,7 @@ class CommentsCubit extends Cubit<CubitStates> {
       final docRef = postRef.collection(
           'commentsLikes').doc(UserDetails.uId);
       await docRef.delete();
-      emit(SuccessState());
+      emit(SuccessState.empty());
     } catch (e) {
       emit(ErrorState(error: e.toString()));
       rethrow;

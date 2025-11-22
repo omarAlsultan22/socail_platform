@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/models/map_model.dart';
 
-class UserModel {
+
+class UserModel implements MapModel{
   String? userId;
   String? userName;
   late String? userImage;
@@ -27,25 +28,12 @@ class UserModel {
     );
   }
 
-
+  @override
   Map<String, dynamic> toMap(){
     return {
       'userId': userId,
       'dateTime': dateTime
     };
-  }
-}
-
-class UserModelList {
-  UserModel userModel;
-
-  UserModelList({required this.userModel});
-
-  factory UserModelList.fromDocumentSnapshot(DocumentSnapshot snapshot){
-    final json = snapshot.data() as Map<String, dynamic>;
-
-    UserModel userModel = UserModel.fromJson(json);
-    return UserModelList(userModel: userModel);
   }
 }
 

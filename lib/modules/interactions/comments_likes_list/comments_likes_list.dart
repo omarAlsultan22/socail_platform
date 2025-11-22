@@ -1,11 +1,12 @@
+import 'cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../shared/constants/user_details.dart';
 import 'package:social_app/models/comment_model.dart';
+import '../../../shared/componentes/public_components.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
 import '../../../layout/interactions_layout/likes_layout/likes_layout.dart';
-import '../../../shared/componentes/constants.dart';
-import '../../../shared/componentes/public_components.dart';
-import 'cubit.dart';
+
 
 class CommentsLikesScreen extends StatelessWidget {
   final CommentModel comment;
@@ -25,7 +26,7 @@ class CommentsLikesScreen extends StatelessWidget {
         ..listenToLikes(comment),
       child: BlocBuilder<CommentsLikesCubit, CubitStates>(
         builder: (context, state) {
-          if (state is ListSuccessState) {
+          if (state is SuccessState) {
             return Scaffold(
               appBar: AppBar(
                 scrolledUnderElevation: 0.0,

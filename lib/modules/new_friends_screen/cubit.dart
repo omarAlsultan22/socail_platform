@@ -1,8 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../shared/constants/state_keys.dart';
+import '../../shared/constants/user_details.dart';
 import 'package:social_app/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../shared/componentes/constants.dart';
+
 
 class AddNewFriendsCubit extends Cubit<CubitStates> {
   AddNewFriendsCubit() : super(InitialState());
@@ -14,7 +16,7 @@ class AddNewFriendsCubit extends Cubit<CubitStates> {
 
   void addFriend(int number) {
     addsNumber += number;
-    emit(SuccessState());
+    emit(SuccessState.empty());
   }
 
   Future<void> getSuggestsUsers() async {
@@ -45,7 +47,7 @@ class AddNewFriendsCubit extends Cubit<CubitStates> {
           .toList();
       dataList.addAll(nonNullData);
 
-      emit(SuccessState(stateKey: StatesKeys.getSuggestsUsers));
+      emit(SuccessState.empty(stateKey: StatesKeys.getSuggestsUsers));
     }
     catch (e) {
       emit(ErrorState(error: e.toString(), stateKey: StatesKeys.getSuggestsUsers));
@@ -67,7 +69,7 @@ class AddNewFriendsCubit extends Cubit<CubitStates> {
             .collection(
             'friends').doc(UserDetails.uId).set({'uId': UserDetails.uId})
       ]);
-      emit(SuccessState(stateKey: StatesKeys.confirmNewFriend));
+      emit(SuccessState.empty(stateKey: StatesKeys.confirmNewFriend));
     }
     catch (error) {
       emit(ErrorState(error: error.toString(), stateKey: StatesKeys.confirmNewFriend));

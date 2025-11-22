@@ -1,23 +1,24 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:social_app/modules/main_screen/main_screen.dart';
-import 'package:social_app/modules/notifications_screen/cubit.dart';
-import 'package:social_app/modules/profile_screen/cubit.dart';
-import 'package:social_app/shared/componentes/constants.dart';
-import 'package:social_app/shared/local/shared_preferences.dart';
-import 'package:social_app/shared/remote/firebase_options.dart';
-import 'modules/friends_screen/cubit.dart';
 import 'modules/home_screen/cubit.dart';
-import 'modules/interactions/comments_list/cubit.dart';
 import 'modules/main_screen/cubit.dart';
 import 'modules/menu_screen/cubit.dart';
-import 'modules/notification_service/notification_service.dart';
+import 'package:provider/provider.dart';
 import 'modules/search_screen/cubit.dart';
+import 'modules/friends_screen/cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'modules/interactions/comments_list/cubit.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_app/modules/profile_screen/cubit.dart';
+import 'package:social_app/shared/constants/user_details.dart';
+import 'services/notification_service.dart';
+import 'package:social_app/layout/main_layout/main_layout.dart';
+import 'package:social_app/modules/notifications_screen/cubit.dart';
+import 'package:social_app/shared/networks/local/shared_preferences.dart';
+import 'package:social_app/shared/networks/remote/firebase_options.dart';
+
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 //⭐\\

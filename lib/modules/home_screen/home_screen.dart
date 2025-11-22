@@ -1,11 +1,12 @@
+import 'cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../shared/constants/user_details.dart';
+import '../../layout/home_layout/home_layout.dart';
+import '../../shared/componentes/public_components.dart';
 import 'package:social_app/modules/profile_screen/cubit.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
-import '../../layout/home_layout/home_layout.dart';
-import '../../shared/componentes/constants.dart';
-import '../../shared/componentes/public_components.dart';
-import 'cubit.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

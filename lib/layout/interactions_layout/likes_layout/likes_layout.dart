@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../models/user_model.dart';
 import '../../../modules/main_screen/cubit.dart';
-import '../../../modules/profile_screen/user_profile.dart';
-import '../../../shared/componentes/constants.dart';
+import '../../../shared/constants/user_details.dart';
+import '../../../modules/profile_screen/user_profile_screen.dart';
 import '../../../shared/componentes/public_components.dart';
+
 
 class LikesModel extends StatelessWidget {
   final UserModel like;

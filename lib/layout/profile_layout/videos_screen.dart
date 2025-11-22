@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 import '../../modules/profile_screen/cubit.dart';
+import '../../shared/cubit_states/cubit_states.dart';
 import '../../shared/componentes/post_components.dart';
 import '../../shared/componentes/public_components.dart';
-import '../../shared/cubit_states/cubit_states.dart';
 
 
 class VideosScreen extends StatefulWidget {
