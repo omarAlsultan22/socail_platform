@@ -6,7 +6,7 @@ import '../../shared/cubit_states/cubit_states.dart';
 import '../../shared/componentes/public_components.dart';
 import '../../shared/networks/local/shared_preferences.dart';
 
-
+//presentation
 class ChangeEmailAndPassword extends StatefulWidget {
   const ChangeEmailAndPassword({super.key});
 
@@ -15,39 +15,46 @@ class ChangeEmailAndPassword extends StatefulWidget {
 }
 
 class _ChangeEmailAndPasswordState extends State<ChangeEmailAndPassword> {
-  final formKey = GlobalKey<FormState>();
-  final newEmailController = TextEditingController();
-  final currentPasswordController = TextEditingController();
-  final newPasswordController = TextEditingController();
-  final repeatNewPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _newEmailController = TextEditingController();
+  final _currentPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _repeatNewPasswordController = TextEditingController();
 
-  bool isObscure = true;
   bool _isLoading = false;
+  bool _isObscureCurrent = false;
+  bool _isObscureNew = false;
+  bool _isObscureConfirm = false;
 
   @override
   void dispose() {
-    newEmailController.dispose();
-    currentPasswordController.dispose();
-    newPasswordController.dispose();
-    repeatNewPasswordController.dispose();
+    _newEmailController.dispose();
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _repeatNewPasswordController.dispose();
     super.dispose();
   }
 
-  IconButton _buildVisibilityToggle() => IconButton(
-    icon: Icon(
-      isObscure ? Icons.visibility_off : Icons.visibility,
-      color: Colors.amber[700],
-    ),
-    onPressed: () => setState(() => isObscure = !isObscure),
-  );
+  IconButton _buildVisibilityToggle({
+    required bool isObscure,
+    required void Function(bool) onToggle
+  }) {
+    return IconButton(
+      icon: Icon(
+        isObscure ? Icons.visibility_off : Icons.visibility,
+        color: Color(0xFFFFB300),
+      ),
+      onPressed: () => onToggle(!isObscure),
+    );
+  }
 
   Future<void> _saveChanges({
     required BuildContext context,
     required AppModelCubit cubit,
   }) async {
-    if (!formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return;
 
-    if (newPasswordController.text != repeatNewPasswordController.text) {
+    if (_newPasswordController.text != _repeatNewPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         _buildSnackBar('The new password does not match', Colors.red[800]!),
       );
@@ -58,9 +65,9 @@ class _ChangeEmailAndPasswordState extends State<ChangeEmailAndPassword> {
 
     try {
       await cubit.changeEmailAndPassword(
-        newEmail: newEmailController.text,
-        currentPassword: currentPasswordController.text,
-        newPassword: newPasswordController.text,
+        newEmail: _newEmailController.text,
+        currentPassword: _currentPasswordController.text,
+        newPassword: _newPasswordController.text,
       ).then((_) {
         CacheHelper.deleteStringValue(key: 'uId');
       }).whenComplete(() {
@@ -165,43 +172,46 @@ class _ChangeEmailAndPasswordState extends State<ChangeEmailAndPassword> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Form(
-              key: formKey,
+              key: _formKey,
               child: Column(
                 children: [
                   buildInputField(
-                    controller: newEmailController,
+                    controller: _newEmailController,
                     hint: "New Email",
                     icon: Icons.email,
                     validator: (value) => validator(value!, 'New Email'),
                   ),
                   sizedBox(),
                   buildInputField(
-                    controller: currentPasswordController,
+                    controller: _currentPasswordController,
                     hint: "Current Password",
                     icon: Icons.lock,
-                    obscureText: isObscure,
-                    suffixIcon: _buildVisibilityToggle(),
+                    obscureText: _isObscureCurrent,
+                    suffixIcon: _buildVisibilityToggle(isObscure: _isObscureCurrent,
+                        onToggle: (value) => setState(() => _isObscureCurrent = value)),
                     validator: (value) => validator(value!, 'Current Password'),
                   ),
                   sizedBox(),
                   buildInputField(
-                    controller: newPasswordController,
+                    controller: _newPasswordController,
                     hint: "New Password",
                     icon: Icons.lock,
-                    obscureText: isObscure,
-                    suffixIcon: _buildVisibilityToggle(),
+                    obscureText: _isObscureNew,
+                    suffixIcon: _buildVisibilityToggle(isObscure: _isObscureNew,
+                        onToggle: (value) => setState(() => _isObscureNew = value)),
                     validator: (value) => validator(value!, 'New Password'),
                   ),
                   sizedBox(),
                   buildInputField(
-                    controller: repeatNewPasswordController,
+                    controller: _repeatNewPasswordController,
                     hint: "Confirm the new password",
                     icon: Icons.lock_reset,
-                    obscureText: isObscure,
-                    suffixIcon: _buildVisibilityToggle(),
+                    obscureText: _isObscureConfirm,
+                    suffixIcon: _buildVisibilityToggle(isObscure: _isObscureConfirm,
+                        onToggle: (value) => setState(() => _isObscureConfirm = value)),
                     validator: (value) {
                       if (value!.isEmpty) return 'Please confirm your password';
-                      if (value != newPasswordController.text) {
+                      if (value != _newPasswordController.text) {
                         return 'Passwords do not match';
                       }
                       return null;

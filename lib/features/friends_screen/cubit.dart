@@ -9,7 +9,9 @@ import '../../shared/cubit_states/cubit_states.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../shared/componentes/public_components.dart';
 import 'package:social_app/modules/main_screen/cubit.dart';
-
+//presentation
+//domain
+//data
 
 class FriendsCubit extends Cubit<CubitStates> {
   FriendsCubit() : super(InitialState());

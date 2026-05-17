@@ -39,8 +39,6 @@ class _SignInScreenState extends State<SignInLayout> {
   void initState() {
     super.initState();
     checkLogIn();
-    emailController.text = 'omaralsultan22@yahoo.com';
-    passwordController.text = '254086Aa';
   }
 
   @override
@@ -187,7 +185,6 @@ class _SignInScreenState extends State<SignInLayout> {
                             ),
                           ),
                           const SizedBox(height: 20),
-
                           // Sign Up Button
                           TextButton(
                             onPressed: () {

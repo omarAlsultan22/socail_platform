@@ -1,4 +1,4 @@
-import 'change_email_&_password.dart';
+import '../../features/auth/change_email_&_password.dart';
 import 'package:flutter/material.dart';
 import '../../modules/menu_screen/cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
