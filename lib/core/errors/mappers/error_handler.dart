@@ -1,4 +1,3 @@
-import '../exceptions/cache_exceptions/shared_prefs_app_exceptions.dart';
 import '../exceptions/url_launcher_app_exceptions.dart';
 import '../exceptions/unknown_app_exception.dart';
 import '../exceptions/base/app_exception.dart';
@@ -24,44 +23,24 @@ class ErrorHandler {
     // Log the error (for analytics)
     _logError(error, stackTrace);
 
-    final exceptionFromType = _mapByType();
-
-    if (exceptionFromType != null) {
-      return exceptionFromType;
-    }
-
-    final exceptionFromString = _mapByStringPattern();
-
-    if (exceptionFromString != null) {
-      return exceptionFromString;
-    }
-
-    if (_exceptionMapper.isUrlLauncherError()) {
-      final prefsException = UrlLauncherAppException(
-        error: error,
-        code: (error as PlatformException).code,
-      );
-      return prefsException.getException();
-    }
-
-    if (_exceptionMapper.isSharedPrefsError()) {
-      final prefsException = SharedPrefsAppException(
-        error: error,
-        code: (error as PlatformException).code,
-      );
-      return prefsException.getException();
-    }
-
-    return UnknownAppException(message: error.toString());
+    return _mapByTypePattern() ??
+        _mapByStringPattern() ??
+        _mapByUrlLauncherError() ??
+        UnknownAppException(message: error.toString());
   }
 
   // ==================== Helper Functions for Checking ====================
 
-  AppException? _mapByType() {
-    final isKeyFound = _exceptionMapper.isKey(error);
-    if (isKeyFound) {
-      final value = _exceptionMapper.mapByType();
-      return value;
+  bool _isUrlLauncherError() {
+    final errorStr = error.toString().toLowerCase();
+    return errorStr.contains('url_launcher') ||
+        error is PlatformException && errorStr.contains('url') ||
+        error is MissingPluginException && errorStr.contains('url');
+  }
+
+  AppException? _mapByTypePattern() {
+    if (_exceptionMapper.isKey) {
+      return _exceptionMapper.mapByTypePattern();
     }
     return null;
   }
@@ -69,9 +48,19 @@ class ErrorHandler {
   AppException? _mapByStringPattern() {
     for (var key in _exceptionMapper.keys) {
       if (error.toString().contains(key)) {
-        final value = _exceptionMapper.mapByType();
-        return value;
+        return _exceptionMapper.mapByStringPattern();
       }
+    }
+    return null;
+  }
+
+  AppException? _mapByUrlLauncherError() {
+    if (_isUrlLauncherError()) {
+      final prefsException = UrlLauncherAppException(
+        error: error,
+        code: (error as PlatformException).code,
+      );
+      return prefsException.handle();
     }
     return null;
   }
@@ -80,7 +69,7 @@ class ErrorHandler {
     // For tracking and analytics
     print('════════════════════════════════════════');
     print('❌ Error caught: ${error.runtimeType}');
-    print('Message: $error');
+    print('Message: ${error.toString()}');
     if (stackTrace != null) {
       print('StackTrace: $stackTrace');
     }

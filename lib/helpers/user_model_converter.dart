@@ -1,16 +1,16 @@
-import '../models/user_model.dart';
+import '../core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-class UserModelList {
+class UserModelConverter {
   UserModel userModel;
 
-  UserModelList({required this.userModel});
+  UserModelConverter({required this.userModel});
 
-  factory UserModelList.fromDocumentSnapshot(DocumentSnapshot snapshot){
+  factory UserModelConverter.fromDocumentSnapshot(DocumentSnapshot snapshot){
     final json = snapshot.data() as Map<String, dynamic>;
 
     UserModel userModel = UserModel.fromJson(json);
-    return UserModelList(userModel: userModel);
+    return UserModelConverter(userModel: userModel);
   }
 }

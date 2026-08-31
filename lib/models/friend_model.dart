@@ -1,4 +1,4 @@
-import 'package:social_app/models/user_model.dart';
+import 'package:social_app/core/data/models/user_model.dart';
 
 
 class UserData extends UserModel {

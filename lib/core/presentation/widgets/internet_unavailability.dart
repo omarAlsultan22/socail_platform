@@ -1,11 +1,21 @@
-import 'package:flutter/material.dart';
 import 'app_spacing.dart';
+import 'package:flutter/material.dart';
+import '../../../features/auth/data/network/connectivity_service.dart';
 
 
 class InternetUnavailability extends StatelessWidget {
-  final VoidCallback onRetry;
+  final String? message;
+  final VoidCallback? onRetry;
+  final ConnectivityService? connectivityService;
 
-  const InternetUnavailability({required this.onRetry, super.key});
+  const InternetUnavailability({
+    super.key,
+    required this.message,
+    required this.onRetry,
+    required this.connectivityService
+  });
+
+  static const _noInternetMessage = 'No Internet Connection';
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +28,7 @@ class InternetUnavailability extends StatelessWidget {
             color: Color(0xFF757575),
           ),
           const SizedBox(height: 20.0),
-          const Text('No Internet Connection',
+          Text(message ?? _noInternetMessage,
               style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,

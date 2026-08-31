@@ -1,7 +1,7 @@
 import 'dart:async';
-import '../../../models/user_model.dart';
+import '../../../core/data/models/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../shared/constants/user_details.dart';
+import '../../../core/constants/user_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/models/comment_model.dart';
 import '../../../shared/componentes/public_components.dart';
@@ -69,7 +69,7 @@ class CommentsCubit extends Cubit<CubitStates> {
 
       emit(SuccessState<CommentModel>.withList(modelsList: validUsers));
     }, onError: (e) {
-      emit(ErrorState(error: e.toString()));
+      emit(ErrorState(message: e.toString()));
     });
   }
 
@@ -104,9 +104,9 @@ class CommentsCubit extends Cubit<CubitStates> {
         'userAction': comment,
         'timestamp': FieldValue.serverTimestamp(),
       });
-      await docRef.set(actionModel.toMap());
+      await docRef.set(actionModel.toJson());
     } catch (e) {
-      emit(ErrorState(error: e.toString()));
+      emit(ErrorState(message: e.toString()));
       rethrow;
     }
   }
@@ -121,7 +121,7 @@ class CommentsCubit extends Cubit<CubitStates> {
           .doc(comment.postId).collection('commentsList').doc(comment.docId);
       await docRef.delete();
     } catch (e) {
-      emit(ErrorState(error: e.toString()));
+      emit(ErrorState(message: e.toString()));
       rethrow;
     }
   }
@@ -157,10 +157,10 @@ class CommentsCubit extends Cubit<CubitStates> {
           userId: UserDetails.uId,
           dateTime: DateTime.now()
       );
-      await docRef.set(userModel.toMap());
+      await docRef.set(userModel.toJson());
       emit(SuccessState.empty());
     } catch (e) {
-      emit(ErrorState(error: e.toString()));
+      emit(ErrorState(message: e.toString()));
       rethrow;
     }
   }
@@ -181,7 +181,7 @@ class CommentsCubit extends Cubit<CubitStates> {
       await docRef.delete();
       emit(SuccessState.empty());
     } catch (e) {
-      emit(ErrorState(error: e.toString()));
+      emit(ErrorState(message: e.toString()));
       rethrow;
     }
   }

@@ -1,15 +1,15 @@
-import 'package:cash_money/core/presentation/widgets/app_spacing.dart';
 import 'package:flutter/material.dart';
+import '../app_spacing.dart';
 
 
 class ErrorStateWidget extends StatelessWidget {
-  final String error;
+  final String? message;
   final String? buttonText;
   final VoidCallback? onRetry;
 
   const ErrorStateWidget({
     super.key,
-    required this.error,
+    required this.message,
     required this.onRetry,
     this.buttonText = 'Retry',
   });
@@ -22,7 +22,7 @@ class ErrorStateWidget extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50.0),
-              child: Text('Error: $error'),
+              child: Text('Error: $message'),
             ),
             AppSpacing.height_30,
             ElevatedButton(

@@ -1,11 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../core/data/data_sources/remote/firebase_auth_service.dart';
 import '../../domain/repositories/auth_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class FirebaseAuthRepository implements AuthRepository {
-  final FirebaseAuth _auth;
+  final FirebaseAuthService _auth;
 
-  FirebaseAuthRepository({required FirebaseAuth auth}) : _auth = auth;
+  FirebaseAuthRepository({required FirebaseAuthService auth}) : _auth = auth;
 
   @override
   Future<UserCredential> signIn({
@@ -13,7 +14,7 @@ class FirebaseAuthRepository implements AuthRepository {
     required String userPassword
   }) async {
     try {
-      return await _auth.signInWithEmailAndPassword(
+      return await _auth.signIn(
         email: userEmail,
         password: userPassword,
       ).then((value) {
@@ -25,17 +26,16 @@ class FirebaseAuthRepository implements AuthRepository {
     }
   }
 
-
   @override
   Future<UserCredential> signUp({
-    required String email,
-    required String password
+    required String userEmail,
+    required String userPassword
   }) async {
     try {
       return await _auth
-          .createUserWithEmailAndPassword(
-          email: email,
-          password: password
+          .signUp(
+          email: userEmail,
+          password: userPassword
       ).then((value) {
         return value;
       });
@@ -45,7 +45,6 @@ class FirebaseAuthRepository implements AuthRepository {
     }
   }
 
-
   @override
   Future<User?> updateProfile({
     required String newEmail,
@@ -53,7 +52,10 @@ class FirebaseAuthRepository implements AuthRepository {
     required String newPassword
   }) async {
     try {
-      final user = _auth.currentUser;
+      final user = _auth.updateProfile(
+          newEmail: newEmail,
+          currentPassword: currentPassword,
+          newPassword: newPassword);
       return user;
     }
     catch (e) {
@@ -61,9 +63,8 @@ class FirebaseAuthRepository implements AuthRepository {
     }
   }
 
-
   @override
-  Future<void> signOut() async {
-    _auth.signOut();
+  Future<void> sendResetEmail({required String userEmail}) async {
+    _auth.sendResetEmail(userEmail: userEmail);
   }
 }

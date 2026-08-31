@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/models/user_model.dart';
+import 'package:social_app/core/data/models/user_model.dart';
 
 
 class CommentModel extends UserModel{
@@ -39,7 +39,7 @@ class CommentModel extends UserModel{
 
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'docUid': docId,
       'userId': userId,

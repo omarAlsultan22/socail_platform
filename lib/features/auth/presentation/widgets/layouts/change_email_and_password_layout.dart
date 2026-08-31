@@ -1,48 +1,29 @@
-import '../../../../../core/data/data_sources/local/shared_preferences.dart';
-import '../../../../../core/presentation/widgets/navigation/navigator.dart';
-import 'package:cash_money/core/presentation/widgets/build_snack_bar.dart';
-import 'package:cash_money/core/presentation/widgets/text_form_field.dart';
-import '../../../../../core/presentation/widgets/app_spacing.dart';
-import '../../../../../core/data/models/message_result_model.dart';
-import 'package:cash_money/core/constants/app_paddings.dart';
-import 'package:cash_money/core/constants/app_numbers.dart';
-import 'package:cash_money/core/constants/app_colors.dart';
-import 'package:cash_money/core/constants/app_states.dart';
-import 'package:cash_money/core/constants/app_keys.dart';
-import '../../utils/validate/validate_password.dart';
-import '../../utils/validate/validate_email.dart';
-import '../../services/auth_services.dart';
 import 'package:flutter/material.dart';
+import '../../screens/sign_in_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/core/services/session_service.dart';
+import '../../../../../shared/componentes/public_components.dart';
 
 
 class ChangeEmailAndPasswordLayout extends StatefulWidget {
-  final AuthServices _authServices;
-  const ChangeEmailAndPasswordLayout(this._authServices, {super.key});
+  final SessionService sessionService;
+  const ChangeEmailAndPasswordLayout({super.key, required this.sessionService});
 
   @override
   State<ChangeEmailAndPasswordLayout> createState() => _ChangeEmailAndPasswordLayoutState();
 }
 
-class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLayout> {
+class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLayout> with AuthMixin{
   final _formKey = GlobalKey<FormState>();
   final _newEmailController = TextEditingController();
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _repeatNewPasswordController = TextEditingController();
 
-  //spaces
-  static const _paddingHorizontal = EdgeInsets.symmetric(horizontal: 16);
-
-  //colors
-  static const _brown900 = AppColors.brown_900;
-  static const _amber600 = AppColors.amber_600;
-  static const _red800 = AppColors.red800;
-  static const _white = AppColors.white;
-
   bool _isLoading = false;
-  bool isObscureCurrent = false;
-  bool isObscureNew = false;
-  bool isObscureConfirm = false;
+  bool _isObscureCurrent = false;
+  bool _isObscureNew = false;
+  bool _isObscureConfirm = false;
 
   @override
   void dispose() {
@@ -53,167 +34,6 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return _buildMainContent(context);
-  }
-
-  Widget _buildMainContent(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Scaffold(
-        backgroundColor: _brown900,
-        appBar: _buildAppBar(),
-        body: _buildBody(),
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: AppColors.transparent,
-      elevation: AppNumbers.zero,
-      leading: _buildBackButton(),
-      title: const Text(
-        'Change email and password',
-        style: TextStyle(color: _white),
-      ),
-      actions: [_buildSaveButton()],
-    );
-  }
-
-  Widget _buildBackButton() {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      color: _white,
-      onPressed: _isLoading ? null : () => Navigator.pop(context),
-    );
-  }
-
-  Widget _buildSaveButton() {
-    return Padding(
-      padding: _paddingHorizontal,
-      child: ElevatedButton(
-        style: _saveButtonStyle(),
-        onPressed: _isLoading ? null : () => _onSavePressed(),
-        child: _buildSaveButtonContent(),
-      ),
-    );
-  }
-
-  Widget _buildSaveButtonContent() {
-    return _isLoading
-        ? const SizedBox(
-      width: 20,
-      height: 20,
-      child: CircularProgressIndicator(
-        strokeWidth: 2,
-        color: _white,
-      ),
-    )
-        : const Text(
-      'Save',
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: _white,
-      ),
-    );
-  }
-
-  Widget _buildBody() {
-    const spaceBetweenFields = AppSpacing.height_16;
-
-    return IgnorePointer(
-      ignoring: _isLoading,
-      child: Container(
-        decoration: _buildBackgroundDecoration(),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: AppPaddings.paddingAll_24,
-            child: RepaintBoundary(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    _buildEmailField(),
-                    spaceBetweenFields,
-                    _buildCurrentPasswordField(),
-                    spaceBetweenFields,
-                    _buildNewPasswordField(),
-                    spaceBetweenFields,
-                    _buildConfirmPasswordField(),
-                    if (_isLoading) _buildLoadingIndicator(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmailField() {
-    return BuildInputField.build(
-      controller: _newEmailController,
-      hintText: 'You can add a new email',
-      prefixIcon: Icons.email,
-      validator: (value) => ValidateEmail.validator(value),
-    );
-  }
-
-  Widget _buildCurrentPasswordField() {
-    return BuildInputField.build(
-      controller: _currentPasswordController,
-      hintText: 'Current Password',
-      prefixIcon: Icons.lock,
-      obscureText: isObscureCurrent,
-      suffixIcon: _buildVisibilityToggle(isObscure: isObscureCurrent,
-          onToggle: (value) => setState(() => isObscureCurrent = value)),
-      validator: (value) => ValidatePassword.validator(value),
-    );
-  }
-
-  Widget _buildNewPasswordField() {
-    return BuildInputField.build(
-      controller: _newPasswordController,
-      hintText: 'New password',
-      prefixIcon: Icons.lock,
-      obscureText: isObscureNew,
-      suffixIcon: _buildVisibilityToggle(
-          isObscure: isObscureNew,
-          onToggle: (value) =>
-              setState(() => isObscureNew = value)),
-      validator: (value) => ValidatePassword.validator(value),
-    );
-  }
-
-  Widget _buildConfirmPasswordField() {
-    return BuildInputField.build(
-      controller: _repeatNewPasswordController,
-      hintText: "Confirm the new password",
-      prefixIcon: Icons.lock_reset,
-      obscureText: isObscureConfirm,
-      suffixIcon: _buildVisibilityToggle(
-          isObscure: isObscureConfirm,
-          onToggle: (value) =>
-              setState(() => isObscureConfirm = value)),
-      validator: _validatePasswordConfirmation,
-    );
-  }
-
-  Widget _buildLoadingIndicator() {
-    return const Column(
-      children: [
-        AppSpacing.height_24,
-        CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.amber_500),
-        ),
-      ],
-    );
-  }
-
   IconButton _buildVisibilityToggle({
     required bool isObscure,
     required void Function(bool) onToggle
@@ -221,90 +41,187 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     return IconButton(
       icon: Icon(
         isObscure ? Icons.visibility_off : Icons.visibility,
-        color: _amber600,
+        color: Color(0xFFFFB300),
       ),
       onPressed: () => onToggle(!isObscure),
     );
   }
 
-  Future<void> _onSavePressed() async {
-    if (!_validateForm()) return;
-    await _saveChanges();
-  }
-
-  bool _validateForm() {
-    if (!_formKey.currentState!.validate()) return false;
+  Future<void> _saveChanges({
+    required BuildContext context,
+    required AppModelCubit cubit,
+  }) async {
+    if (!_formKey.currentState!.validate()) return;
 
     if (_newPasswordController.text != _repeatNewPasswordController.text) {
-      BuildSnackBar.build('The new password does not match', _red800);
-      return false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        _buildSnackBar('The new password does not match', Colors.red[800]!),
+      );
+      return;
     }
 
-    return true;
-  }
-
-  Future<void> _saveChanges() async {
     setState(() => _isLoading = true);
 
-    final message = await widget._authServices.changeEmailAndPassword(
+    try {
+      await cubit.changeEmailAndPassword(
         newEmail: _newEmailController.text,
         currentPassword: _currentPasswordController.text,
-        newPassword: _newPasswordController.text
-    );
-
-    _clearUserData();
-    setState(() => _isLoading = false);
-    _showMessageResult(message);
-  }
-
-  void _clearUserData() {
-    CacheHelper.removeData(key: AppKeys.uId);
-  }
-
-  String? _validatePasswordConfirmation(dynamic value) {
-    if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
-    }
-    if (value != _newPasswordController.text) {
-      return 'Passwords do not match';
-    }
-    return null;
-  }
-
-  void _showMessageResult(MessageResultModel message) {
-    if (message.isSuccess) {
+        newPassword: _newPasswordController.text,
+      ).then((_) {
+        widget.sessionService.logout();
+      }).whenComplete(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) =>  SignInScreen()),
+        );
+      });
+    } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-          BuildSnackBar.build(AppStates.success, AppColors.green800)
+        _buildSnackBar('Update failed: $error', Colors.red[800]!),
       );
-      navigator(context: context);
-    }
-    else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        BuildSnackBar.build(' ${AppStates.failed}${message.error}', _red800),
-      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  BoxDecoration _buildBackgroundDecoration() {
-    return const BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          _brown900,
-          AppColors.brown_800,
-        ],
-      ),
-    );
-  }
-
-  ButtonStyle _saveButtonStyle() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: _amber600,
+  SnackBar _buildSnackBar(String message, Color backgroundColor) {
+    return SnackBar(
+      content: Text(message),
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppNumbers.twenty),
+        borderRadius: BorderRadius.circular(10),
       ),
-      padding: _paddingHorizontal,
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+            textDirection: TextDirection.ltr,
+            child: Scaffold(
+              backgroundColor: Colors.grey.shade900,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  color: Colors.white,
+                  onPressed: _isLoading ? null : () => Navigator.pop(context),
+                ),
+                title: const Text(
+                  'Change email and password',
+                  style: TextStyle(color: Colors.white),
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: _buildSaveButton(cubit, state),
+                  ),
+                ],
+              ),
+              body: _buildFormContent(),
+            ),
+          );
+  }
+
+
+  Widget _buildSaveButton(AppModelCubit cubit ,CubitStates state) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.amber[700],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+      ),
+      onPressed: _isLoading ? null : () => _saveChanges(context: context, cubit: cubit),
+      child: _isLoading
+          ? const SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: Colors.white,
+        ),
+      )
+          : const Text(
+        'Save',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFormContent() {
+    return IgnorePointer(
+      ignoring: _isLoading,
+      child: Container(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  buildInputField/(
+                    controller: _newEmailController,
+                    hint: "New Email",
+                    icon: Icons.email,
+                    validator: (value) => validator(value!, 'New Email'),
+                  ),
+                  sizedBox(),
+                  buildInputField/(
+                    controller: _currentPasswordController,
+                    hint: "Current Password",
+                    icon: Icons.lock,
+                    obscureText: _isObscureCurrent,
+                    suffixIcon: _buildVisibilityToggle(isObscure: _isObscureCurrent,
+                        onToggle: (value) => setState(() => _isObscureCurrent = value)),
+                    validator: (value) => validator(value!, 'Current Password'),
+                  ),
+                  sizedBox(),
+                  buildInputField/(
+                    controller: _newPasswordController,
+                    hint: "New Password",
+                    icon: Icons.lock,
+                    obscureText: _isObscureNew,
+                    suffixIcon: _buildVisibilityToggle(isObscure: _isObscureNew,
+                        onToggle: (value) => setState(() => _isObscureNew = value)),
+                    validator: (value) => validator(value!, 'New Password'),
+                  ),
+                  sizedBox(),
+                  buildInputField/(
+                    controller: _repeatNewPasswordController,
+                    hint: "Confirm the new password",
+                    icon: Icons.lock_reset,
+                    obscureText: _isObscureConfirm,
+                    suffixIcon: _buildVisibilityToggle(isObscure: _isObscureConfirm,
+                        onToggle: (value) => setState(() => _isObscureConfirm = value)),
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Please confirm your password';
+                      if (value != _newPasswordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null;
+                    },
+                  ),
+                  if (_isLoading) ...[
+                    const SizedBox(height: 24),
+                    const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

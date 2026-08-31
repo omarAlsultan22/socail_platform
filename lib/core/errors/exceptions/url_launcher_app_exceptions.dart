@@ -1,8 +1,8 @@
 import 'base/app_exception.dart';
-import 'base/app_exception_convertible.dart';
+import 'base/exception_handler.dart';
 
 
-class UrlLauncherAppException extends AppException implements AppExceptionConvertible {
+class UrlLauncherAppException extends AppException implements ExceptionHandler {
   UrlLauncherAppException({
     super.code,
     super.error,
@@ -22,13 +22,22 @@ class UrlLauncherAppException extends AppException implements AppExceptionConver
   };
 
   @override
-  AppException getException() {
+  bool canHandle() {
+    final errorStr = error.toString().toLowerCase();
+    return _urlLauncherExceptionPatterns.containsKey(errorStr);
+  }
+
+  @override
+  AppException handle() {
     final errorStr = error.toString().toLowerCase();
     final exception = _urlLauncherExceptionPatterns[errorStr];
     if (exception != null) {
       return exception;
     }
-    return UrlLauncherAppException(message: 'Failed to open link');
+    return UrlLauncherAppException(
+        code: code,
+        message: 'Failed to open link'
+    );
   }
 }
 

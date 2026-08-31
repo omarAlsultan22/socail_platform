@@ -2,11 +2,10 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import '../../../models/comment_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/models/user_model.dart';
-import '../../../shared/constants/user_details.dart';
+import '../../../core/constants/user_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../shared/componentes/public_components.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
+import 'package:social_app/core/data/models/user_model.dart';
 
 
 class CommentsLikesCubit extends Cubit<CubitStates> {
@@ -30,12 +29,12 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
       await fireStore.collection('users').doc(userId)
           .collection(
           'requests').doc(friendsInfo.userId)
-          .set(friendsInfo.toMap());
+          .set(friendsInfo.toJson());
 
       emit(SuccessState.empty());
     }
     catch (error) {
-      emit(ErrorState(error: error.toString()));
+      emit(ErrorState(message: error.toString()));
     }
   }
 
@@ -83,7 +82,7 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
         }
         emit(SuccessState<UserModel>.withList(modelsList: validUsers));
       }, onError: (e) {
-        emit(ErrorState(error: e.toString()));
+        emit(ErrorState(message: e.toString()));
       });
     });
   }

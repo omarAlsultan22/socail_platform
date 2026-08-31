@@ -1,3 +1,5 @@
+import 'package:social_app/models/account_model.dart';
+
 import '../../models/account_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,7 +35,7 @@ class SignUpCubit extends Cubit<CubitStates> {
         throw Exception("User UID is null");
       }
 
-      CacheHelper.serIntValue(key: 'friendsCount', value: 0);
+      CacheHelper.serIntValue(key: 'friendsCount', text: 0);
 
       final userModel = UserAccount(
         userId: uId,
@@ -46,7 +48,7 @@ class SignUpCubit extends Cubit<CubitStates> {
       await _saveUserData(uId, userModel);
       emit(SuccessState.empty());
     } catch (error) {
-      emit(ErrorState(error: _parseFirebaseError(error)));
+      emit(ErrorState(message: _parseFirebaseError(error)));
     }
   }
 
@@ -55,7 +57,7 @@ class SignUpCubit extends Cubit<CubitStates> {
         .collection('accounts')
         .doc(uid)
         .set({
-      ...userModel.toMap(),
+      ...userModel.toJson(),
       'userImage': null
     });
   }
@@ -79,11 +81,11 @@ class SignUpCubit extends Cubit<CubitStates> {
     try {
       await FirebaseFirestore.instance
           .collection('accounts').doc(UserDetails.uId)
-          .update(userModel.toMap());
+          .update(userModel.toJson());
       emit(SuccessState.empty());
     }
     catch (error) {
-      emit(ErrorState(error: _parseFirebaseError(error.toString)));
+      emit(ErrorState(message: _parseFirebaseError(error.toString)));
     }
   }
 
@@ -101,23 +103,7 @@ class SignUpCubit extends Cubit<CubitStates> {
       }
     }
     catch (error) {
-      emit(ErrorState(error: _parseFirebaseError(error.toString)));
+      emit(ErrorState(message: _parseFirebaseError(error.toString)));
     }
-  }
-
-  String _parseFirebaseError(dynamic error) {
-    if (error is FirebaseAuthException) {
-      switch (error.code) {
-        case 'email-already-in-use':
-          return 'The email address is already in use.';
-        case 'invalid-email':
-          return 'The email address is invalid.';
-        case 'weak-password':
-          return 'The password is too weak.';
-        default:
-          return 'An error occurred. Please try again.';
-      }
-    }
-    return 'An unexpected error occurred.';
   }
 }

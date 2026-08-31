@@ -1,9 +1,11 @@
 import 'base/app_exception.dart';
 import 'network_app_exception.dart';
-import 'base/app_exception_convertible.dart';
+import 'base/exception_handler.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../features/auth/data/network/connectivity_service.dart';
 
 
-class FirebaseAppException extends AppException implements AppExceptionConvertible {
+class FirebaseAppException extends AppException implements ExceptionHandler {
   FirebaseAppException({
     super.code,
     super.error,
@@ -13,7 +15,7 @@ class FirebaseAppException extends AppException implements AppExceptionConvertib
   static final connectivityService = ConnectivityService();
   static const String _msgNoInternet = 'No Internet Connection';
 
-  Map<String, AppException> map = {
+  static final Map<String, AppException> _errorFactories = {
     // Network
     'unavailable': NetworkAppException(
         message: _msgNoInternet, connectivityService: connectivityService),
@@ -33,6 +35,24 @@ class FirebaseAppException extends AppException implements AppExceptionConvertib
         code: 'unauthenticated', message: 'User is not authenticated'),
     'failed-precondition': FirestoreAppException(
         code: 'failed-precondition', message: 'Failed precondition'),
+    'deadline-exceeded': FirestoreAppException(
+        code: 'deadline-exceeded',
+        message: 'Request timed out, please try again'),
+    'resource-exhausted': FirestoreAppException(
+        code: 'resource-exhausted',
+        message: 'Server limit reached, try again later'),
+    'cancelled': FirestoreAppException(
+        code: 'cancelled',
+        message: 'Operation cancelled'),
+    'aborted': FirestoreAppException(
+        code: 'aborted',
+        message: 'Transaction failed, please retry'),
+    'fetch-failed': FirestoreAppException(
+        code: 'fetch-failed',
+        message: 'Failed to load data, please check your connection'),
+    'data-corrupted': FirestoreAppException(
+        code: 'data-corrupted',
+        message: 'Invalid data format'),
 
     // Auth
     'user-not-found': AuthAppException(
@@ -53,6 +73,12 @@ class FirebaseAppException extends AppException implements AppExceptionConvertib
         code: 'invalid-credential', message: 'Invalid login credentials'),
     'requires-recent-login': AuthAppException(
         code: 'requires-recent-login', message: 'Please log in again'),
+    'operation-not-allowed': AuthAppException(
+        code: 'operation-not-allowed',
+        message: 'This sign-in method is not available'),
+    'account-exists-with-different-credential': AuthAppException(
+        code: 'account-exists-with-different-credential',
+        message: 'Email already used with another login method'),
 
     // Storage
     'object-not-found': StorageAppException(
@@ -62,12 +88,16 @@ class FirebaseAppException extends AppException implements AppExceptionConvertib
   };
 
   @override
-  AppException getException() {
-    final isKeyFound = map.containsKey(error.code);
-    if (isKeyFound) {
-      final value = map[error.code];
-      if (value != null) {
-        return value;
+  bool canHandle() {
+    return _errorFactories.containsKey((error as FirebaseException).code);
+  }
+
+  @override
+  AppException handle() {
+    if (canHandle()) {
+      final exception = _errorFactories[(error as FirebaseException).code];
+      if (exception != null) {
+        return exception;
       }
     }
     return FirebaseAppException(message: 'Firebase error');
