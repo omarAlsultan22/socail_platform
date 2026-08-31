@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:social_app/core/data/models/profile_info_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/models/account_model.dart';
+import 'package:social_app/core/data/models/account_model.dart';
 import '../../../../core/constants/user_details.dart';
 import 'package:social_app/features/menu/domain/repositories/menu_repository.dart';
 import 'package:social_app/core/presentation/data/repositories_impl/firestore_base_repository.dart';

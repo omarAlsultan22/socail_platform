@@ -3,7 +3,7 @@ import '../../../core/data/models/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/user_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/models/comment_model.dart';
+import 'package:social_app/core/data/models/comment_model.dart';
 import '../../../shared/componentes/public_components.dart';
 import 'package:social_app/shared/cubit_states/cubit_states.dart';
 

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
-import '../../../models/comment_model.dart';
+import '../../../core/data/models/comment_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/user_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

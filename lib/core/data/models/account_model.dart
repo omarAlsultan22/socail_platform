@@ -1,4 +1,4 @@
-import 'package:social_app/models/json_model.dart';
+import 'package:social_app/core/data/models/base/json_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 

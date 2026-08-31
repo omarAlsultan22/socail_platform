@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-class AccountModelConverter {
+class AccountConverter {
   Map<String, dynamic> modelMap;
 
-  AccountModelConverter({required this.modelMap});
+  AccountConverter({required this.modelMap});
 
-  factory AccountModelConverter.fromDocumentSnapshot(DocumentSnapshot snapshot){
+  factory AccountConverter.fromDocumentSnapshot(DocumentSnapshot snapshot){
     Map <String, dynamic> modelMap = {};
     if (snapshot.data() != null) {
       modelMap = snapshot.data() as Map<String, dynamic>;
     }
-    return AccountModelConverter(modelMap: modelMap);
+    return AccountConverter(modelMap: modelMap);
   }
 }

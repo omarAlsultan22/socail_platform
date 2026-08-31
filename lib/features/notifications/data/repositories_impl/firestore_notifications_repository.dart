@@ -1,6 +1,6 @@
 import 'package:social_app/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/models/comment_model.dart';
+import 'package:social_app/core/data/models/comment_model.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
 import '../converters/notification_data_converter.dart';
 import '../../domain/repositories/notifications_repository.dart';

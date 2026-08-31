@@ -1,8 +1,8 @@
 import 'package:social_app/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/models/friend_model.dart';
+import 'package:social_app/core/data/models/user_data.dart';
 import 'package:video_player/video_player.dart';
-import '../../../models/comment_model.dart';
+import 'comment_model.dart';
 import 'dart:io';
 
 

@@ -1,4 +1,4 @@
-import 'package:social_app/models/account_model.dart';
+import 'package:social_app/core/data/models/account_model.dart';
 
 import '../../models/account_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +7,7 @@ import '../../shared/constants/user_details.dart';
 import '../../shared/cubit_states/cubit_states.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../shared/networks/local/shared_preferences.dart';
-import 'package:social_app/helpers/account_model_converter.dart';
+import 'package:social_app/features/auth/utils/helpers/account_converter.dart';
 
 
 class SignUpCubit extends Cubit<CubitStates> {
@@ -97,7 +97,7 @@ class SignUpCubit extends Cubit<CubitStates> {
         .get();
     try {
       if (snapshot.exists) {
-        final userData = AccountModelConverter.fromDocumentSnapshot(snapshot);
+        final userData = AccountConverter.fromDocumentSnapshot(snapshot);
         userDataList = userData.modelMap;
         emit(SuccessState.empty());
       }

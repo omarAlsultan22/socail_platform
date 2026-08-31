@@ -1,6 +1,6 @@
 import '../../../../core/data/models/profile_info_model.dart';
 import '../repositories/menu_repository.dart';
-import 'package:social_app/models/account_model.dart';
+import 'package:social_app/core/data/models/account_model.dart';
 import '../../../../core/constants/user_details.dart';
 
 

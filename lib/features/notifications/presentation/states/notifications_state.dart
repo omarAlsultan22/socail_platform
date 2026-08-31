@@ -1,5 +1,5 @@
 import '../../../../core/data/models/post_model.dart';
-import '../../../../models/comment_model.dart';
+import '../../../../core/data/models/comment_model.dart';
 import '../../data/models/notification_model.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
