@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import '../../../../core/data/models/post_model.dart';
-import 'package:social_app/core/constants/user_details.dart';
 import '../../../../core/presentation/widgets/new/build_submit_button.dart';
 import 'package:social_app/core/presentation/widgets/new/split_screen.dart';
 import '../../../../core/presentation/widgets/new/build_user_info_section.dart';

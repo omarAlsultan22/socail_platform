@@ -1,9 +1,7 @@
-import 'package:social_app/features/public/presentation/screens/create_post_screen.dart';
-
 import '../../../profile/cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:social_app/core/constants/user_details.dart';
-import '../../../../shared/componentes/post_components.dart';
+import 'package:social_app/features/public/presentation/cubits/public_cubit.dart';
+import 'package:social_app/features/public/presentation/screens/create_post_screen.dart';
 
 
 class PostCreationWidget extends StatelessWidget {
@@ -40,8 +38,8 @@ class PostCreationWidget extends StatelessWidget {
                     CreatePostScreen(
                         titleName: 'Create Post',
                         buttonName: 'Post',
-                        onPressed: (postModel) {
-                          HomeCubit
+                        onPressed: (postModel) {/
+                          PublicCubit
                               .get(context).insertAndUpdatePosts(postModel: postModel);
                           ProfileCubit.get(context)
                               .insertAndUpdatePosts(postModel:

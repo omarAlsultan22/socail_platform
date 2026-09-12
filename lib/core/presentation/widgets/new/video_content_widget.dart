@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:social_app/core/presentation/widgets/new/video_time_indicator.dart';
 import '../../../data/models/post_model.dart';
 import 'package:video_player/video_player.dart';
 import 'package:social_app/core/presentation/widgets/new/full_video_viewer.dart';
@@ -12,8 +11,8 @@ class VideoContentWidget extends StatefulWidget {
   final double? width;
   final double? height;
   const VideoContentWidget({
-    required this.postModel,
     required this.context,
+    required this.postModel,
     required this.fullScreenVideoController,
     this.width,
     this.height,

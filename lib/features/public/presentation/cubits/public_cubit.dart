@@ -1,23 +1,29 @@
 import 'dart:async';
 import '../states/public_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/useCases/public_use_cases.dart';
 import '../../../../core/data/models/post_model.dart';
-import '../../../../core/constants/user_details.dart';
 import '../../data/services/online_status_service.dart';
-import '../../../../core/errors/mappers/error_handler.dart';
-import '../../../../shared/componentes/public_components.dart';
+import '../../../../core/services/user_account_service.dart';
+import 'package:social_app/core/services/session_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
 
 
-class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState> {check this file if need error exception or no
-  final PublicUseCases _useCases;
+class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState> {
+  final PublicUseCase _useCases;
+  final SessionService _sessionService;
+  final UserAccountService _userAccountService;
   StreamSubscription? _onlineSubscription;
 
-  PublicCubit({required PublicUseCases useCases})
-      : _useCases = useCases,
+  PublicCubit({
+    required PublicUseCase useCase,
+    required SessionService sessionService,
+    required UserAccountService userAccountService
+  })
+      : _useCases = useCase,
+        _sessionService = sessionService,
+        _userAccountService = userAccountService,
         super(PublicState.initial());
 
   static PublicCubit get(context) => BlocProvider.of(context);
@@ -44,14 +50,21 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
     final currentMyStatuses = state.myStatuses;
     List<PostModel> newMyStatuses;
 
-    if (homeStatusesList.isNotEmpty &&
-        homeStatusesList.first.first.userId == UserDetails.uId) {
+    if (state.homeStatusesList.isNotEmpty &&
+        state.homeStatusesList.first.first.userId ==
+            _sessionService.currentUid) {
       newMyStatuses = [statusModel, ...currentMyStatuses];
     } else {
       newMyStatuses = [statusModel];
     }
 
-    emit(state.addStatus(statusModel, newMyStatuses));
+    emit(
+        state.addStatus(
+            status: statusModel,
+            myStatusesList: newMyStatuses,
+            currentUId: _sessionService.currentUid
+        )
+    );
   }
 
   Future<void> insertAndUpdateStatuses({
@@ -60,7 +73,7 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
     emit(state.copyWith(subState: LoadingState()));
     try {
       if (statusModel.userId == null) {
-        final userModel = await getUserAccountData();
+        final userModel = await _userAccountService.getUserAccountData();
         statusModel
           ..userId = userModel.userId
           ..userName = userModel.userName
@@ -86,7 +99,7 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
     emit(state.copyWith(subState: LoadingState()));
     try {
       if (postModel.userId == null) {
-        final userModel = await getUserAccountData();
+        final userModel = await _userAccountService.getUserAccountData();
         postModel
           ..userId = userModel.userId
           ..userName = userModel.userName
@@ -122,9 +135,9 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
       );
 
       emit(state.updatePostsPagination(
-        newPosts: result.posts,
-        lastDoc: result.lastDoc,
-        hasMore: result.hasMore,
+        newPosts: result.homePostsList,
+        hasMore: result.hasMorePosts,
+        lastDoc: result.lastPostDoc,
       ));
 
       emit(state.copyWith(subState: SuccessState()));
@@ -152,10 +165,10 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
       );
 
       emit(state.updateStatusesPagination(
-        newStatuses: result.statuses,
-        lastDoc: result.lastDoc,
-        hasMore: result.hasMore,
+        newStatuses: result.homeStatusesList,
         myStatusesList: result.myStatuses,
+        hasMore: result.hasMoreStatuses,
+        lastDoc: result.lastStatusDoc,
       ));
 
       emit(state.copyWith(subState: SuccessState()));
@@ -172,7 +185,7 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
   Future<void> deletePost({
     required PostModel postModel
   }) async {
-    final isMyPost = postModel.userId == UserDetails.uId;
+    final isMyPost = postModel.userId == _sessionService.currentUid;
 
     emit(state.removePost(postModel.docId!));
 
@@ -187,7 +200,7 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
     required PostModel statusModel,
   }) async {
     try {
-      final isMyStatus = statusModel.userId == UserDetails.uId;
+      final isMyStatus = statusModel.userId == _sessionService.currentUid;
 
       emit(state.removeStatus(statusModel.docId!));
 

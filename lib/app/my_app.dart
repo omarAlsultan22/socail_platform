@@ -2,16 +2,17 @@ import '../features/main/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../features/profile/cubit.dart';
-import '../core/themes/screen_theme.dart';
-import '../core/constants/user_details.dart';
+import '../core/di/service _locator.dart';
+import '../core/themes/theme_notifier.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/navigation/navigation_keys.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../features/interactions/comments_list/cubit.dart';
-import '../features/menu/presentation/cubits/menu_cubit.dart';
+import 'package:social_app/core/services/session_service.dart';
 import '../features/main/presentation/screens/main_screen.dart';
 import '../features/search/presentation/cubits/search_cubit.dart';
 import 'package:social_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
 import '../features/notifications/presentation/cubits/notifications_cubit.dart';
 
 
@@ -90,9 +91,9 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<MainLayoutCubit>(create: (context) =>
-        MainLayoutCubit()
-          ..checkOnAnyFriends(uId: UserDetails.uId)
+        BlocProvider<MainCubit>(create: (context) =>
+        sl<MainCubit>()
+          ..checkOnAnyFriends(uId: sl<SessionService>())
           ..startListeningToCounters()), //
         BlocProvider<HomeCubit>(
             create: (context) =>
@@ -104,18 +105,14 @@ class MyApp extends StatelessWidget {
         ),
 
         BlocProvider<ProfileCubit>(
-          create: (context) => ProfileCubit(),
+          create: (context) => ProfileCubit(),/
           key: const ValueKey('myProfile'),
         ),
 
         BlocProvider<NotificationsCubit>(
-            create: (context) => NotificationsCubit(useCases: null)),
+            create: (context) => sl<NotificationsCubit>()),
         BlocProvider<FriendsCubit>(create: (context) => FriendsCubit()),
-        BlocProvider<SearchCubit>(
-            create: (context) => SearchCubit(useCase: null)),
-        BlocProvider<AppModelCubit>(
-            create: (context) => AppModelCubit(useCases: null)),
-        BlocProvider<CommentsCubit>(create: (context) => CommentsCubit()),
+        BlocProvider<CommentsCubit>(create: (context) => CommentsCubit()),/check all providers
       ],
       child: ChangeNotifierProvider(
       create: (_) => ThemeNotifier(cacheHelper: cacheHelper),

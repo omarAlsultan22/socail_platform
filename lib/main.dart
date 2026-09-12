@@ -1,6 +1,6 @@
 import 'app/my_app.dart';
 import 'core/di/service _locator.dart';
-import 'core/utils/bloc_observer.dart';
+import 'core/config/bloc_observer.dart';
 import 'package:flutter/material.dart';
 import 'core/constants/app_colors.dart';
 import 'core/errors/mappers/error_handler.dart';

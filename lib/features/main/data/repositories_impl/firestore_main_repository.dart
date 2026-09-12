@@ -1,91 +1,86 @@
-import 'package:social_app/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/constants/user_details.dart';
+import '../data_sources/remote/firestore_main_service.dart';
+import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/features/main/domain/repositories/main_repository.dart';
 
 
-class FirestoreMainRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+class FirestoreMainRepository implements MainRepository{
+  final SessionService _sessionService;
+  final FirestoreMainService _repository;
 
-  // جلب قائمة الأصدقاء
+  FirestoreMainRepository({
+    required SessionService sessionService,
+    required FirestoreMainService repository
+  }): _repository = repository,
+  _sessionService = sessionService;
+
+  @override
   Future<QuerySnapshot> getFriendsList({required String uId}) async {
-    return await _firestore
-        .collection('users')
-        .doc(uId)
-        .collection('friends')
-        .get();
+    return await _repository.getSubCollection(
+        docId: uId,
+        supCollectionPath: 'users',
+        subCollectionPath: 'friends'
+    );
   }
 
-  // جلب قائمة المستخدمين (باستثناء المستخدم الحالي)
+  @override
   Future<QuerySnapshot> getAllUsersExceptCurrent({required String uId}) async {
-    return await _firestore
-        .collection('users')
-        .where('userId', isNotEqualTo: uId)
-        .get();
+    return await _repository.getAllUsersExceptCurrent(uId: uId);
   }
 
-  // تحويل المستخدمين إلى Models
+  @override
   List<UserModel> convertUsersToModels(QuerySnapshot snapshot) {
     return snapshot.docs
         .map((doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>))
         .toList();
   }
 
-  // جلب إشعارات غير مقروءة
+  @override
   Future<QuerySnapshot> getUnreadNotifications() async {
-    return await _firestore
-        .collection('notifications')
-        .where('isRead', isEqualTo: false)
-        .get();
+    return await _repository.getUnreadNotifications();
   }
 
-  // Stream للإشعارات
+  @override
   Stream<QuerySnapshot> getNotificationsStream() {
-    return _firestore
-        .collection('notifications')
-        .where('isRead', isEqualTo: false)
-        .snapshots();
+    return _repository.getNotificationsStream();
   }
 
-  // جلب طلبات الأصدقاء
+  @override
   Future<QuerySnapshot> getFriendRequests() async {
-    return await _firestore
-        .collection('users')
-        .doc(UserDetails.uId)
-        .collection('requests')
-        .get();
+    return await _repository.getSubCollection(
+      supCollectionPath: 'users',
+      subCollectionPath: 'requests',
+      docId: _sessionService.currentUid,
+
+    );
   }
 
-  // Stream لطلبات الأصدقاء
+  @override
   Stream<QuerySnapshot> getFriendRequestsStream() {
-    return _firestore
-        .collection('users')
-        .doc(UserDetails.uId)
-        .collection('requests')
-        .snapshots();
+    return _repository.getSubCollectionStream(
+      supCollectionPath: 'users',
+      subCollectionPath: 'requests',
+      docId: _sessionService.currentUid,
+    );
   }
 
-  // جلب جميع محادثات المستخدم
+  @override
   Future<QuerySnapshot> getAllMessages() async {
-    return await _firestore.collection('messages').get();
+    return await _repository.getSupCollection(collectionPath: 'messages');
   }
 
-  // جلب المحادثات غير المقروءة من غرفة محددة
+  @override
   Future<QuerySnapshot> getUnreadConversations(String messageDocId) async {
-    return await _firestore
-        .collection('messages')
-        .doc(messageDocId)
-        .collection('conversations')
-        .where('unreadMessage', isEqualTo: true)
-        .get();
+    return await _repository.getUnreadConversations(
+      messageDocId: messageDocId,
+    );
   }
 
-  // Stream للمحادثات غير المقروءة
+  @override
   Stream<QuerySnapshot> getUnreadConversationsStream(String messageDocId) {
-    return _firestore
-        .collection('messages')
-        .doc(messageDocId)
-        .collection('conversations')
-        .where('unreadMessage', isEqualTo: true)
-        .snapshots();
+    return _repository.getUnreadConversationsStream(
+      messageDocId: messageDocId,
+    );
   }
 }

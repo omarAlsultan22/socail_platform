@@ -1,12 +1,12 @@
 import 'package:social_app/core/data/models/user_model.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
-import 'package:social_app/core/presentation/states/app_sup_states.dart';
-import '../../../../core/presentation/states/base/main_loaded_state.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
+import 'package:social_app/features/main/data/models/main_success_state.dart';
+import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart';
 
 
-class MainState extends DoubleModelAppState<int, UserModel> {
+class MainState extends MainAppSupState {
   final int currentScreenIndex;
   final int friendRequestsCounter;
   final int notificationsCounter;
@@ -17,39 +17,34 @@ class MainState extends DoubleModelAppState<int, UserModel> {
   final List<UserModel> suggestsList;
   final bool isMessageListenerActive;
 
-  MainState({
-    super.firstModel,
-    super.secondModel,
+  const MainState({
     required super.subState,
-    this.currentScreenIndex = 0,
-    this.friendRequestsCounter = 0,
-    this.notificationsCounter = 0,
     this.messagesCounter = 0,
-    this.friendRequestsDocIds = const {},
-    this.notificationsDocIds = const {},
-    this.messagesDocIds = const {},
+    this.currentScreenIndex = 0,
+    this.notificationsCounter = 0,
+    this.friendRequestsCounter = 0,
     this.suggestsList = const [],
+    this.messagesDocIds = const {},
+    this.notificationsDocIds = const {},
+    this.friendRequestsDocIds = const {},
     this.isMessageListenerActive = false,
   });
 
   factory MainState.initial() {
     return MainState(
-      firstModel: 0,
-      secondModel: null,
       subState: InitialState(),
-      currentScreenIndex: 0,
-      friendRequestsCounter: 0,
-      notificationsCounter: 0,
       messagesCounter: 0,
-      friendRequestsDocIds: const {},
-      notificationsDocIds: const {},
-      messagesDocIds: const {},
+      currentScreenIndex: 0,
+      notificationsCounter: 0,
+      friendRequestsCounter: 0,
       suggestsList: const [],
+      messagesDocIds: const {},
+      notificationsDocIds: const {},
+      friendRequestsDocIds: const {},
       isMessageListenerActive: false,
     );
   }
 
-  @override
   MainState copyWith({
     int? firstModel,
     Never? thirdModel,
@@ -67,8 +62,6 @@ class MainState extends DoubleModelAppState<int, UserModel> {
   }) {
     return MainState(
       subState: subState ?? this.subState,
-      firstModel: firstModel ?? this.firstModel,
-      secondModel: secondModel ?? this.secondModel,
       suggestsList: suggestsList ?? this.suggestsList,
       messagesDocIds: messagesDocIds ?? this.messagesDocIds,
       messagesCounter: messagesCounter ?? this.messagesCounter,
@@ -172,11 +165,21 @@ class MainState extends DoubleModelAppState<int, UserModel> {
 
   int get friendRequestsCount => friendRequestsCounter;
 
+
+  @override
+  MainSuccessState get dataModels => MainSuccessState(
+      suggestsList: suggestsList,
+      messagesDocIds: messagesDocIds,
+      currentScreenIndex: currentScreenIndex,
+      notificationsDocIds: notificationsDocIds,
+      friendRequestsDocIds: friendRequestsDocIds
+  );
+
   @override
   R when<R>({
     required R Function() onInitial,
     required R Function() onLoading,
-    required R Function(LoadedState) onLoaded,
+    required R Function(MainSuccessState) onLoaded,
     required R Function(AppException) onError
   }) {
     return subState.when(

@@ -6,7 +6,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class ProfileRepository {
 
-  Future<ProfileInfoModel?> getInfo(String uid);
+  Future<String> uploadImage({
+    required PostModel postModel,
+    required String collectionPath,
+    required String imageType,
+  });
 
   Future<QuerySnapshot> getPosts({
     required String userId,
@@ -21,35 +25,31 @@ abstract class ProfileRepository {
     required int limit,
   });
 
-  Future<Map<String, dynamic>> getAccountData(String userId);
-
-  Future<({int? comments, int? likes})> getPostCounts(String postId);
+  Future<void> deletePost(String postId);
 
   Future<String> addPost(PostModel postModel);
 
   Future<void> updatePost(PostModel postModel);
 
-  Future<void> deletePost(String postId);
+  Future<void> deleteFriendship(String userId);
 
-  Future<String> uploadImage({
-    required PostModel postModel,
-    required String collection,
-    required String imageType,
-  });
+  Future<ProfileInfoModel?> getInfo(String uid);
 
-  Future<void> sendFriendRequest(String userId, UserModel friendInfo);
+  Future<bool> checkFriendExists(String userId);
 
-  Future<void> deleteFriendRequest(String userId, String currentUserId);
+  Future<bool> checkRequestExists(String userId);
 
-  Future<void> deleteFriendship(String userId, String currentUserId);
-
-  Future<void> addFriend(String docId, UserModel friendInfo);
+  Future<void> deleteFriendRequest(String userId);
 
   Future<List<UserModel>> getFriends(String userId);
 
-  Future<bool> checkRequestExists(String userId, String currentUserId);
+  Future<Map<String, dynamic>> getAccountData(String userId);
 
-  Future<bool> checkFriendExists(String userId, String currentUserId);
+  Future<void> addFriend(String docId, UserModel friendInfo);
+
+  Future<({int? comments, int? likes})> getPostCounts(String postId);
+
+  Future<void> sendFriendRequest(String userId, UserModel friendInfo);
 
   Future<({ProfileInfoModel? info, UserModel? account})> getProfileInfo(String uid);
 }

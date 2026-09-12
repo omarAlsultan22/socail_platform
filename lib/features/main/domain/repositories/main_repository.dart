@@ -2,7 +2,7 @@ import 'package:social_app/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-abstract class FirestoreMainRepository {
+abstract class MainRepository {
 
   Future<QuerySnapshot> getAllUsersExceptCurrent({required String uId});
 

@@ -1,4 +1,4 @@
-import 'app_spacing.dart';
+import 'app_spaces.dart';
 import 'package:flutter/material.dart';
 import '../../../features/auth/data/network/connectivity_service.dart';
 
@@ -35,7 +35,7 @@ class InternetUnavailability extends StatelessWidget {
                   color: Color(0xFF424242)
               )
           ),
-          AppSpacing.height_30,
+          AppSpaces.vertical_30,
           ElevatedButton(
             onPressed: onRetry,
             child: const Text('Retry'),

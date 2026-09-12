@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../modules/profile_screen/cubit.dart';
-import '../../shared/constants/user_details.dart';
-import 'package:social_app/core/data/models/profile_info_model.dart';
 import 'package:social_app/core/data/models/post_model.dart';
-import '../../shared/cubit_states/cubit_states.dart';
-import '../../shared/componentes/post_components.dart';
-import '../../shared/componentes/public_components.dart';
+import 'package:social_app/core/data/models/profile_info_model.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 

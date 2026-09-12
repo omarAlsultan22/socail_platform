@@ -1,5 +1,5 @@
+import '../app_spaces.dart';
 import 'package:flutter/material.dart';
-import '../app_spacing.dart';
 
 
 class ErrorStateWidget extends StatelessWidget {
@@ -24,7 +24,7 @@ class ErrorStateWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 50.0),
               child: Text('Error: $message'),
             ),
-            AppSpacing.height_30,
+            AppSpaces.vertical_30,
             ElevatedButton(
               onPressed: onRetry,
               child: Text(buttonText!),

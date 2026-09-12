@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../core/constants/user_details.dart';
-import 'package:social_app/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../core/services/notification_service.dart';
 import '../../shared/componentes/public_components.dart';
 import '../public/presentation/screens/public_screen.dart';
+import 'package:social_app/core/data/models/user_model.dart';
 import '../profile/presentation/screens/my_profile_screen.dart';
 import '../notifications/presentation/screens/notifications_screen.dart';
 import 'package:social_app/features/main/presentation/states/main_state.dart';
@@ -23,19 +22,19 @@ class MainLayoutCubit extends Cubit<MainState> {
 
   final Map<String, dynamic> friendRequestsCount = {
     'counter': 0,
-    'docIds': Set<String>()
+    'docIds': <String>{}
   };
   final Map<String, dynamic> notificationsCount = {
     'counter': 0,
-    'docIds': Set<String>()
+    'docIds': <String>{}
   };
   final Map<String, dynamic> messagesCount = {
     'counter': 0,
-    'docIds': Set<String>()
+    'docIds': <String>{}
   };
 
-  StreamSubscription? _notificationsSub;
   StreamSubscription? _friendRequestsSub;
+  StreamSubscription? _notificationsSub;
   StreamSubscription? _messagesSub;
   bool isMessage = false;
 
@@ -43,7 +42,7 @@ class MainLayoutCubit extends Cubit<MainState> {
   final List<Widget> mainScreens = [
     HomeScreen(),
     NotificationsScreen(),
-    FriendsScreen(),
+    FriendsScree(),
     ChatScreen(),
     ProfileScreen(),
   ];
@@ -55,7 +54,7 @@ class MainLayoutCubit extends Cubit<MainState> {
     }
   }
 
-  void deleteRequest() {
+  void deleteRequestNumber() {
     if (friendRequestsCount['counter'] > 0) {
       friendRequestsCount['counter'] = friendRequestsCount['counter'] - 1;
       emit(SuccessState.empty());

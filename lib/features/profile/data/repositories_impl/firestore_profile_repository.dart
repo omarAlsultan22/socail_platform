@@ -1,22 +1,34 @@
-import 'package:social_app/core/data/models/profile_info_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../domain/repositories/profile_repository.dart';
+import '../../../../core/services/user_account_service.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/data/models/user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/constants/user_details.dart';
-import '../../domain/repositories/profile_repository.dart';
-import '../../../../shared/componentes/public_components.dart';
+import 'package:social_app/core/services/session_service.dart';
+import '../data_sources/remote/firestore_profile_service.dart';
+import 'package:social_app/core/data/models/profile_info_model.dart';
 
 
 class FirestoreProfileRepository implements ProfileRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final SessionService _sessionService;
+  final FirestoreProfileService _repository;
+  final UserAccountService _userAccountService;
 
-  // جلب معلومات المستخدم
+  FirestoreProfileRepository({
+    required SessionService sessionService,
+    required FirestoreProfileService repository,
+    required UserAccountService userAccountService,
+  })
+      : _repository = repository,
+
+        _sessionService = sessionService,
+        _userAccountService = userAccountService;
+
   @override
   Future<({ProfileInfoModel? info, UserModel? account})> getProfileInfo(
       String uid) async {
     final results = await Future.wait([
-      _firestore.collection('info').doc(uid).get(),
-      _firestore.collection('accounts').doc(uid).get(),
+      _repository.getSupDoc(docId: uid, collectionPath: 'info'),
+      _repository.getSupDoc(docId: uid, collectionPath: 'accounts'),
     ]);
 
     final infoDoc = results[0] as DocumentSnapshot;
@@ -35,200 +47,189 @@ class FirestoreProfileRepository implements ProfileRepository {
     return (info: info, account: account);
   }
 
-  // جلب معلومات info فقط
   @override
   Future<ProfileInfoModel?> getInfo(String uid) async {
-    final doc = await _firestore.collection('info').doc(uid).get();
+    final doc = await _repository.getSupDoc(docId: uid, collectionPath: 'info');
     if (doc.exists) {
       return ProfileInfoModel.fromJson(doc.data() as Map<String, dynamic>);
     }
     return null;
   }
 
-  // جلب البوستات
   @override
   Future<QuerySnapshot> getPosts({
+    required int limit,
     required String userId,
     required String postType,
     required DocumentSnapshot? lastDoc,
-    required int limit,
   }) async {
-    var query = _firestore
-        .collection('posts')
-        .where('userId', isEqualTo: userId)
-        .where('postType', isEqualTo: postType)
-        .orderBy('dateTime', descending: true);
-
-    if (lastDoc != null) {
-      query = query.startAfterDocument(lastDoc);
-    }
-
-    return await query.limit(limit).get();
+    return await _repository.getPosts(
+        limit: limit,
+        userId: userId,
+        postType: postType,
+        lastPostDoc: lastDoc
+    );
   }
 
-  // جلب الفيديوهات
   @override
   Future<QuerySnapshot> getVideos({
     required String userId,
     required DocumentSnapshot? lastDoc,
     required int limit,
   }) async {
-    var query = _firestore
-        .collection('posts')
-        .where('userId', isEqualTo: userId)
-        .where('pathType', isEqualTo: 'video')
-        .orderBy('dateTime', descending: true);
-
-    if (lastDoc != null) {
-      query = query.startAfterDocument(lastDoc);
-    }
-
-    return await query.limit(limit).get();
+    return await _repository.getPosts(
+        limit: limit,
+        userId: userId,
+        postType: 'video',
+        lastPostDoc: lastDoc
+    );
   }
 
-  // جلب بيانات الحساب
   @override
   Future<Map<String, dynamic>> getAccountData(String userId) async {
-    final doc = await _firestore.collection('accounts').doc(userId).get();
-    return await getAccountMap(userDoc: doc);
+    final doc = await _repository.getSupDoc(
+        docId: userId, collectionPath: 'accounts'
+    );
+    return await _userAccountService.getAccountMap(userDoc: doc);
   }
 
-  // جلب عدد اللايكات والتعليقات
   @override
   Future<({int? comments, int? likes})> getPostCounts(String postId) async {
-    final postRef = _firestore.collection('posts').doc(postId);
+    final postRef = _repository.docRef(docId: postId, collectionPath: 'posts');
     final results = await Future.wait([
-      postRef.collection('likesList').count().get(),
-      postRef.collection('commentsList').count().get(),
+      _repository.getCount(docRef: postRef, collectionPath: 'likesList'),
+      _repository.getCount(docRef: postRef, collectionPath: 'commentsList')
     ]);
     return (likes: results[0].count, comments: results[1].count);
   }
 
-  // إضافة بوست
   @override
   Future<String> addPost(PostModel postModel) async {
-    final docRef = _firestore.collection('posts').doc();
-    postModel.docId = docRef.id;
-    await docRef.set(postModel.postToMap(), SetOptions(merge: true));
-    return docRef.id;
+    final docId = await _repository.createAndSetDoc(
+      collectionPath: 'posts',
+      data: postModel.postToMap(),
+    );
+    postModel.docId = docId;
+    return docId;
   }
 
-  // تحديث بوست موجود
   @override
   Future<void> updatePost(PostModel postModel) async {
     if (postModel.docId != null) {
-      final docRef = _firestore.collection('posts').doc(postModel.docId);
-      await docRef.set(postModel.postToMap(), SetOptions(merge: true));
+      await _repository.getRefAndSetDoc(
+        isMerge: true,
+        docId: postModel.docId,
+        collectionPath: 'posts',
+        data: postModel.postToMap(),
+      );
     }
   }
 
-  // حذف بوست
   @override
   Future<void> deletePost(String postId) async {
-    await _firestore.collection('posts').doc(postId).delete();
+    await _repository.deleteSupDoc(collectionPath: 'posts', docId: postId);
   }
 
-  // رفع صورة (بروفايل أو كفر)
   @override
   Future<String> uploadImage({
-    required PostModel postModel,
-    required String collection,
     required String imageType,
+    required PostModel postModel,
+    required String collectionPath,
   }) async {
-    final docRef = _firestore.collection('posts').doc();
-    await _firestore.collection(collection).doc(UserDetails.uId).set({
-      imageType: docRef.path,
-    }, SetOptions(merge: true));
-
-    postModel.docId = docRef.id;
-    await docRef.set(postModel.postToMap(), SetOptions(merge: true));
-    return docRef.id;
+    return _repository.uploadImage(
+        imageType: imageType,
+        postModel: postModel,
+        collectionPath: collectionPath,
+        currentUid: _sessionService.currentUid
+    );
   }
 
-  // طلب صداقة
   @override
   Future<void> sendFriendRequest(String userId, UserModel friendInfo) async {
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('requests')
-        .doc(friendInfo.userId)
-        .set(friendInfo.toJson());
+    await _repository.setSubDoc(
+      supDocId: userId,
+      supCollectionPath: 'users',
+      subCollectionPath: 'requests',
+      data: friendInfo.toJson(),
+      subDocId: friendInfo.userId ?? '',
+    );
   }
 
-  // حذف طلب صداقة
   @override
-  Future<void> deleteFriendRequest(String userId, String currentUserId) async {
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('requests')
-        .doc(currentUserId)
-        .delete();
+  Future<void> deleteFriendRequest(String userId) async {
+    await _repository.deleteSubDoc(
+      supDoc: userId,
+      supCollectionPath: 'users',
+      subCollectionPath: 'requests',
+      subDoc: _sessionService.currentUid,
+
+    );
   }
 
-  // حذف صداقة
   @override
-  Future<void> deleteFriendship(String userId, String currentUserId) async {
+  Future<void> deleteFriendship(String userId) async {
     await Future.wait([
-      _firestore.collection('users').doc(currentUserId)
-          .collection('friends')
-          .doc(userId)
-          .delete(),
-      _firestore.collection('users').doc(userId).collection('friends').doc(
-          currentUserId).delete(),
+      _repository.deleteSubDoc(
+          subDoc: userId,
+          supCollectionPath: 'users',
+          subCollectionPath: 'friends',
+          supDoc: _sessionService.currentUid
+      ),
+      _repository.deleteSubDoc(
+          supDoc: userId,
+          supCollectionPath: 'users',
+          subCollectionPath: 'friends',
+          subDoc: _sessionService.currentUid
+      ),
     ]);
   }
 
-  // إضافة صديق
   @override
   Future<void> addFriend(String docId, UserModel friendInfo) async {
-    await _firestore
-        .collection('users')
-        .doc(friendInfo.userId)
-        .collection('friends')
-        .doc(docId)
-        .set(friendInfo.toJson());
+    await _repository.setSubDoc(
+        subDocId: docId,
+        supCollectionPath: 'users',
+        supDocId: friendInfo.userId,
+        subCollectionPath: 'friends',
+        data: friendInfo.toJson()
+    );
   }
 
-  // جلب الأصدقاء
   @override
   Future<List<UserModel>> getFriends(String userId) async {
-    final snapshot = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('friends')
-        .get();
+    final snapshot = await _repository.getSubCollection(
+        docId: userId,
+        supCollectionPath: 'users',
+        subCollectionPath: 'friends'
+    );
 
     final List<UserModel> friends = [];
     for (final doc in snapshot.docs) {
-      final user = await getUserModelData(id: doc.id);
+      final user = await _userAccountService.getUserModelData(id: doc.id);
       friends.add(user);
     }
     return friends;
   }
 
-  // التحقق من وجود طلب
   @override
-  Future<bool> checkRequestExists(String userId, String currentUserId) async {
-    final doc = await _firestore
-        .collection('users')
-        .doc(currentUserId)
-        .collection('requests')
-        .doc(userId)
-        .get();
+  Future<bool> checkRequestExists(String userId) async {
+    final doc = await _repository.getSubDoc(
+        subDoc: userId,
+        supCollectionPath: 'users',
+        subCollectionPath: 'requests',
+        supDoc: _sessionService.currentUid
+    );
     return doc.exists;
   }
 
-  // التحقق من وجود صديق
   @override
-  Future<bool> checkFriendExists(String userId, String currentUserId) async {
-    final doc = await _firestore
-        .collection('users')
-        .doc(currentUserId)
-        .collection('friends')
-        .doc(userId)
-        .get();
+  Future<bool> checkFriendExists(String userId) async {
+    final doc = await _repository.getSubDoc(
+        subDoc: userId,
+        supCollectionPath: 'users',
+        subCollectionPath: 'friends',
+        supDoc: _sessionService.currentUid
+    );
     return doc.exists;
   }
 }

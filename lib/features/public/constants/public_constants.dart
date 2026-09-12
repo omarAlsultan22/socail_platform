@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/models/status_element.dart';
 
 
 class PublicConstants {
@@ -19,14 +20,3 @@ class PublicConstants {
   }
 }
 
-class StatusElement {/
-  final String value;
-  final IconData icon;
-  final String text;
-
-  const StatusElement({
-    required this.value,
-    required this.icon,
-    required this.text,
-  });
-}

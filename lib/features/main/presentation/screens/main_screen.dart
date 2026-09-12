@@ -1,11 +1,12 @@
+import '../cubits/main_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../../../../modules/main_screen/cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/layouts/main_layout.dart';
-import '../../../../modules/menu_screen/menu_screen.dart';
-import '../../../../modules/search_screen/search_screen.dart';
-import 'package:social_app/shared/cubit_states/cubit_states.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/service _locator.dart';
+import '../../../search/presentation/screens/search_screen.dart';
+import 'package:social_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:social_app/features/main/presentation/states/main_state.dart';
 
 
 class MainScreen extends StatefulWidget {
@@ -18,12 +19,12 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late TabController _tabController;
-  late MainLayoutCubit _cubit;
+  late MainCubit _cubit;
 
   @override
   void initState() {
     super.initState();
-    _cubit = MainLayoutCubit.get(context);
+    _cubit = MainCubit.get(context);
     _cubit.currentScreen = widget.targetScreen ?? 0;
     _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(_handleTabSelection);
@@ -42,8 +43,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Widget _buildTabIcon(int index, IconData activeIcon, IconData inactiveIcon,
-      {int? count, required MainLayoutCubit cubit}) {
+  Widget _buildTabIcon({
+    int? count,
+    required int index,
+    required IconData activeIcon,
+    required IconData inactiveIcon,
+  }) {
     return Stack(
       children: [
         Tab(icon: Icon(
@@ -67,7 +72,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<MainLayoutCubit, CubitStates>(
+    return BlocConsumer<MainCubit, MainState>(
       listener: (context, state) {
         if (_tabController.index != _cubit.currentScreen) {
           setState(() {
@@ -76,7 +81,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         }
       },
       builder: (context, state) {
-        return _buildMainLayout();
+        return state.when(
+            onInitial: onInitial,
+            onLoading: onLoading,
+            onLoaded: (data)=> _buildMainLayout(),
+            onError: onError
+        );
       },
     );
   }
@@ -141,7 +151,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const MenuScreen()),
+                        builder: (context) => MenuScreen(cacheHelper: sl<CacheHelper>()
+                        )
+                    ),
                   ),
               icon: const Icon(Icons.menu_outlined),
             ),
@@ -150,37 +162,32 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             controller: _tabController,
             tabs: [
               _buildTabIcon(
-                0,
-                Icons.public,
-                Icons.public_outlined,
-                cubit: _cubit,
+                index: 0,
+                activeIcon: Icons.public,
+                inactiveIcon: Icons.public_outlined,
               ),
               _buildTabIcon(
-                1,
-                Icons.notifications,
-                Icons.notifications_outlined,
+                index: 1,
+                activeIcon: Icons.notifications,
+                inactiveIcon: Icons.notifications_outlined,
                 count: _cubit.notificationsCount['counter'],
-                cubit: _cubit,
               ),
               _buildTabIcon(
-                2,
-                Icons.group,
-                Icons.group_outlined,
+                index: 2,
+                activeIcon: Icons.group,
+                inactiveIcon: Icons.group_outlined,
                 count: _cubit.friendRequestsCount['counter'],
-                cubit: _cubit,
               ),
               _buildTabIcon(
-                3,
-                CupertinoIcons.chat_bubble_2_fill,
-                CupertinoIcons.chat_bubble_2,
+                index: 3,
+                activeIcon: CupertinoIcons.chat_bubble_2_fill,
+                inactiveIcon: CupertinoIcons.chat_bubble_2,
                 count: _cubit.messagesCount['counter'],
-                cubit: _cubit,
               ),
               _buildTabIcon(
-                4,
-                Icons.home,
-                Icons.home_outlined,
-                cubit: _cubit,
+                index: 4,
+                activeIcon: Icons.home,
+                inactiveIcon:  Icons.home_outlined,
               ),
             ],
             indicatorSize: TabBarIndicatorSize.tab,

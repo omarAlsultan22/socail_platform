@@ -1,41 +1,52 @@
 import '../../../../core/data/models/user_model.dart';
+import '../../data/models/setup_friends_success_state.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
-import 'package:social_app/core/presentation/states/app_sup_states.dart';
-import '../../../../core/presentation/states/base/main_loaded_state.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
+import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart';
 
 
-class SetupFriendsState extends TripleModelAppState<int, List<UserModel>, MessageResult> {
-  SetupFriendsState({
-    super.firstModel,
-    super.secondModel,
-    super.thirdModel,
-    required super.subState
+class SetupFriendsState extends MainAppSupState {
+  final int friendsNumber;
+  final List<UserModel> friendsList;
+  final MessageResult messageResult;
+
+  const SetupFriendsState({
+    required super.subState,
+    required this.friendsNumber,
+    required this.friendsList,
+    required this.messageResult,
   });
 
   factory SetupFriendsState.initial() {
     return SetupFriendsState(
-      firstModel: 0,
-      secondModel: const [],
-      thirdModel: MessageResult.initial(),
+      friendsNumber: 0,
+      friendsList: const [],
+      messageResult: MessageResult.initial(),
       subState: InitialState(),
     );
   }
 
   @override
+  SetupFriendsSuccessState get dataModels =>
+      SetupFriendsSuccessState(
+          friendsNumber: friendsNumber,
+          friendsList: friendsList,
+          messageResult: messageResult
+      );
+
   SetupFriendsState copyWith({
-    int? firstModel,
-    List<UserModel>? secondModel,
-    MessageResult? thirdModel,
+    int? friendsNumber,
+    List<UserModel>? friendsList,
+    MessageResult? messageResult,
     MainAppSubState? subState,
   }) {
     return SetupFriendsState(
         subState: subState ?? this.subState,
-        firstModel: firstModel ?? this.firstModel,
-        secondModel: secondModel ?? this.secondModel,
-        thirdModel: thirdModel ?? this.thirdModel
+        friendsNumber: friendsNumber ?? this.friendsNumber,
+        friendsList: friendsList ?? this.friendsList,
+        messageResult: messageResult ?? this.messageResult
     );
   }
 
@@ -43,7 +54,7 @@ class SetupFriendsState extends TripleModelAppState<int, List<UserModel>, Messag
   R when<R>({
     required R Function() onInitial,
     required R Function() onLoading,
-    required R Function(LoadedState) onLoaded,
+    required R Function(SetupFriendsSuccessState) onLoaded,
     required R Function(AppException) onError
   }) {
     return subState.when(

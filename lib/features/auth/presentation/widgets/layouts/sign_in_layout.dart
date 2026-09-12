@@ -1,24 +1,40 @@
+import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../../screens/sign_up_screen.dart';
+import 'package:social_app/core/utils/validate_input.dart';
+import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/services/session_service.dart';
+import '../../../../main/presentation/screens/main_screen.dart';
+import 'package:social_app/core/presentation/widgets/build_input_field.dart';
+import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:social_app/features/auth/presentation/screens/forget_password_screen.dart';
 
 
 class SignInLayout extends StatefulWidget {
+  final void Function({
+  required String userEmail,
+  required String userPassword
+  }) onSignIn;
+  final MessageResult messageResult;
   final SessionService sessionService;
-  const SignInLayout({super.key, required this.sessionService});
+  const SignInLayout({
+    super.key,
+    required this.onSignIn,
+    required this.messageResult,
+    required this.sessionService,
+  });
 
   @override
   State<SignInLayout> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInLayout> with AuthMixin{
+class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout> {
+  bool _isLocked = false;
   bool _isObscure = false;
-  final formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   Future<void> checkLogIn() async {
     if (widget.sessionService.isLoggedIn) {
@@ -33,6 +49,33 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin{
   void initState() {
     super.initState();
     checkLogIn();
+  }
+
+  @override
+  void didUpdateWidget(covariant SignInLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    handleMessageResult(
+      messageResult: widget.messageResult,
+      onNavigate: () =>
+          navigateToScreen(const MainScreen()
+          ),
+    );
+  }
+
+  void _updateLockButton(bool value) {
+    setState(() => _isLocked = value);
+  }
+
+  Future<void> _submitForm() async {
+    if (validateForm(_formKey)) {
+      _updateLockButton(true);
+      hideKeyboard(context);
+      widget.onSignIn(
+        userEmail: _emailController.text.trim(),
+        userPassword: _passwordController.text,
+      );
+      _updateLockButton(false);
+    }
   }
 
   @override
@@ -86,15 +129,16 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin{
 
                 // Form Section
                 Form(
-                  key: formKey,
+                  key: _formKey,
                   child: Column(
                     children: [
                       // Email Field
-                      buildInputField(
-                        controller: emailController,
+                      BuildInputField.build(
+                        controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         validator: (String? value) {
-                          return validator(value, 'Email');
+                          return ValidateInput.validator(
+                              value: value, text: 'Email');
                         },
                         label: 'Email',
                         icon: Icons.email_outlined,
@@ -102,21 +146,19 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin{
                       const SizedBox(height: 20),
 
                       // Password Field
-                      buildInputField(
-                        controller: passwordController,
+                      BuildInputField.build(
+                        controller: _passwordController,
                         keyboardType: TextInputType.text,
                         validator: (String? value) {
-                          return validator(value, 'Password');
+                          return ValidateInput.validator(
+                              value: value, text: 'Password');
                         },
                         obscureText: _isObscure,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isObscure ? Icons.visibility_off : Icons
-                                .visibility,
-                            color: Colors.amber,
-                          ),
-                          onPressed: () =>
-                              setState(() => _isObscure = !_isObscure),
+                        suffixIcon: buildPasswordVisibilityToggle(
+                            isObscure: _isObscure,
+                            onToggle: () =>
+                                setState(() => _isObscure = !_isObscure
+                                )
                         ),
                         label: 'Password',
                         icon: Icons.lock_outline,
@@ -145,39 +187,21 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin{
                         ),
                         width: double.infinity,
                         height: 50.0,
-                        child: MaterialButton(
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              cubit.signInEmailAndPassword(
-                                email: emailController.text.trim(),
-                                password: passwordController.text,
-                              );
-                            }
-                          },
-                          child: state is LoadingState
-                              ? const CircularProgressIndicator(
-                              color: Colors.white)
-                              : const Text(
-                            'Sign in',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                          ),
+                        child: ElevatedButton(
+                          style: buttonStyle(),
+                          onPressed: _isLocked ? null : _submitForm,
+                          child: buildButtonContent(isLoading: widget
+                              .messageResult.isLoading, text: 'Sign in'),
                         ),
                       ),
                       const SizedBox(height: 20),
                       // Sign Up Button
                       TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignUpScreen(),
+                        onPressed: () =>
+                            BuildNavigator.build(
+                                context: context,
+                                link: const SignUpScreen()
                             ),
-                          );
-                        },
                         child: RichText(
                           text: TextSpan(
                             text: 'Don\'t have an account? ',
@@ -199,15 +223,11 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin{
                         ),
                       ),
                       TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (
-                                  context) => const ForgetPasswordScreen(),
+                        onPressed: () =>
+                            BuildNavigator.build(
+                                context: context,
+                                link: const ForgetPasswordScreen()
                             ),
-                          );
-                        },
                         child: const Text(
                           'نسيت كلمة المرور؟',
                           style: TextStyle(
@@ -228,28 +248,5 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin{
   }
 }
 
-
-void showToast({/
-  required String message,
-}) {
-  Fluttertoast.showToast(
-    msg: message,
-  );
-}
-
-enum ToastStates { SUCCESS, ERROR, WARNING }
-
-Color chooseToastColor(ToastStates state) {
-  switch (state) {
-    case ToastStates.SUCCESS:
-      return Colors.green;
-    case ToastStates.ERROR:
-      return Colors.red;
-    case ToastStates.WARNING:
-      return Colors.amber;
-    default:
-      return Colors.black;
-  }
-}
 
 

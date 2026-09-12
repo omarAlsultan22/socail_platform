@@ -3,6 +3,7 @@ import 'base/main_app_sub_state.dart';
 
 
 class InitialState implements MainAppSubState{
+  const InitialState();
   @override
   R when<R>({
     required R Function() onInitial,
@@ -16,6 +17,7 @@ class InitialState implements MainAppSubState{
 
 
 class LoadingState implements MainAppSubState{
+  const LoadingState();
   @override
   R when<R>({
     required R Function() onInitial,
@@ -29,6 +31,7 @@ class LoadingState implements MainAppSubState{
 
 
 class SuccessState implements MainAppSubState {
+  const SuccessState();
   @override
   R when<R>({
     required R Function() onInitial,
@@ -44,7 +47,7 @@ class SuccessState implements MainAppSubState {
 class ErrorState implements MainAppSubState {
   final AppException failure;
 
-  ErrorState({
+  const ErrorState({
     required this.failure,
   });
 

@@ -49,6 +49,31 @@ class ProfileInfoModel extends UserModel{
     );
   }
 
+  ProfileInfoModel copyWith({
+    String? userId,
+    bool? isOnline,
+    String? userName,
+    String? userLive,
+    String? userFrom,
+    String? userWork,
+    String? userState,
+    PostModel? coverImage,
+    String? userRelational,
+    PostModel? profileImage,
+  }) {
+    return ProfileInfoModel(
+        userId: userId ?? this.userId,
+        userName: userName ?? this.userName,
+        userWork: userWork ?? this.userWork,
+        userLive: userLive ?? this.userLive,
+        userFrom: userFrom ?? this.userFrom,
+        isOnline: isOnline ?? this.isOnline,
+        userState: userState ?? this.userState,
+        coverImage: coverImage ?? this.coverImage,
+        profileImage: profileImage ?? this.profileImage,
+        userRelational: userRelational ?? this.userRelational
+    );
+  }
 
   @override
   Map<String, dynamic> toJson() {

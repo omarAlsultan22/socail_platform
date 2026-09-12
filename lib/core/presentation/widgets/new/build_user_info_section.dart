@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../constants/user_details.dart';
 import '../../../../features/public/constants/public_constants.dart';
 
 
 class BuildUserInfoSection extends StatefulWidget {
-  Function(String) onPressed;
-  BuildUserInfoSection({
+  final Function(String) onPressed;
+  const BuildUserInfoSection({
     required this.onPressed,
     super.key
   });

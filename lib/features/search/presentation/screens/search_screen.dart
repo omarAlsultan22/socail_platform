@@ -1,10 +1,11 @@
-import 'dart:async';
+import '../../../../core/di/service _locator.dart';
 import '../cubits/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/core/presentation/states/loaded_states.dart';
+import 'package:social_app/features/search/utils/search_debouncer.dart';
 import 'package:social_app/core/presentation/widgets/states/initial_state.dart';
 import 'package:social_app/features/search/presentation/states/search_state.dart';
+import 'package:social_app/features/search/presentation/widgets/search_text_field.dart';
 import 'package:social_app/features/search/presentation/widgets/layouts/search_layout.dart';
 
 
@@ -12,80 +13,73 @@ class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  _SearchScreenState createState() => _SearchScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final TextEditingController searchController = TextEditingController();
-  Timer? _debounce;
+  late final SearchDebounce _searchDebounce;
 
   @override
   void initState() {
     super.initState();
-    searchController.addListener(_onSearchChanged);
+    _searchDebounce = SearchDebounce(
+      onSearch: () => _performSearch(),
+      onClear: () => _clearSearch(),
+    );
+  }
+
+  void _performSearch() {
+    final query = _searchDebounce.controller.text;
+    if (query.isNotEmpty) {
+      SearchCubit.get(context).getDataSearch(query: query);
+    }
+  }
+
+  void _clearSearch() {
+    SearchCubit.get(context).clearSearch();
   }
 
   @override
   void dispose() {
-    searchController.removeListener(_onSearchChanged);
-    searchController.dispose();
-    _debounce?.cancel();
+    _searchDebounce.dispose();
     super.dispose();
-  }
-
-  _onSearchChanged() {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      if (searchController.text.isNotEmpty) {
-        SearchCubit.get(context).getDataSearch(query: searchController.text);
-      } else {
-        SearchCubit.get(context).clearSearch();
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SearchCubit, SearchState>(
-      builder: (context, state) {
-        final searchCubit = SearchCubit.get(context);
-
-        return Scaffold(
-            appBar: AppBar(
-              title: TextField(
-                controller: searchController,
-                decoration: InputDecoration(
+    return BlocProvider<SearchCubit>(
+        create: (context) => sl<SearchCubit>(),
+        child: BlocBuilder<SearchCubit, SearchState>(
+          builder: (context, state) {
+            return Scaffold(
+              appBar: AppBar(
+                title: SearchTextField(
+                  debounce: _searchDebounce,
                   hintText: 'Search...',
-                  border: InputBorder.none,
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      searchController.clear();
-                      searchCubit.clearSearch();
-                    },
-                  ),
                 ),
               ),
-            ),
-            body: state.when(
-                onInitial: () => InitialStateWidget(),
-                onLoading: () =>
-                const Center(child: CircularProgressIndicator()),
-                onLoaded: (loadedState) {
-                  final searchData = loadedState as SingleModelSuccessState;
-                  if (searchController.text.isNotEmpty &&
-                      searchData.firstModel) {
-                    InitialStateWidget(
-                        text: 'No results for "${searchController.text}"');
-                  }
-                  return SearchLayout(
-                    searchData: searchData.firstModel,
-                  );
-                },
-                onError: (error) => error.buildErrorWidget()
-            )
+              body: _buildBody(state),
+            );
+          },
+        )
+    );
+  }
+
+  Widget _buildBody(SearchState state) {
+    return state.when(
+      onInitial: () => const InitialStateWidget(),
+      onLoading: () => const Center(child: CircularProgressIndicator()),
+      onLoaded: (data) {
+        if (!data.queryIsEmpty && data.dataIsEmpty) {
+          return InitialStateWidget(
+            text: 'No results for "${_searchDebounce.controller.text}"',
+          );
+        }
+        return SearchLayout(
+          searchData: data.searchDataList,
         );
       },
+      onError: (error) => error.buildErrorWidget(),
     );
   }
 }

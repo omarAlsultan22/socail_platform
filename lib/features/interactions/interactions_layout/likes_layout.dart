@@ -23,7 +23,7 @@ class LikesLayout extends StatelessWidget {
             body: ListBuilder(
               list: state.modelsList!,
               object: (like) =>
-                  LikeModelLayout(
+                  UserModelLayout(
                     like: like,
                     userId: userId,
                     onPressed: () =>

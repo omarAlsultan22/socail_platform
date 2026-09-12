@@ -1,36 +1,40 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../repositories/notifications_repository.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/data/models/user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
-import '../repositories/notifications_repository.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
 
 
-class NotificationsUseCases {
+class NotificationsUseCase {
+  final SessionService _sessionService;
   final NotificationsRepository _repository;
 
-  NotificationsUseCases({required NotificationsRepository repository})
-      : _repository = repository;
+  NotificationsUseCase({
+    required SessionService sessionService,
+    required NotificationsRepository repository
+  })
+      : _repository = repository,
+        _sessionService = sessionService;
 
   Future<void> executeInsertNotification({
     required String userUid,
     required String userImage,
-    required String userName,
+    required String fullName,
     required String userAction,
   }) async {
     final notificationData = UserModel(
       userId: userUid,
       userImage: userImage,
-      userName: userName,
+      fullName: fullName,
     );
 
     await _repository.insertNotification(notificationData: notificationData);
   }
 
-  Stream<List<NotificationsModel>> executeGetNotificationsStream({
-    required String userId,
-  }) {
-    return _repository.getNotificationsStream(userId: userId).asyncMap(
+  Stream<List<NotificationsModel>> executeGetNotificationsStream() {
+    return _repository.getNotificationsStream(userId: _sessionService.currentUid).asyncMap(
             (notificationsSnapshot) async {
           return await _repository.convertNotificationsToModels(
             notificationsSnapshot: notificationsSnapshot,
@@ -46,7 +50,6 @@ class NotificationsUseCases {
     required String userId,
     required String postId,
   }) async {
-    // 1. جلب البيانات الأساسية
     final postData = await _repository.getPostData(
       postId: postId,
       userId: userId,
@@ -56,19 +59,15 @@ class NotificationsUseCases {
       throw Exception('Post or user not found');
     }
 
-    // 2. جلب بيانات المستخدم
     final userAccount = await _getAccountMap(userDoc: postData.userDoc);
 
-    // 3. جلب عدد اللايكات
     final likesCount = await _repository.getPostLikesCount(postId: postId);
 
-    // 4. جلب التعليقات
     final comments = await _repository.getCommentsWithUsers(
       commentsDocs: postData.commentsDocs,
       postId: postId,
     );
 
-    // 5. إنشاء البوست
     final postDocData = postData.postDoc.data() as Map<String, dynamic>;
     final post = PostModel.fromFirestoreToPost({
       ...userAccount,
@@ -89,7 +88,6 @@ class NotificationsUseCases {
     await _repository.updateNotificationReadStatus(docId: docId);
   }
 
-  // دالة مساعدة خاصة
   Future<Map<String, dynamic>> _getAccountMap({
     required DocumentSnapshot userDoc,
   }) async {

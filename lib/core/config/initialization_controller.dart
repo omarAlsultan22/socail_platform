@@ -51,7 +51,7 @@ class InitializationController {
 
     await NotificationService.setupBackgroundIsolate();
 
-    _onlineStatusService = OnlineStatusService();
+    _onlineStatusService = sl<OnlineStatusService>();
     await _onlineStatusService.initialize();
 
     _notificationService = NotificationService();

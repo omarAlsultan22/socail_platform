@@ -1,9 +1,4 @@
-import '../../../../core/data/data_sources/remote/firebase_auth_service.dart';
-import '../../../../core/data/data_sources/local/cache_helper.dart';
-import '../../data/repositories_impl/firebase_auth_repository.dart';
-import 'package:social_app/core/services/session_service.dart';
-import '../../data/network/connectivity_service.dart';
-import '../../domain/useCases/sign_in_useCase.dart';
+import '../../../../core/services/session_service.dart';
 import '../../../../core/di/service _locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/layouts/sign_in_layout.dart';
@@ -17,31 +12,24 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = FirebaseAuthService();
-    final cacheHelper = CacheHelper();
-    final authRepository = FirebaseAuthRepository(auth: auth);
-    final useCase = SignInUseCase(
-        cacheHelper: cacheHelper,
-        authRepository: authRepository,
-      sessionService: sl<SessionService>(),
-    );
-    final connectivityService = sl<ConnectivityService>();
-    final cubit = SignInCubit(
-        useCase: useCase, connectivityService: connectivityService);
-    return BlocBuilder<SignInCubit, AuthState>(
-        builder: (context, state) {
-          return SignInLayout(
-              messageResult: state.messageResult!,
-              sessionService: sl<SessionService>(),
-              onUpdate: ({
-                required String userEmail,
-                required String userPassword
-              }) =>
-                  cubit.signIn(
-                      userEmail: userEmail, userPassword: userPassword
-                  )
-          );
-        }
+    return BlocProvider(
+        create: (context) => sl<SignInCubit>(),
+        child: BlocBuilder<SignInCubit, AuthState>(
+            builder: (context, state) {
+              final cubit = SignInCubit.get(context);
+              return SignInLayout(
+                  sessionService: sl<SessionService>(),
+                  messageResult: state.messageResult!,
+                  onSignIn: ({
+                    required String userEmail,
+                    required String userPassword
+                  }) =>
+                      cubit.signIn(
+                          userEmail: userEmail, userPassword: userPassword
+                      )
+              );
+            }
+        )
     );
   }
 }

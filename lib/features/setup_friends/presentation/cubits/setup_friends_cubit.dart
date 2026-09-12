@@ -9,24 +9,24 @@ import 'package:social_app/features/setup_friends/presentation/states/setup_frie
 class SetupFriendsCubit extends Cubit<SetupFriendsState> with ErrorHandlerMixin<SetupFriendsState> {
   final SetupFriendsUseCase _useCases;
 
-  SetupFriendsCubit({required SetupFriendsUseCase useCases})
-      : _useCases = useCases,
+  SetupFriendsCubit({required SetupFriendsUseCase useCase})
+      : _useCases = useCase,
         super(SetupFriendsState.initial());
 
   static SetupFriendsCubit get(context) => BlocProvider.of(context);
 
-  void addFriend(int number) {
-    emit(state.copyWith(firstModel: number,
-        thirdModel: MessageResult.success(message: 'Successfully added')));
+  void addFriend(int friendsNumber) {
+    emit(state.copyWith(friendsNumber: friendsNumber,
+        messageResult: MessageResult.success(message: 'Successfully added')));
   }
 
-  Future<void> getSuggestsUsers() async {
+  Future<void> getSuggestsFriends() async {
     emit(state.copyWith(subState: LoadingState()));
 
     try {
       final usersList = await _useCases.executeGetSuggestsUsers();
 
-      emit(state.copyWith(subState: SuccessState(), secondModel: usersList));
+      emit(state.copyWith(subState: SuccessState(), friendsList: usersList));
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
@@ -40,17 +40,18 @@ class SetupFriendsCubit extends Cubit<SetupFriendsState> with ErrorHandlerMixin<
   Future<void> confirmNewFriend({
     required String uId
   }) async {
-    emit(state.copyWith(thirdModel: MessageResult.loading()));
+    emit(state.copyWith(messageResult: MessageResult.loading()));
 
     try {
       await _useCases.executeConfirmNewFriend(friendId: uId);
 
-      emit(state.copyWith(thirdModel: MessageResult.success(message: 'Successfully confirmed')));
+      emit(state.copyWith(messageResult: MessageResult.success(
+          message: 'Successfully confirmed')));
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
               state.copyWith(
-                  thirdModel: MessageResult.error(error: failure)
+                  messageResult: MessageResult.error(error: failure)
               )
       );
     }

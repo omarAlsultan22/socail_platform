@@ -7,16 +7,16 @@ class UserAccount implements JsonModel{
   final String firstName;
   final String lastName;
   final String fullName;
-  final DocumentReference? userImage;
   bool? isOnline;
+  final DocumentReference? userImage;
 
   UserAccount({
+    this.isOnline,
+    this.userImage,
     required this.userId,
     required this.firstName,
     required this.lastName,
     required this.fullName,
-    this.userImage,
-    this.isOnline
   });
 
   factory UserAccount.fromJson(Map<String, dynamic> json) {
@@ -27,6 +27,24 @@ class UserAccount implements JsonModel{
         fullName: json['fullName'] ?? '',
         userImage: json['userImage'] ?? '',
         isOnline: json['isOnline'] ?? false
+    );
+  }
+
+  UserAccount copyWith({
+    String? userId,
+    String? firstName,
+    String? lastName,
+    String? fullName,
+    bool? isOnline,
+    DocumentReference? userImage,
+}) {
+    return UserAccount(
+        userId: userId ?? this.userId,
+        firstName: firstName ?? this.fullName,
+        lastName: lastName ?? this.lastName,
+        fullName: fullName ?? this.fullName,
+        userImage: userImage ?? this.userImage,
+        isOnline: isOnline ?? this.isOnline
     );
   }
 

@@ -1,28 +1,32 @@
 import 'package:flutter/cupertino.dart';
-import 'package:social_app/core/data/models/profile_info_model.dart';
-import 'package:social_app/core/data/models/post_model.dart';
-import 'package:social_app/core/data/models/user_model.dart';
+import '../repositories/profile_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/converters/Info_data_converter.dart';
-import '../../../../core/constants/user_details.dart';
-import '../../../../shared/componentes/public_components.dart';
-import '../../data/repositories_impl/firestore_profile_repository.dart';
+import 'package:social_app/core/data/models/post_model.dart';
+import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/user_account_service.dart';
+import 'package:social_app/core/data/models/profile_info_model.dart';
 
 
-class ProfileUseCases {
+class ProfileUseCase {
   final ProfileRepository _repository;
+  final UserAccountService _userAccountService;
 
-  ProfileUseCases({required ProfileRepository repository})
-      : _repository = repository;
+  ProfileUseCase({
+    required ProfileRepository repository,
+    required UserAccountService userAccountService
+  })
+      : _repository = repository,
+        _userAccountService = userAccountService;
 
   Future<ProfileInfoModel?> executeGetProfileInfo(String uid) async {
     final data = await _repository.getProfileInfo(uid);
     if (data.info != null) return data.info;
 
     if (data.account != null) {
-      final converter = InfoDataConverter(
-        userInfo: null,
-        userAccount: data.account!,
+      final converter = InfoDataConverter(/
+        infoModel: data.info!,
       );
       return converter.infoModel;
     }
@@ -195,11 +199,12 @@ class ProfileUseCases {
 
   Future<void> executeInsertPost(PostModel postModel) async {
     if (postModel.userId == null) {
-      final userModel = await getUserAccountData();
-      postModel
-        ..userId = userModel.userId
-        ..userName = userModel.userName
-        ..userImage = userModel.userImage;
+      final userModel = await _userAccountService.getUserAccountData();
+      postModel.copyWith(
+          userId: userModel.userId,
+          userName: userModel.userName,
+          userImage: userModel.userImage
+      );
     }
 
     if (postModel.docId != null) {
@@ -214,15 +219,16 @@ class ProfileUseCases {
     required String collection,
     required String imageType,
   }) async {
-    final userModel = await getUserAccountData();
-    postModel
-      ..userId = userModel.userId
-      ..userName = userModel.userName
-      ..userImage = userModel.userImage;
+    final userModel = await _userAccountService.getUserAccountData();
+    postModel.copyWith(
+      userId: userModel.userId,
+      userName: userModel.userName,
+      userImage: userModel.userImage
+    );
 
     await _repository.uploadImage(
       postModel: postModel,
-      collection: collection,
+      collectionPath: collection,
       imageType: imageType,
     );
   }
@@ -232,11 +238,11 @@ class ProfileUseCases {
   }
 
   Future<void> executeDeleteFriendRequest(String userId) async {
-    await _repository.deleteFriendRequest(userId, UserDetails.uId);
+    await _repository.deleteFriendRequest(userId);
   }
 
   Future<void> executeDeleteFriendship(String userId) async {
-    await _repository.deleteFriendship(userId, UserDetails.uId);
+    await _repository.deleteFriendship(userId);
   }
 
   Future<void> executeAddFriend(String userId, UserModel friendInfo) async {
@@ -248,11 +254,11 @@ class ProfileUseCases {
   }
 
   Future<bool> executeCheckIsRequest(String userId) async {
-    return await _repository.checkRequestExists(userId, UserDetails.uId);
+    return await _repository.checkRequestExists(userId);
   }
 
   Future<bool> executeCheckIsFriend(String userId) async {
-    return await _repository.checkFriendExists(userId, UserDetails.uId);
+    return await _repository.checkFriendExists(userId);
   }
 
   Future<void> executeDeletePost(String postId) async {

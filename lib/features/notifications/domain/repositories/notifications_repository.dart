@@ -17,7 +17,7 @@ abstract class NotificationsRepository {
   Future<({
   DocumentSnapshot postDoc,
   DocumentSnapshot userDoc,
-  QuerySnapshot commentsDocs
+  QuerySnapshot<Map<String, dynamic>> commentsDocs
   })> getPostData({
     required String postId,
     required String userId,
@@ -26,8 +26,8 @@ abstract class NotificationsRepository {
   Future<int> getPostLikesCount({required String postId});
 
   Future<List<CommentModel>> getCommentsWithUsers({
-    required QuerySnapshot commentsDocs,
     required String postId,
+    required QuerySnapshot<Map<String, dynamic>> commentsDocs
   });
 
   Future<void> insertNotification({

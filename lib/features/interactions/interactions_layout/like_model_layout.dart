@@ -6,12 +6,12 @@ import '../../shared/componentes/public_components.dart';
 import '../../modules/profile_screen/user_profile_screen.dart';
 
 
-class LikeModelLayout extends StatelessWidget {
+class UserModelLayout extends StatelessWidget {
   final UserModel like;
   final VoidCallback? onPressed;
   final String? userId;
 
-  const LikeModelLayout({
+  const UserModelLayout({
     required this.like,
     this.onPressed,
     this.userId,

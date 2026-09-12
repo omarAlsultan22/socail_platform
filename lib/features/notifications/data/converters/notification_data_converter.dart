@@ -1,37 +1,50 @@
 import '../models/notification_model.dart';
+import '../../../../core/di/service _locator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/services/user_account_service.dart';
 
 
 class NotificationsDataConverter {
-  NotificationsModel notificationsModel;
+  final UserAccountService userAccountService;
+  final NotificationsModel notificationsModel;
 
-  NotificationsDataConverter({required this.notificationsModel});
+  const NotificationsDataConverter({
+    required this.notificationsModel,
+    required this.userAccountService
+  });
 
-  static Future<NotificationsDataConverter> fromDocumentSnapshot(
-      DocumentSnapshot doc1, DocumentSnapshot doc2) async {
+  static final _userAccountService = sl<UserAccountService>();
+
+  static final _notificationModel = NotificationsDataConverter(
+      userAccountService: _userAccountService,
+      notificationsModel: NotificationsModel.empty()
+  );
+
+  static Future<NotificationsDataConverter> fromDocumentSnapshot({
+    required DocumentSnapshot userAccountDoc,
+    required DocumentSnapshot notificationDoc,
+  }) async {
     try {
-      if (!doc1.exists || !doc2.exists) {
+      if (!userAccountDoc.exists || !notificationDoc.exists) {
         print(
-            'Document missing - Doc1 exists: ${doc1.exists}, Doc2 exists: ${doc2
+            'Document missing - Doc1 exists: ${userAccountDoc.exists}, Doc2 exists: ${notificationDoc
                 .exists}');
-        return NotificationsDataConverter(
-            notificationsModel: NotificationsModel.empty());
+        return _notificationModel;
       }
 
-      final userAccount = await getAccountMap(userDoc: doc1);
-      final userNotifications = doc2.data();
+      final userAccount = await _userAccountService.getAccountMap(userDoc: userAccountDoc);
+      final userNotifications = notificationDoc.data();
 
       // Debug logging
       print('User Account Data: $userAccount');
       print('User Notifications Data: $userNotifications');
 
-      if (userAccount == null || userNotifications == null) {
-        print('Null data - Doc1: ${doc1.id}, Doc2: ${doc2.id}');
-        return NotificationsDataConverter(
-            notificationsModel: NotificationsModel.empty());
+      if (userAccount.isEmpty || userNotifications == null) {
+        print('Null data - Doc1: ${userAccountDoc.id}, Doc2: ${notificationDoc.id}');
+        return _notificationModel;
       }
 
-      final userAccountMap = userAccount as Map<String, dynamic>;
+      final userAccountMap = userAccount;
       final userNotificationsMap = userNotifications as Map<String, dynamic>;
 
       // Validate required fields
@@ -39,8 +52,7 @@ class NotificationsDataConverter {
           !userAccountMap.containsKey('firstName') ||
           !userAccountMap.containsKey('lastName')) {
         print('Missing required fields in user account');
-        return NotificationsDataConverter(
-            notificationsModel: NotificationsModel.empty());
+        return _notificationModel;
       }
 
       // Merge data
@@ -50,14 +62,11 @@ class NotificationsDataConverter {
 
       print('Merged Data: $mergedData');
 
-      return NotificationsDataConverter(
-        notificationsModel: NotificationsModel.fromJson(mergedData),
-      );
+      return _notificationModel;
     } catch (e, stackTrace) {
       print('Error creating NotificationsData: $e');
       print('Stack trace: $stackTrace');
-      return NotificationsDataConverter(
-          notificationsModel: NotificationsModel.empty());
+      return _notificationModel;
     }
   }
 }

@@ -6,7 +6,6 @@ abstract class SetupFriendsRepository {
   Future<List<UserModel>> getSuggestsUsers();
 
   Future<void> confirmNewFriend({
-    required String currentUserId,
     required String friendId,
   });
 }

@@ -1,9 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/user_model.dart';
-import 'package:social_app/core/constants/user_details.dart';
+import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/data/data_sources/remote/firestore/firestore_base_service.dart';
 
 
 class UserAccountService {
+  final SessionService sessionService;
+  final FirestoreBaseService repository;
+
+  UserAccountService({
+    required this.repository,
+    required this.sessionService
+  });
 
   Future<Map<String, dynamic>> getUserAccount({
     required Map<String, dynamic> userAccount,
@@ -43,11 +51,13 @@ class UserAccountService {
 
   Future<UserModel> getUserModelData({
     required String id,
-  })async {
+  }) async {
     UserModel userModel;
     try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('accounts').doc(id).get();
+      final userDoc = await repository.getSupDoc(
+          docId: id,
+          collectionPath: 'accounts'
+      );
       final data = await getAccountMap(userDoc: userDoc);
       UserModel accountData = UserModel.fromJson(data);
       userModel = accountData;
@@ -57,9 +67,11 @@ class UserAccountService {
     return userModel;
   }
 
-  Future<UserModel>getUserAccountData()async {
-    final firestore = FirebaseFirestore.instance;
-    final docData = await firestore.collection('accounts').doc(UserDetails.uId).get();
+  Future<UserModel> getUserAccountData() async {
+    final docData = await repository.getSupDoc(
+        collectionPath: 'accounts',
+        docId: sessionService.currentUid
+    );
     final userAccount = await getAccountMap(userDoc: docData);
     UserModel userModel = UserModel.fromJson(userAccount);
     return userModel;

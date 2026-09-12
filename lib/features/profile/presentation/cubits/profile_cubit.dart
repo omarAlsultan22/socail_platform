@@ -2,27 +2,34 @@ import 'dart:async';
 import '../states/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../../../../core/data/models/post_model.dart';
-import '../../../../core/data/models/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../profile_layout/posts_screen.dart';
 import '../../profile_layout/photos_screen.dart';
 import '../../profile_layout/videos_screen.dart';
 import '../../domain/useCases/profile_useCase.dart';
-import '../../../../shared/constants/state_keys.dart';
-import '../../../../core/constants/user_details.dart';
+import '../../../../core/data/models/post_model.dart';
+import '../../../../core/data/models/user_model.dart';
+import '../../../../core/services/user_account_service.dart';
 import '../../../../shared/componentes/public_components.dart';
+import 'package:social_app/core/services/session_service.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 
 
-class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileState>{check if method need error exception
-  final ProfileUseCases _useCases;
+class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileState>{
+  final ProfileUseCase _useCases;
+  final SessionService _sessionService;
+  final UserAccountService _userAccountService;
 
-  ProfileCubit({required ProfileUseCases useCases})
-      : _useCases = useCases,
+  ProfileCubit({
+    required ProfileUseCase useCase,
+    required SessionService sessionService,
+    required UserAccountService userAccountService
+  })
+      : _useCases = useCase,
+        _sessionService = sessionService,
+        _userAccountService = userAccountService,
         super(ProfileState.initial()) {
-    // إعداد الـ listenerScreens بعد الإنشاء
     emit(state.copyWith(
       listenerScreens: [
         _loadMorePosts,
@@ -41,7 +48,7 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
   ];
 
   void setProfileCubit(ProfileCubit cubit) {
-    emit(state.setSuccess());
+    emit(state.copyWith(subState: SuccessState()));
   }
 
   void setUserId(String uId) {
@@ -90,98 +97,129 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
   Future<void> insertFriendsRequests({
     required final String userId,
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       final UserModel friendsInfo = UserModel(
-          userId: UserDetails.uId,
-          dateTime: DateTime.now()
+          dateTime: DateTime.now(),
+        userId: _sessionService.currentUid
       );
       await _useCases.executeSendFriendRequest(userId, friendsInfo);
-      emit(state.setSuccess());
-    } catch (error) {
-      emit(state.setError(error.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> deleteRequests({
     required String userId
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       await _useCases.executeDeleteFriendRequest(userId);
-      emit(state.setSuccess());
-    } catch (error) {
-      emit(state.setError(error.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> deleteFriendship({
     required String userId
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       await _useCases.executeDeleteFriendship(userId);
-      emit(state.setSuccess());
-    } catch (error) {
-      emit(state.setError(error.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> getProfileInfo({
     required String uid
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       final profileInfo = await _useCases.executeGetProfileInfo(uid);
       if (profileInfo != null) {
         emit(state.updateProfileInfo(profileInfo));
       }
       emit(state.setUserId(uid));
-      emit(state.setSuccess());
-    } catch (e) {
-      emit(state.setError(e.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> getInfo({
     required String uid
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       final profileInfo = await _useCases.executeGetInfo(uid);
       if (profileInfo != null) {
         emit(state.updateProfileInfo(profileInfo));
       }
-      emit(state.setSuccess());
-    } catch (e) {
-      emit(state.setError(e.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> insertAndUpdatePosts({
     required PostModel postModel
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       await _useCases.executeInsertPost(postModel);
       addPost(postModel);
-      emit(state.setSuccess());
-    } catch (error) {
-      emit(state.setError(error.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> uploadImage({
     required PostModel postModel,
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
-      final userModel = await getUserAccountData();
+      final userModel = await _userAccountService.getUserAccountData();
 
-      postModel
-        ..userId = userModel.userId
-        ..userName = userModel.userName
-        ..userImage = userModel.userImage;
+      postModel.copyWith(
+          userId: userModel.userId,
+          userName: userModel.userName,
+          userImage: userModel.userImage
+      );
 
       if (postModel.postType == 'profileImage') {
         await _useCases.executeUploadImage(
@@ -209,23 +247,28 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
           emit(state.updateProfileInfo(updatedInfo));
         }
       }
-      emit(state.setSuccess());
-    } catch (error) {
-      emit(state.setError(error.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> getProfileData({
     required final String userId
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
 
     try {
       final result = await _useCases.executeGetProfileData(userId, state.lastPostDoc);
 
       if (result.posts.isEmpty) {
         emit(state.setHasMorePosts(false));
-        emit(state.setSuccess());
+        emit(state.copyWith(subState: SuccessState()));
         return;
       }
 
@@ -239,9 +282,14 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
         emit(state.updateAlbumScreenList(0, state.postsDataList));
       }
 
-      emit(state.setSuccess());
-    } catch (e) {
-      emit(state.setError(e.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
@@ -255,7 +303,7 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
 
       if (result.images.isEmpty) {
         emit(state.setHasMoreProfileImages(false));
-        emit(state.setSuccess());
+        emit(state.copyWith(subState: SuccessState()));
         return;
       }
 
@@ -269,9 +317,14 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
         emit(state.updateAlbumScreenList(1, state.profileImagesList));
       }
 
-      emit(state.setSuccess());
-    } catch (e) {
-      emit(state.setError(e.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
@@ -285,7 +338,7 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
 
       if (result.covers.isEmpty) {
         emit(state.setHasMoreCoverImages(false));
-        emit(state.setSuccess());
+        emit(state.copyWith(subState: SuccessState()));
         return;
       }
 
@@ -299,31 +352,41 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
         emit(state.updateAlbumScreenList(2, state.coverImagesList));
       }
 
-      emit(state.setSuccess());
-    } catch (e) {
-      emit(state.setError(e.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> getVideosPosts({
     required String userId
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
 
     try {
       final result = await _useCases.executeGetVideosPosts(userId, state.lastProfileImageDoc);
 
       if (result.videos.isEmpty) {
-        emit(state.setSuccess());
+        emit(state.copyWith(subState: SuccessState()));
         return;
       }
 
       emit(state.updateVideosList(result.videos, append: true));
       emit(state.updateLastProfileImageDoc(result.lastDoc));
 
-      emit(state.setSuccess());
-    } catch (e) {
-      emit(state.setError(e.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
@@ -333,7 +396,7 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
     required final String uId,
     required final String docId
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       final UserModel friendsInfo = UserModel(
           userId: uId,
@@ -341,33 +404,43 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
           userName: userName
       );
       await _useCases.executeAddFriend(docId, friendsInfo);
-      emit(state.setSuccess());
-    } catch (e) {
-      emit(state.setError(e.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> getFriends({
     required String userId
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       final friends = await _useCases.executeGetFriends(userId);
       emit(state.updateFriendsList(friends));
-      emit(state.setSuccess());
-    } catch (e) {
-      emit(state.setError(e.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
   Future<void> checkIsRequest({
     required String userId
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       final exists = await _useCases.executeCheckIsRequest(userId);
       emit(state.setIsRequest(exists));
-      emit(state.setSuccess());
+      emit(state.copyWith(subState: SuccessState()));
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
@@ -381,11 +454,11 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
   Future<void> checkIsFriend({
     required final String userId
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
     try {
       final exists = await _useCases.executeCheckIsFriend(userId);
       emit(state.setIsFriend(exists));
-      emit(state.setSuccess());
+      emit(state.copyWith(subState: SuccessState()));
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
@@ -401,11 +474,6 @@ class ProfileCubit extends Cubit<ProfileState> with ErrorHandlerMixin<ProfileSta
   }) async {
     emit(state.removePost(postModel.docId!));
     await _useCases.executeDeletePost(postModel.docId!);
-    emit(state.setSuccess());
-  }
-
-  @override
-  Future<void> close() async {
-    return super.close();
+    emit(state.copyWith(subState: SuccessState()));
   }
 }

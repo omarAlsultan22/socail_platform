@@ -1,21 +1,69 @@
+import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/core/utils/validate_input.dart';
+import '../../../../../core/data/models/message_result.dart';
+import 'package:social_app/core/presentation/widgets/app_spaces.dart';
+import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 
 
 class SignUpLayout extends StatefulWidget {
-  const SignUpLayout({super.key});
+  final void Function({
+  required String firstName,
+  required String lastName,
+  required String userEmail,
+  required String userPassword,
+  }) onSignUp;
+  final MessageResult messageResult;
+
+  const SignUpLayout({
+    super.key,
+    required this.onSignUp,
+    required this.messageResult
+  });
 
   @override
   State<SignUpLayout> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpLayout> with AuthMixin{
+class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout> {
+  bool _isLocked = false;
   bool _isObscure = false;
-  final formKey = GlobalKey<FormState>();
-  final firstNameController = TextEditingController();
-  final secondNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void didUpdateWidget(covariant SignUpLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    handleMessageResult(
+      messageResult: widget.messageResult,
+      onNavigate: _navigateToBack,
+    );
+  }
+
+  void _navigateToBack() {
+    Navigator.pop(context);
+  }
+
+  void _updateLockButton(bool value) {
+    setState(() => _isLocked = value);
+  }
+
+  Future<void> _submitForm() async {
+    if (!validateForm(_formKey)) return;
+    _updateLockButton(true);
+    hideKeyboard(context);
+    widget.onSignUp(
+      firstName: _firstNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
+      userEmail: _emailController.text.trim(),
+      userPassword: _passwordController.text,
+    );
+    _updateLockButton(true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,20 +116,21 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin{
 
                           // Form Section
                           Form(
-                            key: formKey,
+                            key: _formKey,
                             child: Column(
                                 children: [
                                   // Name Fields Row
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: buildInputField(
-                                          controller: firstNameController,
+                                        child: BuildInputField.build(
+                                          controller: _firstNameController,
                                           keyboardType: TextInputType
                                               .name,
                                           validator: (String? value) {
-                                            return validator(
-                                                value, 'First Name');
+                                            return ValidateInput.validator(
+                                                value: value,
+                                                text: 'First Name');
                                           },
                                           label: 'First Name',
                                           icon: Icons.person,
@@ -89,13 +138,14 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin{
                                       ),
                                       const SizedBox(width: 15.0),
                                       Expanded(
-                                        child: buildInputField(
-                                          controller: secondNameController,
+                                        child: BuildInputField.build(
+                                          controller: _lastNameController,
                                           keyboardType: TextInputType
                                               .name,
                                           validator: (String? value) {
-                                            return validator(
-                                                value, 'Second Name');
+                                            return ValidateInput.validator(
+                                                value: value,
+                                                text: 'Second Name');
                                           },
                                           label: 'Second Name',
                                           icon: Icons.person,
@@ -106,12 +156,13 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin{
                                   const SizedBox(height: 20),
 
                                   // Email Field
-                                  buildInputField(
-                                    controller: emailController,
+                                  BuildInputField.build(
+                                    controller: _emailController,
                                     keyboardType: TextInputType
                                         .emailAddress,
                                     validator: (String? value) {
-                                      return validator(value, 'Email');
+                                      return ValidateInput.validator(
+                                          value: value, text: 'Email');
                                     },
                                     label: 'Email',
                                     icon: Icons.email_outlined,
@@ -119,35 +170,30 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin{
                                   const SizedBox(height: 20),
 
                                   // Password Field
-                                  buildInputField(
-                                    controller: passwordController,
+                                  BuildInputField.build(
+                                    controller: _passwordController,
                                     keyboardType: TextInputType.text,
                                     validator: (String? value) {
-                                      return validator(value, 'Password');
+                                      return ValidateInput.validator(
+                                          value: value, text: 'Password');
                                     },
                                     obscureText: _isObscure,
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        _isObscure
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        color: Colors.amber,
-                                      ),
-                                      onPressed: () =>
-                                          setState(() =>
-                                          _isObscure = !_isObscure),
+                                    suffixIcon: buildPasswordVisibilityToggle(
+                                        isObscure: _isObscure,
+                                        onToggle: () =>
+                                            setState(() =>
+                                            _isObscure = !_isObscure
+                                            )
                                     ),
                                     label: 'Password',
                                     icon: Icons.lock_outline,
                                   ),
-
-                                  const SizedBox(height: 30),
-
+                                  AppSpaces.vertical_30,
                                   Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(
-                                          12.0), // زيادة نصف القطر
-                                      gradient: LinearGradient( // إضافة تدرج لوني
+                                          12.0),
+                                      gradient: LinearGradient(
                                         colors: [
                                           Colors.amber.shade700,
                                           Colors.amber.shade400,
@@ -164,30 +210,18 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin{
                                     ),
                                     width: double.infinity,
                                     height: 50.0,
-                                    child: MaterialButton(
-                                      onPressed: () {
-                                        /* ... */
-                                      },
-                                      child: state is LoadingState
-                                          ? CircularProgressIndicator(
-                                          color: Colors.white)
-                                          : Text(
-                                        'Sign up',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      ),
+                                    child: ElevatedButton(
+                                      style: buttonStyle(),
+                                      onPressed: _isLocked ? null : _submitForm,
+                                      child: buildButtonContent(
+                                          isLoading: widget.messageResult
+                                              .isLoading, text: 'Sign up'),
                                     ),
                                   ),
                                   const SizedBox(height: 20),
 
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.pushReplacement(context,
-                                            MaterialPageRoute(builder: (
-                                                context) => const SignInScreen())),
+                                    onPressed: _navigateToBack,
                                     child: RichText(
                                       text: TextSpan(
                                         text: 'Already have an account? ',

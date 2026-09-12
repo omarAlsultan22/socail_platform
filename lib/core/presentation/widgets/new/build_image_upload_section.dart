@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../data/models/post_model.dart';
-import 'package:social_app/core/constants/user_details.dart';
 import 'package:social_app/core/services/media_picker_service.dart';
 import 'package:social_app/core/presentation/widgets/new/publishing_confirmation_screen.dart';
 

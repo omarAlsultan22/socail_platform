@@ -1,91 +1,41 @@
+import '../../data/models/public_posts.dart';
+import '../../data/models/public_statuses.dart';
 import '../../../../core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/constants/user_details.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
-import 'package:social_app/core/presentation/states/app_sup_states.dart';
-import '../../../../core/presentation/states/base/main_loaded_state.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
+import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart';
+import 'package:social_app/features/public/data/models/public_success_state.dart';
 
 
-class PublicPostsModel {
-  final bool hasMorePosts;
-  final DocumentSnapshot? lastPostDoc;
-  final List<PostModel> homePostsList;
-
-  const PublicPostsModel({
-    this.lastPostDoc,
-    this.hasMorePosts = true,
-    this.homePostsList = const []
-  });
-
-  PublicPostsModel copyWith({
-    bool? hasMorePosts,
-    DocumentSnapshot? lastPostDoc,
-    List<PostModel>? homePostsList,
-  }) {
-    return PublicPostsModel(
-      hasMorePosts: hasMorePosts ?? this.hasMorePosts,
-      lastPostDoc: lastPostDoc ?? this.lastPostDoc,
-      homePostsList: homePostsList ?? this.homePostsList,
-    );
-  }
-}
-
-class PublicStatusesModel{
-  final bool hasMoreStatuses;
-  final DocumentSnapshot? lastStatusDoc;
-  final List<PostModel>? myStatuses;
-  final List<List<PostModel>> homeStatusesList;
-
-  const PublicStatusesModel({
-    this.lastStatusDoc,
-    this.hasMoreStatuses = true,
-    this.myStatuses = const [],
-    this.homeStatusesList = const []
-  });
-
-  PublicStatusesModel copyWith({
-    bool? hasMoreStatuses,
-    DocumentSnapshot? lastStatusDoc,
-    List<List<PostModel>>? homeStatusesList,
-    List<PostModel>? myStatuses,
-  }) {
-    return PublicStatusesModel(
-      hasMoreStatuses: hasMoreStatuses ?? this.hasMoreStatuses,
-      lastStatusDoc: lastStatusDoc ?? this.lastStatusDoc,
-      homeStatusesList: homeStatusesList ?? this.homeStatusesList,
-      myStatuses: myStatuses ?? this.myStatuses,
-    );
-  }
-}
-
-class PublicState extends DoubleModelAppState<PublicPostsModel, PublicStatusesModel> {
+class PublicState extends MainAppSupState {
   final bool? isOnline;
   final bool isLoadingPosts;
+  final PublicPosts postsModel;
+  final PublicStatuses statusesModel;
 
-  PublicState({
-    super.firstModel,
-    super.secondModel,
+  const PublicState({
+    this.isOnline,
     required super.subState,
     this.isLoadingPosts = false,
-    this.isOnline,
+    required this.postsModel,
+    required this.statusesModel,
   });
 
   factory PublicState.initial() {
     return PublicState(
-      firstModel: const PublicPostsModel(),
-      secondModel: const PublicStatusesModel(),
-      subState: InitialState(),
-      isLoadingPosts: false,
       isOnline: null,
+      isLoadingPosts: false,
+      subState: InitialState(),
+      postsModel: const PublicPosts(),
+      statusesModel: const PublicStatuses(),
     );
   }
 
-  @override
   PublicState copyWith({
-    PublicPostsModel? firstModel,
-    PublicStatusesModel? secondModel,
+    PublicStatuses? statusesModel,
+    PublicPosts? postsModel,
     List<PostModel>? thirdModel,
     MainAppSubState? subState,
     bool? isLoadingPosts,
@@ -93,39 +43,37 @@ class PublicState extends DoubleModelAppState<PublicPostsModel, PublicStatusesMo
   }) {
     return PublicState(
       subState: subState ?? this.subState,
-      firstModel: firstModel ?? this.firstModel,
-      secondModel: secondModel ?? this.secondModel,
+      postsModel: postsModel ?? this.postsModel,
+      statusesModel: statusesModel ?? this.statusesModel,
       isLoadingPosts: isLoadingPosts ?? this.isLoadingPosts,
       isOnline: isOnline ?? this.isOnline,
     );
   }
 
-  // ✅ دوال التعديل الخاصة بالبوستات
-
   PublicState updatePostsList(List<PostModel> newPosts, {bool append = false}) {
-    final currentPosts = firstModel?.homePostsList ?? [];
+    final currentPosts = postsModel.homePostsList;
     final updatedPosts = append ? [...currentPosts, ...newPosts] : newPosts;
 
     return copyWith(
-      firstModel: firstModel?.copyWith(
+      postsModel: postsModel.copyWith(
         homePostsList: updatedPosts,
       ),
     );
   }
 
   PublicState addPostAtBeginning(PostModel post) {
-    final currentPosts = firstModel?.homePostsList ?? [];
+    final currentPosts = postsModel.homePostsList;
     return copyWith(
-      firstModel: firstModel?.copyWith(
+      postsModel: postsModel.copyWith(
         homePostsList: [post, ...currentPosts],
       ),
     );
   }
 
   PublicState removePost(String postId) {
-    final currentPosts = firstModel?.homePostsList ?? [];
+    final currentPosts = postsModel.homePostsList;
     return copyWith(
-      firstModel: firstModel?.copyWith(
+      postsModel: postsModel.copyWith(
         homePostsList: currentPosts.where((p) => p.docId != postId).toList(),
       ),
     );
@@ -136,9 +84,9 @@ class PublicState extends DoubleModelAppState<PublicPostsModel, PublicStatusesMo
     required DocumentSnapshot? lastDoc,
     required bool hasMore,
   }) {
-    final currentPosts = firstModel?.homePostsList ?? [];
+    final currentPosts = postsModel.homePostsList;
     return copyWith(
-      firstModel: firstModel?.copyWith(
+      postsModel: postsModel.copyWith(
         homePostsList: [...currentPosts, ...newPosts],
         lastPostDoc: lastDoc,
         hasMorePosts: hasMore,
@@ -148,36 +96,40 @@ class PublicState extends DoubleModelAppState<PublicPostsModel, PublicStatusesMo
 
   PublicState setHasMorePosts(bool hasMore) {
     return copyWith(
-      firstModel: firstModel?.copyWith(hasMorePosts: hasMore),
+      postsModel: postsModel.copyWith(hasMorePosts: hasMore),
     );
   }
 
-  // ✅ دوال التعديل الخاصة بالستوريس
-
-  PublicState updateStatusesList(List<List<PostModel>> newStatuses, {bool append = false}) {
-    final currentStatuses = secondModel?.homeStatusesList ?? [];
-    final updatedStatuses = append ? [...currentStatuses, ...newStatuses] : newStatuses;
+  PublicState updateStatusesList(List<List<PostModel>> newStatuses,
+      {bool append = false}) {
+    final currentStatuses = statusesModel.homeStatusesList;
+    final updatedStatuses = append
+        ? [...currentStatuses, ...newStatuses]
+        : newStatuses;
 
     return copyWith(
-      secondModel: secondModel?.copyWith(
+      statusesModel: statusesModel.copyWith(
         homeStatusesList: updatedStatuses,
       ),
     );
   }
 
-  PublicState addStatus(PostModel status, List<PostModel> myStatusesList) {
-    final currentStatuses = secondModel?.homeStatusesList ?? [];
+  PublicState addStatus({
+    required PostModel status,
+    required String currentUId,
+    required List<PostModel> myStatusesList,
+  }) {
+    final currentStatuses = statusesModel.homeStatusesList;
     List<List<PostModel>> newStatuses;
 
-    if (currentStatuses.isNotEmpty && currentStatuses.first.first.userId == UserDetails.uId) {
-      // إضافة إلى قائمتي أنا
+    if (currentStatuses.isNotEmpty &&
+        currentStatuses.first.first.userId == currentUId) {
       final updatedMyStatuses = [status, ...myStatusesList];
       newStatuses = [
         updatedMyStatuses,
         ...currentStatuses.skip(1),
       ];
     } else {
-      // إنشاء قائمة جديدة لي
       newStatuses = [
         [status],
         ...currentStatuses,
@@ -185,7 +137,7 @@ class PublicState extends DoubleModelAppState<PublicPostsModel, PublicStatusesMo
     }
 
     return copyWith(
-      secondModel: secondModel?.copyWith(
+      statusesModel: statusesModel.copyWith(
         homeStatusesList: newStatuses,
         myStatuses: myStatusesList,
       ),
@@ -194,13 +146,13 @@ class PublicState extends DoubleModelAppState<PublicPostsModel, PublicStatusesMo
 
   PublicState updateStatusesPagination({
     required List<List<PostModel>> newStatuses,
+    required List<PostModel> myStatusesList,
     required DocumentSnapshot? lastDoc,
     required bool hasMore,
-    required List<PostModel> myStatusesList,
   }) {
-    final currentStatuses = secondModel?.homeStatusesList ?? [];
+    final currentStatuses = statusesModel.homeStatusesList;
     return copyWith(
-      secondModel: secondModel?.copyWith(
+      statusesModel: statusesModel.copyWith(
         homeStatusesList: [...currentStatuses, ...newStatuses],
         lastStatusDoc: lastDoc,
         hasMoreStatuses: hasMore,
@@ -210,18 +162,19 @@ class PublicState extends DoubleModelAppState<PublicPostsModel, PublicStatusesMo
   }
 
   PublicState removeStatus(String statusId) {
-    final currentStatuses = secondModel?.homeStatusesList ?? [];
+    final currentStatuses = statusesModel.homeStatusesList;
     final List<List<PostModel>> newStatuses = [];
 
     for (var innerList in currentStatuses) {
-      final filteredList = innerList.where((item) => item.docId != statusId).toList();
+      final filteredList = innerList.where((item) => item.docId != statusId)
+          .toList();
       if (filteredList.isNotEmpty) {
         newStatuses.add(filteredList);
       }
     }
 
     return copyWith(
-      secondModel: secondModel?.copyWith(
+      statusesModel: statusesModel.copyWith(
         homeStatusesList: newStatuses,
       ),
     );
@@ -229,13 +182,13 @@ class PublicState extends DoubleModelAppState<PublicPostsModel, PublicStatusesMo
 
   PublicState setHasMoreStatuses(bool hasMore) {
     return copyWith(
-      secondModel: secondModel?.copyWith(hasMoreStatuses: hasMore),
+      statusesModel: statusesModel.copyWith(hasMoreStatuses: hasMore),
     );
   }
 
   PublicState updateMyStatuses(List<PostModel> myStatusesList) {
     return copyWith(
-      secondModel: secondModel?.copyWith(myStatuses: myStatusesList),
+      statusesModel: statusesModel.copyWith(myStatuses: myStatusesList),
     );
   }
 
@@ -251,20 +204,32 @@ class PublicState extends DoubleModelAppState<PublicPostsModel, PublicStatusesMo
 
   // ✅ Getters
 
-  List<PostModel> get homePostsList => firstModel?.homePostsList ?? [];
-  bool get hasMorePosts => firstModel?.hasMorePosts ?? true;
-  DocumentSnapshot? get lastPostDoc => firstModel?.lastPostDoc;
+  bool get hasMorePosts => postsModel.hasMorePosts;
 
-  List<List<PostModel>> get homeStatusesList => secondModel?.homeStatusesList ?? [];
-  bool get hasMoreStatuses => secondModel?.hasMoreStatuses ?? true;
-  DocumentSnapshot? get lastStatusDoc => secondModel?.lastStatusDoc;
-  List<PostModel> get myStatuses => secondModel?.myStatuses ?? [];
+  bool get hasMoreStatuses => statusesModel.hasMoreStatuses;
+
+  List<PostModel> get myStatuses => statusesModel.myStatuses;
+
+  DocumentSnapshot? get lastPostDoc => postsModel.lastPostDoc;
+
+  List<PostModel> get homePostsList => postsModel.homePostsList;
+
+  DocumentSnapshot? get lastStatusDoc => statusesModel.lastStatusDoc;
+
+  List<List<PostModel>> get homeStatusesList => statusesModel.homeStatusesList;
+
+  @override
+  PublicSuccessState get dataModels =>
+      PublicSuccessState(
+          postsModel: postsModel,
+          statusesModel: statusesModel
+      );
 
   @override
   R when<R>({
     required R Function() onInitial,
     required R Function() onLoading,
-    required R Function(LoadedState) onLoaded,
+    required R Function(PublicSuccessState) onLoaded,
     required R Function(AppException) onError
   }) {
     return subState.when(

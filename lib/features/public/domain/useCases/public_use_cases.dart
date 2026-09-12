@@ -1,31 +1,44 @@
 import 'dart:async';
-import 'package:social_app/core/data/models/post_model.dart';
+import '../repositories/public_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/constants/user_details.dart';
-import '../../../../services/online_status_service.dart';
-import '../../../../shared/componentes/public_components.dart';
-import '../../data/repositories_impl/firestore_public_repository.dart';
+import '../../data/services/online_status_service.dart';
+import 'package:social_app/core/data/models/post_model.dart';
+import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/user_account_service.dart';
+import 'package:social_app/features/public/data/models/public_posts.dart';
+import 'package:social_app/features/public/data/models/public_statuses.dart';
 
 
-class PublicUseCases {
-
+class PublicUseCase {
   final PublicRepository _repository;
+  final SessionService _sessionService;
+  final UserAccountService _userAccountService;
 
-  PublicUseCases({required PublicRepository repository})
-      : _repository = repository;
+  PublicUseCase({
+    required PublicRepository repository,
+    required SessionService sessionService,
+    required UserAccountService userAccountService,
+  })
+      : _repository = repository,
+        _sessionService = sessionService,
+        _userAccountService = userAccountService;
 
-  // جلب البوستات الرئيسية
-  Future<({bool hasMore, DocumentSnapshot<Object?>? lastDoc, List<dynamic> posts})> executeGetHomePosts({
+  Future<PublicPosts> executeGetHomePosts({
     required DocumentSnapshot? lastPostDoc,
     required bool hasMorePosts,
   }) async {
     if (!hasMorePosts) {
-      return (posts: [], hasMore: false, lastDoc: lastPostDoc);
+      return PublicPosts(
+          homePostsList: [],
+          hasMorePosts: false,
+          lastPostDoc: lastPostDoc
+      );
     }
 
-    final friendsSnapshot = await _repository.getFriendsList(uId: UserDetails.uId);
-    final friendsUIds = friendsSnapshot.docs.postStatuses((doc) => doc.id).toList();
-    friendsUIds.add(UserDetails.uId);
+    final friendsSnapshot = await _repository.getFriendsList();
+    final friendsUIds = friendsSnapshot.docs.map((doc) => doc.id)
+        .toList();
+    friendsUIds.add(_sessionService.currentUid);
 
     final results = await Future.wait([
       _repository.fetchPostsQuery(
@@ -38,16 +51,21 @@ class PublicUseCases {
 
     final querySnapshot = results[0];
     final deletedPostsSnapshot = results[1];
-    final deletedPosts = deletedPostsSnapshot.docs.postStatuses((doc) => doc.id).toList();
+    final deletedPosts = deletedPostsSnapshot.docs.map((doc) => doc.id)
+        .toList();
 
     if (querySnapshot.docs.isEmpty) {
-      return (posts: [], hasMore: false, lastDoc: lastPostDoc);
+      return PublicPosts(
+          homePostsList: [],
+          hasMorePosts: false,
+          lastPostDoc: lastPostDoc
+      );
     }
 
     final newLastDoc = querySnapshot.docs.last;
     final List<PostModel> posts = [];
 
-    await Future.wait(querySnapshot.docs.postStatuses((doc) async {
+    await Future.wait(querySnapshot.docs.map((doc) async {
       try {
         if (deletedPosts.contains(doc.id)) return;
 
@@ -64,7 +82,8 @@ class PublicUseCases {
 
         Map<String, dynamic> friendAccount = {};
         if (isActive) {
-          final friendAccountDoc = await _repository.getAccountData(data['friendId']);
+          final friendAccountDoc = await _repository.getAccountData(
+              data['friendId']);
           if (friendAccountDoc.exists) {
             friendAccount = await _repository.getAccountMap(friendAccountDoc);
           }
@@ -82,31 +101,28 @@ class PublicUseCases {
             'commentsNumber': counts.commentsCount,
           }),
         );
-      } catch (e) {
-        // تجاهل الأخطاء الفردية
-      }
+      } catch (_) {}
     }).toList());
 
     posts.sort((a, b) => b.dateTime!.compareTo(a.dateTime!));
 
-    return (
-    posts: posts,
-    hasMore: posts.isNotEmpty,
-    lastDoc: newLastDoc,
+    return PublicPosts(
+      homePostsList: posts,
+      lastPostDoc: newLastDoc,
+      hasMorePosts: posts.isNotEmpty,
     );
   }
 
-  // جلب الستوريس
-  Future<({bool hasMore, DocumentSnapshot<Object?>? lastDoc, List<dynamic> myStatuses, List<dynamic> statuses})> executeGetHomeStatus({
+  Future<PublicStatuses> executeGetHomeStatus({
     required DocumentSnapshot? lastStatusDoc,
     required bool hasMoreStatuses,
   }) async {
     if (!hasMoreStatuses) {
-      return (
-      statuses: [],
-      hasMore: false,
-      lastDoc: lastStatusDoc,
-      myStatuses: [],
+      return PublicStatuses(
+        myStatuses: [],
+        homeStatusesList: [],
+        hasMoreStatuses: false,
+        lastStatusDoc: lastStatusDoc,
       );
     }
 
@@ -117,20 +133,22 @@ class PublicUseCases {
 
     final friendsSnapshot = await friendsQuery;
     final deletedStatusesSnapshot = await _repository.getDeletedStatuses();
-    final deletedStatuses = deletedStatusesSnapshot.docs.postStatuses((doc) => doc.id).toList();
+    final deletedStatuses = deletedStatusesSnapshot.docs.map((doc) => doc.id)
+        .toList();
 
     if (friendsSnapshot.docs.isEmpty) {
-      return (
-      statuses: [],
-      hasMore: false,
-      lastDoc: lastStatusDoc,
-      myStatuses: [],
+      return PublicStatuses(
+        myStatuses: [],
+        homeStatusesList: [],
+        hasMoreStatuses: false,
+        lastStatusDoc: lastStatusDoc,
       );
     }
 
     final newLastDoc = friendsSnapshot.docs.last;
-    final friendsUIds = friendsSnapshot.docs.postStatuses((doc) => doc.id).toList();
-    friendsUIds.add(UserDetails.uId);
+    final friendsUIds = friendsSnapshot.docs.map((doc) => doc.id)
+        .toList();
+    friendsUIds.add(_sessionService.currentUid);
 
     List<List<PostModel>> statusModelList = [];
     List<PostModel> myStatuses = [];
@@ -153,14 +171,14 @@ class PublicUseCases {
 
           final statusData = {
             ...userAccount,
-            ...statusDoc.data() as Map<String, dynamic>,/
+            ...statusDoc.data() as Map<String, dynamic>,
           };
 
           userStatuses.add(PostModel.fromFirestoreToStatus(statusData));
         }
 
         if (userStatuses.isNotEmpty) {
-          if (userStatuses.first.userId == UserDetails.uId) {
+          if (userStatuses.first.userId == _sessionService.currentUid) {
             myStatuses = userStatuses;
           } else {
             statusModelList.add(userStatuses);
@@ -174,42 +192,42 @@ class PublicUseCases {
     if (myStatuses.isNotEmpty) {
       statusModelList.insert(0, myStatuses);
     }
-    statusModelList.sort((a, b) => b.first.dateTime!.compareTo(a.first.dateTime!));
+    statusModelList.sort((a, b) =>
+        b.first.dateTime!.compareTo(a.first.dateTime!));
 
-    return (
-    statuses: statusModelList,
-    hasMore: statusModelList.isNotEmpty,
-    lastDoc: newLastDoc,
-    myStatuses: myStatuses,
+    return PublicStatuses(
+      myStatuses: myStatuses,
+      lastStatusDoc: newLastDoc,
+      homeStatusesList: statusModelList,
+      hasMoreStatuses: statusModelList.isNotEmpty,
     );
   }
 
-  // إضافة بوست جديد
   Future<void> executeInsertPost(PostModel postModel) async {
     if (postModel.userId == null) {
-      final userModel = await getUserAccountData();
-      postModel
-        ..userId = userModel.userId
-        ..userName = userModel.userName
-        ..userImage = userModel.userImage
-        ..postType = postModel.postType ?? 'post';
+      final userModel = await _userAccountService.getUserAccountData();
+      postModel.copyWith(
+          userId: userModel.userId,
+          userName: userModel.userName,
+          userImage: userModel.userImage,
+          postType: postModel.postType ?? 'post'
+      );
     }
     await _repository.addPostToFirestore(postModel);
   }
 
-  // إضافة status جديد
   Future<void> executeInsertStatus(PostModel statusModel) async {
     if (statusModel.userId == null) {
-      final userModel = await getUserAccountData();
-      statusModel
-        ..userId = userModel.userId
-        ..userName = userModel.userName
-        ..userImage = userModel.userImage;
+      final userModel = await _userAccountService.getUserAccountData();
+      statusModel.copyWith(
+          userId: userModel.userId,
+          userName: userModel.userName,
+          userImage: userModel.userImage
+      );
     }
     await _repository.addStatusToFirestore(statusModel);
   }
 
-  // حذف بوست
   Future<void> executeDeletePost({
     required PostModel postModel,
     required bool isMyPost,
@@ -233,18 +251,16 @@ class PublicUseCases {
     }
   }
 
-  // جلب بيانات المستخدم
   Future<void> executeGetUserAccount() async {
-    final userModel = await getUserModelData(id: UserDetails.uId);
+    final userModel = await _userAccountService.getUserModelData(
+        id: _sessionService.currentUid);
     UserDetails.name = userModel.userName!;
     UserDetails.image = userModel.userImage!;
   }
 
-  // مراقبة الحالة online
   Stream<bool> executeGetUserOnlineStatus(
       OnlineStatusService onlineStatusService,
-      String userId,
-      ) {
+      String userId,) {
     return onlineStatusService.getUserOnlineStatus(userId);
   }
 }

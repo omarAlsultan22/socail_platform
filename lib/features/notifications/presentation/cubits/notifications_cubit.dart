@@ -2,79 +2,78 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import '../states/notifications_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/user_details.dart';
 import '../../domain/useCases/notifications_useCase.dart';
-import '../../../../core/errors/mappers/error_handler.dart';
-import '../../../../shared/componentes/public_components.dart';
+import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
+import 'package:social_app/core/presentation/states/app_sub_states.dart';
+import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
 
 
 class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixin<NotificationsState> {
-  final NotificationsUseCases _useCases;
+  final NotificationsUseCase _useCases;
 
   StreamSubscription? _notificationsSubscription;
 
-  NotificationsCubit({required NotificationsUseCases useCases})
-      : _useCases = useCases,
+  NotificationsCubit({required NotificationsUseCase useCase})
+      : _useCases = useCase,
         super(NotificationsState.initial());
 
   static NotificationsCubit get(context) => BlocProvider.of(context);
 
-  Future<void> insertNotificationsRequests({
+  Future<void> insertNotifications({
     required final String userUid,
     required final String userImage,
     required final String userName,
     required final String userAction,
   }) async {
-    emit(state.setLoading());
+    emit(state.copyWith(messageResult: MessageResult.loading()));
 
     try {
       await _useCases.executeInsertNotification(
         userUid: userUid,
         userImage: userImage,
-        userName: userName,
+        fullName: userName,
         userAction: userAction,
       );
 
-      emit(state.insertNotificationSuccess());
+      emit(state.copyWith(messageResult: MessageResult.success()));/
 
-    } catch (e) {
-      final errorHandler = ErrorHandler(
-        error: e,
-        stackTrace: StackTrace.current,
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  messageResult: MessageResult.error(error: failure)
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(state.setError(exception.toString()));
     }
   }
 
-  void getNotificationsRequests({required String userId}) {
-    emit(state.setLoading(stateKey: StateKeys.getNotificationsRequests));
+  void getNotifications() {
+    emit(state.copyWith(subState: LoadingState()));
 
     try {
       _notificationsSubscription?.cancel();
       _notificationsSubscription =
-          _useCases.executeGetNotificationsStream(userId: userId).listen(
+          _useCases.executeGetNotificationsStream().listen(
                 (notifications) {
-              emit(state.getNotificationsSuccess(notifications));
+              emit(state.copyWith(subState: SuccessState()));
             },
             onError: (error) {
-              emit(state.setError(
-                error.toString(),
-                stateKey: StateKeys.getNotificationsRequests,
-              ));
+              handleError(error, StackTrace.current,
+                  onError: (failure) =>
+                      state.copyWith(
+                          subState: ErrorState(failure: failure)
+                      )
+              );
             },
           );
-    } catch (e) {
-      final errorHandler = ErrorHandler(
-        error: e,
-        stackTrace: StackTrace.current,
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(state.setError(
-        exception.toString(),
-        stateKey: StateKeys.getNotificationsRequests,
-      ));
     }
   }
 
@@ -82,7 +81,7 @@ class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixi
     required String userId,
     required String postId,
   }) async {
-    emit(state.setLoading(stateKey: StateKeys.getPostData));
+    emit(state.copyWith(subState: LoadingState()));
 
     try {
       final result = await _useCases.executeGetPostData(
@@ -90,21 +89,18 @@ class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixi
         postId: postId,
       );
 
-      emit(state.getPostDataSuccess(
-        post: result.post,
-        comments: result.comments,
+      emit(state.copyWith(
+        postModel: result.post,
+        commentsList: result.comments,
       ));
 
-    } catch (e) {
-      final errorHandler = ErrorHandler(
-        error: e,
-        stackTrace: StackTrace.current,
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(state.setError(
-        exception.toString(),
-        stateKey: StateKeys.getPostData,
-      ));
     }
   }
 
@@ -112,23 +108,9 @@ class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixi
     required String docId,
     required BuildContext context,
   }) async {
-    try {
-      await _useCases.executeUpdateNotificationsCounter(docId: docId);
-
-      MainLayoutCubit.get(context).deleteNotification();
-      emit(state.updateNotificationsCounterSuccess());
-
-    } catch (e) {
-      final errorHandler = ErrorHandler(
-        error: e,
-        stackTrace: StackTrace.current,
-      );
-      final exception = errorHandler.handleException();
-      emit(state.setError(
-        exception.toString(),
-        stateKey: StateKeys.updateNotificationsCounter,
-      ));
-    }
+    await _useCases.executeUpdateNotificationsCounter(docId: docId);
+    MainCubit.get(context).deleteNotification();/
+    emit(state.copyWith(subState: SuccessState()));
   }
 
   @override

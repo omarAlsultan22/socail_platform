@@ -1,35 +1,33 @@
 import 'dart:async';
 import '../states/main_state.dart';
-import 'package:flutter/material.dart';
-import '../../../../core/data/models/user_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/useCases/main_use_case.dart';
-import '../../../public/presentation/screens/public_screen.dart';
-import '../../../profile/presentation/screens/my_profile_screen.dart';
+import '../../../../core/services/notification_service.dart';
+import 'package:social_app/core/services/user_account_service.dart';
+import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
-import '../../../notifications/presentation/screens/notifications_screen.dart';
-import 'package:social_app/features/friend_interactions/presentation/screens/friend_interactions_screen.dart';
 
 
-class MainLayoutCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
+class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
   final MainUseCases _useCases;
+  final UserAccountService _userAccountService;
+  final NotificationService _notificationService;
 
   StreamSubscription? _notificationsSub;
   StreamSubscription? _friendRequestsSub;
   List<StreamSubscription> _messagesSubs = [];
 
-  final List<Widget> mainScreens = [
-    HomeScreen(),
-    NotificationsScreen(),
-    FriendInteractionsScreen(),
-    ProfileScreen(),
-  ];
-
-  MainLayoutCubit({required MainUseCases useCases})
-      : _useCases = useCases,
+  MainCubit({
+    required MainUseCases useCase,
+    required UserAccountService userAccountService,
+    required NotificationService notificationService
+  })
+      : _useCases = useCase,
+        _userAccountService = userAccountService,
+        _notificationService = notificationService,
         super(MainState.initial());
 
-  static MainLayoutCubit get(context) => BlocProvider.of(context);
+  static MainCubit get(context) => BlocProvider.of(context);
 
   void changeIndexScreen(int index) {
     if (state.currentScreen != index) {
@@ -56,14 +54,19 @@ class MainLayoutCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState>
   }
 
   Future<void> checkOnAnyFriends({required String uId}) async {
-    emit(state.setLoading());
+    emit(state.copyWith(subState: LoadingState()));
 
     try {
       final suggests = await _useCases.executeCheckOnAnyFriends(uId: uId);
       emit(state.updateSuggestsList(suggests));
-      emit(state.setSuccess());
-    } catch (error) {
-      emit(state.setError(error.toString()));
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
@@ -79,10 +82,15 @@ class MainLayoutCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState>
       ]);
 
       emit(state.setMessageListenerActive(true));
-      emit(state.setSuccess());
-    } catch (error) {
+      emit(state.copyWith(subState: SuccessState()));
+    } catch (e, stackTrace) {
       emit(state.setMessageListenerActive(true));
-      emit(state.setError(error.toString()));
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
     }
   }
 
@@ -100,24 +108,23 @@ class MainLayoutCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState>
   }
 
   Future<void> _setupNotificationsListener() async {
-    // جلب البيانات الأولية
     final initialData = await _useCases.executeGetInitialNotificationsCount();
     emit(state.updateNotifications(
       counter: initialData.count,
       docIds: initialData.docIds,
     ));
 
-    // الاستماع للتغييرات
     _notificationsSub = _useCases.executeGetNotificationsStream().listen(
           (data) async {
         final newDocIds = Set<String>.from(data.docIds);
 
         for (var doc in data.docs) {
-          final userModel = await getUserModelData(id: doc['friendId']);
+          final userModel = await _userAccountService.getUserModelData(
+              id: doc['friendId']);
           if (state.isMessageActive) {
-            NotificationService().sendInteractionNotification({
+            _notificationService.sendInteractionNotification({
               ...doc.data() as Map<String, dynamic>,
-              'friendName': userModel.userName,
+              'friendName': userModel.fullName,
             });
           }
         }
@@ -132,20 +139,18 @@ class MainLayoutCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState>
   }
 
   Future<void> _setupFriendRequestsListener() async {
-    // جلب البيانات الأولية
     final initialData = await _useCases.executeGetInitialFriendRequestsCount();
     emit(state.updateFriendRequests(
       counter: initialData.count,
       docIds: initialData.docIds,
     ));
 
-    // الاستماع للتغييرات
     _friendRequestsSub = _useCases.executeGetFriendRequestsStream().listen(
           (data) {
         final newDocIds = Set<String>.from(data.docIds);
 
         if (state.isMessageActive) {
-          NotificationService().sendFriendRequestNotification();
+          _notificationService.sendFriendRequestNotification();
         }
 
         emit(state.updateFriendRequests(
@@ -158,7 +163,6 @@ class MainLayoutCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState>
   }
 
   Future<void> _setupMessagesListener() async {
-    // جلب البيانات الأولية
     final initialData = await _useCases.executeGetInitialMessagesCount();
     _messagesSubs = initialData.subscriptions;
 
@@ -167,9 +171,7 @@ class MainLayoutCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState>
       docIds: initialData.docIds,
     ));
 
-    // جلب أسماء المستندات لإعداد الـ streams
-    final messagesQuery = await FirebaseFirestore.instance.collection(
-        'messages').get();
+    final messagesQuery = await _useCases.getMessages();
 
     for (final doc in messagesQuery.docs) {
       final subscription = _useCases.executeGetMessagesStreamForDoc(
@@ -178,7 +180,7 @@ class MainLayoutCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState>
         state.messagesIds,
       ).listen((data) {
         if (state.isMessageActive) {
-          NotificationService().sendMessageNotification();
+          _notificationService.sendMessageNotification();
         }
 
         emit(state.updateMessages(
@@ -194,7 +196,7 @@ class MainLayoutCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState>
 
   void changeIsMessage() {
     emit(state.setMessageListenerActive(false));
-    emit(state.setSuccess());
+    emit(state.copyWith(subState: SuccessState()));
   }
 
   @override

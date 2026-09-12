@@ -1,26 +1,49 @@
 import 'package:flutter/material.dart';
 import '../cubits/setup_friends_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/service _locator.dart';
 import '../widgets/layouts/setup_friends_layout.dart';
-import 'package:social_app/features/setup_friends/domain/useCases/setup_friends_useCase.dart';
+import 'package:social_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:social_app/core/presentation/widgets/states/initial_state.dart';
+import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
 import 'package:social_app/features/setup_friends/presentation/states/setup_friends_state.dart';
-import 'package:social_app/features/setup_friends/data/repositories_impl/firestore_setup_friends_repository.dart';
 
 
 class AddNewFriendsScreen extends StatelessWidget {
-  const AddNewFriendsScreen({super.key});
+  final CacheHelper cacheHelper;
+
+  const AddNewFriendsScreen({super.key, required this.cacheHelper});
 
   @override
   Widget build(BuildContext context) {
-    final repository = FirestoreSetupFriendsRepository();
-    final useCase = SetupFriendsUseCase(repository: repository);
     return BlocProvider(create: (context) =>
-    SetupFriendsCubit(useCases: useCase)
-      ..getSuggestsUsers(),
+    sl<SetupFriendsCubit>()
+      ..getSuggestsFriends(),
         child: BlocBuilder<SetupFriendsCubit, SetupFriendsState>(
             builder: (context, state) {
-              state.when(onInitial: onInitial, onLoading: onLoading, onLoaded: onLoaded, onError: onError)
-              return AddNewFriendsLayout();
+              final cubit = SetupFriendsCubit.get(context);
+              return state.when(
+                  onInitial: () =>
+                      InitialStateWidget(text: 'No suggested friends found'),
+                  onLoading: () => LoadingStateWidget(),
+                  onLoaded: (data) =>
+                      AddNewFriendsLayout(
+                          onAdd: (friend) =>
+                          cubit
+                            ..addFriend(data.friendsNumber + 1)
+                            ..confirmNewFriend(uId: friend.userId!),
+                          onSave: () async =>
+                          await cacheHelper.setBool(
+                              key: 'friends', value: true),
+                          friendsList: data.friendsList,
+                          friendsNumber: data.friendsNumber,
+                          messageResult: data.messageResult
+                      ),
+                  onError: (failure) =>
+                      failure.buildErrorWidget(
+                          onRetry: () => cubit.getSuggestsFriends()
+                      )
+              );
             }
         )
     );

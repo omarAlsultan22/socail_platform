@@ -1,35 +1,41 @@
-import 'package:social_app/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/constants/user_details.dart';
+import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/services/session_service.dart';
+import '../../../../core/data/data_sources/remote/firestore/firestore_base_service.dart';
 import 'package:social_app/features/setup_friends/domain/repositories/setup_friends_repository.dart';
 
 
-class FirestoreSetupFriendsRepository implements SetupFriendsRepository{
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+class FirestoreSetupFriendsRepository implements SetupFriendsRepository {
+  final SessionService _sessionService;
+  final FirestoreBaseService _repository;
+
+  FirestoreSetupFriendsRepository({
+    required SessionService sessionService,
+    required FirestoreBaseService repository
+  })
+      : _repository = repository,
+        _sessionService = sessionService;
 
   @override
   Future<List<UserModel>> getSuggestsUsers() async {
     final allUsers = await _getAllUsersFromFirebase();
-    final currentUserId = UserDetails.uId;
 
-    final usersData = await _fetchAccountsData(allUsers, currentUserId);
+    final usersData = await _fetchAccountsData(
+        allUsers, _sessionService.currentUid);
     return _filterNullValues(usersData);
   }
 
   Future<QuerySnapshot> _getAllUsersFromFirebase() async {
-    return await _firestore.collection('users').get();
+    return await _repository.getSupCollection(collectionPath: 'users');
   }
 
-  Future<List<UserModel?>> _fetchAccountsData(
-      QuerySnapshot users,
-      String currentUserId
-      ) async {
+  Future<List<UserModel?>> _fetchAccountsData(QuerySnapshot users,
+      String currentUserId) async {
     final futures = users.docs.map((doc) async {
       if (doc.id == currentUserId) return null;
 
-      final account = await _firestore.collection('accounts')
-          .doc(doc.id)
-          .get();
+      final account = await _repository.getSupDoc(
+          collectionPath: 'accounts', docId: doc.id);
 
       if (!account.exists) return null;
 
@@ -45,14 +51,23 @@ class FirestoreSetupFriendsRepository implements SetupFriendsRepository{
 
   @override
   Future<void> confirmNewFriend({
-    required String currentUserId,
     required String friendId,
   }) async {
     await Future.wait([
-      _firestore.collection('users').doc(currentUserId)
-          .collection('friends').doc(friendId).set({'uId': friendId}),
-      _firestore.collection('users').doc(friendId)
-          .collection('friends').doc(currentUserId).set({'uId': currentUserId})
+      _repository.setSubDoc(
+          supCollectionPath: 'users',
+          subCollectionPath: 'friends',
+          subDocId: friendId,
+          supDocId: _sessionService.currentUid,
+          data: {'uId': friendId}
+      ),
+      _repository.setSubDoc(
+          supCollectionPath: 'users',
+          subCollectionPath: 'friends',
+          supDocId: friendId,
+          subDocId: _sessionService.currentUid,
+          data: {'uId': _sessionService.currentUid}
+      )
     ]);
   }
 }

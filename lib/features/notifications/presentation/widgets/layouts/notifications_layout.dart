@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import '../../../../../shared/constants/state_keys.dart';
+import '../../cubits/notifications_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../shared/componentes/post_components.dart';
-import '../../../../../shared/componentes/public_components.dart';
-import 'package:social_app/features/notifications/data/models/notification_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../../../shared/componentes/public_components.dart';
+import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:social_app/features/notifications/data/models/notification_model.dart';
+import 'package:social_app/features/notifications/presentation/states/notifications_state.dart';
 
 
 Widget notificationItemsBuilder(NotificationsModel notificationsModel, BuildContext context) {
   return InkWell(
     onTap: () {
-      navigator(
-          context,
-          ShowPost(notificationsModel: notificationsModel));
+      BuildNavigator.build(
+          context: context,
+          link: ShowPost(notificationsModel: notificationsModel));
     },
     child: Padding(
       padding: const EdgeInsets.only(left: 10.0),
@@ -71,7 +73,7 @@ Widget notificationItemsBuilder(NotificationsModel notificationsModel, BuildCont
 class NotificationListBuilder extends StatelessWidget {
   final List<NotificationsModel> notificationData;
 
-  const NotificationListBuilder({super.key, required this.notificationData});
+  const  NotificationListBuilder({super.key, required this.notificationData});
 
   @override
   Widget build(BuildContext context) {
@@ -176,45 +178,16 @@ class _ShowPostState extends State<ShowPost> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NotificationsCubit, CubitStates>(
+    return BlocBuilder<NotificationsCubit, NotificationsState>(
       builder: (context, state) {
+        state.when(
+            onInitial: onInitial,
+            onLoading: ()=> const Scaffold(
+                body: Center(child: CircularProgressIndicator())),
+            onLoaded: (data) => ,
+            onError: (failure)=> failure.buildErrorWidget(onRetry: _loadPostData)
+            );
         final notificationsCubit = NotificationsCubit.get(context);
-
-        if (state is LoadingState && state.stateKey == StatesKeys.getPostData) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (state is ErrorState && state.stateKey == StatesKeys.getPostData) {
-          return Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back_ios),
-              ),
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.message!),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _loadPostData,
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        if (notificationsCubit.postModel == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
 
         final postModel = notificationsCubit.postModel!;
         final commentsList = notificationsCubit.commentsList;

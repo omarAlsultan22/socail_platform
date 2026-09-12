@@ -4,14 +4,16 @@ import '../../errors/exceptions/base/app_exception.dart';
 
 
 class MessageResult {
+  final Color? color;
   final bool isLoading;
   final String? message;
-  final Color? color;
+  final AppException? error;
 
   const MessageResult({
     this.isLoading = false,
     this.message,
-    this.color
+    this.color,
+    this.error
   });
 
   factory MessageResult.initial(){
@@ -35,8 +37,9 @@ class MessageResult {
     required AppException error,
   }){
     return MessageResult(
-        color: AppColors.errorRed,
-        message: error.message
+        error: error,
+        message: error.message,
+        color: AppColors.errorRed
     );
   }
 }

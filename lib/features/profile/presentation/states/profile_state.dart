@@ -1,8 +1,20 @@
 import '../../cubit.dart';
+import '../../profile_layout/photos_screen.dart';
 import '../../../../core/data/models/post_model.dart';
 import '../../../../core/data/models/user_model.dart';
-import '../../profile_layout/photos_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/data/models/profile_info_model.dart';
+import 'package:social_app/core/data/models/message_result.dart';
+import '../../../../core/presentation/states/app_sub_states.dart';
+import '../../../../core/presentation/states/base/main_app_sub_state.dart';
+import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart';
+
+
+ProfileCubit? profileCubit;
+
+List<PostModel> usersProfileDataList = [];
+
+List<PostModel> imagesList = [];
 
 ProfileCubit? profileCubit;
 
@@ -12,7 +24,7 @@ List<AlbumsButtons> albumsButtons = [
   AlbumsButtons(id: 2, albumImage: null, albumText: 'Cover Photos'),
 ];
 
-InfoModel? profileInfoList;
+ProfileInfoModel? profileInfoList;
 
 List<PostModel> videosList = [];
 
@@ -38,14 +50,13 @@ DocumentSnapshot? lastCoverImageDoc;
 
 String uId = '';
 String userId = '';
-int currentButton = 0;
-int currentIndex = 0;
-bool isRequest = false;
-bool isFriend = false;
+int currentButton = 0; //toggle buttons
+int currentIndex = 0; // toggle albums
+bool isRequest = false;// check friend
+bool isFriend = false;// check friemd
 bool isLoadingMore = true;
 
-class ProfileState{
-  // ✅ بيانات البوستات
+class ProfileState extends MainAppSupState{
   final List<PostModel> postsDataList;
   final List<PostModel> usersProfileDataList;
   final List<PostModel> imagesList;
@@ -53,19 +64,22 @@ class ProfileState{
   final List<PostModel> profileImagesList;
   final List<PostModel> coverImagesList;
 
-  // ✅ بيانات الألبومات
+  // ✅ Album Data
   final List<AlbumsButtons> albumsButtons;
   final List<ImagesScreen> albumsScreens;
 
-  // ✅ بيانات الأصدقاء
+  // ✅ Friends' Data
   final List<UserModel> friendsList;
 
-  // ✅ متغيرات Pagination
+  // ✅ State message
+  final MessageResult messageResult;/this state need this
+
+  // ✅ Pagination variables
   final DocumentSnapshot? lastPostDoc;
   final DocumentSnapshot? lastProfileImageDoc;
   final DocumentSnapshot? lastCoverImageDoc;
 
-  // ✅ متغيرات الحالة
+  // ✅ State variables
   final String uId;
   final String userId;
   final int currentButton;
@@ -77,15 +91,13 @@ class ProfileState{
   final bool hasMoreProfileImages;
   final bool hasMoreCoverImages;
 
-  // ✅ قوائم الأزرار (ثابتة)
+  // ✅ Button lists (fixed)
   final List<ButtonModel> buttons;
   final List<void Function()> listenerScreens;
 
   const ProfileState({
-    super.firstModel,
-    super.secondModel,
-    super.thirdModel,
     required super.subState,
+    required this.messageResult,
     this.postsDataList = const [],
     this.usersProfileDataList = const [],
     this.imagesList = const [],
@@ -117,7 +129,9 @@ class ProfileState{
       firstModel: null,
       secondModel: const [],
       thirdModel: const [],
+      listenerScreens: [],
       subState: const InitialState(),
+      messageResult: MessageResult.initial(),
       albumsButtons: [
         AlbumsButtons(id: 0, albumImage: null, albumText: 'posts Images'),
         AlbumsButtons(id: 1, albumImage: null, albumText: 'Profile Pictures'),
@@ -133,23 +147,26 @@ class ProfileState{
         ButtonModel(id: 1, label: 'photos'),
         ButtonModel(id: 2, label: 'videos')
       ],
-      listenerScreens: [],
     );
   }
-
-  @override
-  LoadedState get dataModels =>
-      TripleModelSuccessState<InfoModel, List<PostModel>, List<UserModel>>(
-        firstModel: firstModel,
-        secondModel: secondModel ?? const [],
-        thirdModel: thirdModel ?? const [],
-      );
 
   ProfileState copyWith({
     InfoModel? firstModel,
     List<PostModel>? secondModel,
     List<UserModel>? thirdModel,
+    String? uId,
+    String? userId,
+    int? currentButton,
+    int? currentIndex,
+    bool? isRequest,
+    bool? isFriend,
+    bool? isLoadingMore,
+    bool? hasMorePosts,
+    bool? hasMoreProfileImages,
+    bool? hasMoreCoverImages,
+    List<ButtonModel>? buttons,
     MainAppSubState? subState,
+    MessageResult? messageResult,
     List<PostModel>? postsDataList,
     List<PostModel>? usersProfileDataList,
     List<PostModel>? imagesList,
@@ -162,24 +179,10 @@ class ProfileState{
     DocumentSnapshot? lastPostDoc,
     DocumentSnapshot? lastProfileImageDoc,
     DocumentSnapshot? lastCoverImageDoc,
-    String? uId,
-    String? userId,
-    int? currentButton,
-    int? currentIndex,
-    bool? isRequest,
-    bool? isFriend,
-    bool? isLoadingMore,
-    bool? hasMorePosts,
-    bool? hasMoreProfileImages,
-    bool? hasMoreCoverImages,
-    List<ButtonModel>? buttons,
-    List<void Function()>? listenerScreens,
+    List<void Function()>? listenerScreens
   }) {
     return ProfileState(
       subState: subState ?? this.subState,
-      firstModel: firstModel ?? this.firstModel,
-      secondModel: secondModel ?? this.secondModel,
-      thirdModel: thirdModel ?? this.thirdModel,
       postsDataList: postsDataList ?? this.postsDataList,
       usersProfileDataList: usersProfileDataList ?? this.usersProfileDataList,
       imagesList: imagesList ?? this.imagesList,
@@ -207,7 +210,7 @@ class ProfileState{
     );
   }
 
-  // ✅ دوال التعديل الخاصة بالبوستات
+  // ✅ Post modification functions
 
   ProfileState addPost(PostModel post) {
     return copyWith(
@@ -236,7 +239,7 @@ class ProfileState{
     return copyWith(hasMorePosts: hasMore);
   }
 
-  // ✅ دوال التعديل الخاصة بالصور والستوريس
+  // ✅ Image and Story editing functions
 
   ProfileState addProfileImage(PostModel image) {
     return copyWith(
@@ -281,7 +284,7 @@ class ProfileState{
     return copyWith(hasMoreCoverImages: hasMore);
   }
 
-  // ✅ دوال التعديل الخاصة بالألبومات
+  // ✅ Album modification functions
 
   ProfileState updateAlbumImage(int albumId, PostModel? image) {
     final updatedButtons = List<AlbumsButtons>.from(albumsButtons);
@@ -307,7 +310,7 @@ class ProfileState{
     return copyWith(albumsScreens: updatedScreens);
   }
 
-  // ✅ دوال التعديل الخاصة بالمستخدم
+  // ✅ User-specific modification functions
 
   ProfileState setUserId(String id) {
     return copyWith(userId: id);
@@ -331,13 +334,13 @@ class ProfileState{
     return copyWith(firstModel: updatedInfo);
   }
 
-  // ✅ دوال التعديل الخاصة بالأصدقاء
+  // ✅ Friend modification functions
 
   ProfileState updateFriendsList(List<UserModel> friends) {
     return copyWith(thirdModel: friends, friendsList: friends);
   }
 
-  // ✅ دوال التعديل الخاصة بالحالات
+  // ✅ State modification functions
 
   ProfileState setCurrentIndex(int index) {
     return copyWith(currentIndex: index);
@@ -363,7 +366,7 @@ class ProfileState{
     return copyWith(listenerScreens: listeners);
   }
 
-  // ✅ دوال الحالة
+  // ✅ State functions
 
   ProfileState setLoadingWithKey(String stateKey) {
     return copyWith(subState: LoadingState(stateKey: stateKey));
@@ -389,6 +392,14 @@ class ProfileState{
   String? get errorMessage => subState is ErrorState
       ? (subState as ErrorState).message
       : null;
+
+  @override
+  LoadedState get dataModels =>
+      TripleModelSuccessState<InfoModel, List<PostModel>, List<UserModel>>(
+        firstModel: firstModel,
+        secondModel: secondModel ?? const [],
+        thirdModel: thirdModel ?? const [],
+      );
 
   @override
   R when<R>({

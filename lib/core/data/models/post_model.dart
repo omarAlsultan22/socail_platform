@@ -1,6 +1,6 @@
 import 'package:social_app/core/data/models/user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/user_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:video_player/video_player.dart';
 import 'comment_model.dart';
 import 'dart:io';
@@ -102,6 +102,48 @@ class PostModel extends UserData{
     );
   }
 
+  PostModel copyWith({
+    File? file,
+    String? docId,
+    bool? isActive,
+    String? userId,
+    String? userName,
+    String? postType,
+    String? userPost,
+    String? pathType,
+    int? likesNumber,
+    String? userText,
+    String? userImage,
+    String? userState,
+    int? sharesNumber,
+    int? commentsNumber,
+    UserData? friendModel,
+    List<UserModel>? likesList,
+    List<CommentModel>? commentsList,
+    VideoPlayerController? videoController
+}) {
+    return PostModel(
+        file: file ?? this.file,
+        docId: docId ?? this.docId,
+        userId: userId ?? this.userId,
+        userName: userName ?? this.userName,
+        isActive: isActive ?? this.isActive,
+        userPost: userPost ?? this.userPost,
+        postType: postType ?? this.postType,
+        pathType: pathType ?? this.pathType,
+        userText: userText ?? this.userText,
+        userImage: userImage ?? this.userImage,
+        userState: userState ?? this.userState,
+        likesList: likesList ?? this.likesList,
+        friendModel: friendModel ?? this.friendModel,
+        likesNumber: likesNumber ?? this.likesNumber,
+        sharesNumber: sharesNumber ?? this.sharesNumber,
+        commentsList: commentsList ?? this.commentsList,
+        commentsNumber: commentsNumber ?? this.commentsNumber,
+        videoController: videoController ?? this.videoController
+    );
+  }
+
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -115,7 +157,6 @@ class PostModel extends UserData{
     };
   }
 
-
   Map<String, dynamic> postToMap() {
     bool isShared = postType == 'shared';
     return {
@@ -123,12 +164,12 @@ class PostModel extends UserData{
       'userId': userId,
       'userText': userText,
       'userPost': userPost,
-      'userState': userState,
       'dateTime': dateTime,
-      'sharesNumber': sharesNumber,
       'postType': postType,
       'pathType': pathType,
       'isActive': isActive,
+      'userState': userState,
+      'sharesNumber': sharesNumber,
       if(isShared)...{
         'friendId': friendId,
         'friendText': friendText,

@@ -1,20 +1,21 @@
 import 'dart:async';
-import '../../../cubit.dart';
 import 'package:flutter/material.dart';
 import '../../cubits/public_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
-import '../../../../../core/constants/user_details.dart';
+import '../../../../../core/di/service _locator.dart';
+import '../../../data/services/online_status_service.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import '../../../../../shared/componentes/post_components.dart';
+import 'package:social_app/features/public/presentation/states/public_state.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 
 class PublicLayout extends StatefulWidget {
   final List<PostModel> status;
-  void Function(PostModel) onPressed;
+  final void Function(PostModel) onPressed;
 
-  PublicLayout({
+  const PublicLayout({
     super.key,
     required this.status,
     required this.onPressed,
@@ -44,7 +45,7 @@ class _PublicLayoutState extends State<PublicLayout> with TickerProviderStateMix
   Timer? timer;
   late Animation<double> animation;
   late AnimationController controller;
-  final onlineStatusService = OnlineStatusService();
+  final onlineStatusService = sl<OnlineStatusService>();
 
 
   @override
@@ -756,8 +757,8 @@ Widget stateLine({
 
 
 class HomeBuilder extends StatefulWidget {
-  final List<List<PostModel>> homeStatus;
-  final List<PostModel> homeData;
+  final List<List<PostModel>> homeStatuses;
+  final List<PostModel> homePosts;
   final void Function(PostModel) deletePost;
   final void Function(PostModel) deleteStatus;
   final Future<void> Function() loadMoreStatus;
@@ -766,8 +767,8 @@ class HomeBuilder extends StatefulWidget {
   final PublicCubit homeCubit;
 
   const HomeBuilder({
-    required this.homeStatus,
-    required this.homeData,
+    required this.homeStatuses,
+    required this.homePosts,
     required this.deletePost,
     required this.deleteStatus,
     required this.loadMoreStatus,
@@ -835,7 +836,7 @@ class _HomeBuilderState extends State<HomeBuilder> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PublicCubit, CubitStates>(
+    return BlocConsumer<PublicCubit, PublicState>(
         listener: (context, state) {},
         builder: (context, state) {
           return ConstrainedBox(
@@ -931,17 +932,17 @@ class _HomeBuilderState extends State<HomeBuilder> with WidgetsBindingObserver {
                       ),
                       Expanded(
                         child: ConditionalBuilder(
-                          condition: widget.homeStatus.isNotEmpty,
+                          condition: widget.homeStatuses.isNotEmpty,
                           builder: (context) {
                             return ListView.builder(
                               controller: _scrollControllerStatus,
                               scrollDirection: Axis.horizontal,
-                              itemCount: widget.homeStatus.length +
+                              itemCount: widget.homeStatuses.length +
                                   (widget.hasMoreStatuses ? 1 : 0),
                               itemBuilder: (context, index) {
-                                if (index < widget.homeStatus.length) {
+                                if (index < widget.homeStatuses.length) {
                                   return HomeState(
-                                    state: widget.homeStatus[index],
+                                    state: widget.homeStatuses[index],
                                     deleteStatus: (object) =>
                                         widget.deleteStatus(object),
                                   );
@@ -981,26 +982,26 @@ class _HomeBuilderState extends State<HomeBuilder> with WidgetsBindingObserver {
 
                 // Posts Section
                 ConditionalBuilder(
-                  condition: widget.homeData.isNotEmpty,
+                  condition: widget.homePosts.isNotEmpty,
                   builder: (context) {
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: widget.homeData.length +
+                      itemCount: widget.homePosts.length +
                           (widget.hasMorePosts ? 1 : 0),
                       itemBuilder: (context, index) {
-                        if (index < widget.homeData.length) {
+                        if (index < widget.homePosts.length) {
                           return HomeItem(
-                            postModel: widget.homeData[index],
+                            postModel: widget.homePosts[index],
                             deletePost: (val) =>
-                              val? widget.deletePost(widget.homeData[index]) : null
+                              val? widget.deletePost(widget.homePosts[index]) : null
                           );
                         }
                         else if (state is SuccessState){
                           return HomeItem(
-                            postModel: widget.homeData[0],
+                            postModel: widget.homePosts[0],
                             deletePost: (val) =>
-                                widget.deletePost(widget.homeData[0]),
+                                widget.deletePost(widget.homePosts[0]),
                           );
                         }
                         else if (widget.hasMorePosts) {

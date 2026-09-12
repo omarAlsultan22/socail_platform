@@ -1,16 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
-import '../../features/main/cubit.dart';
+import '../di/service _locator.dart';
 import 'package:flutter/material.dart';
-import '../constants/user_details.dart';
+import '../../features/main/cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/navigation/navigation_keys.dart';
 import '../../features/main/presentation/screens/main_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
 import '../../features/notifications/presentation/widgets/layouts/notifications_layout.dart';
+import 'package:social_app/core/data/data_sources/remote/firestore/firestore_base_service.dart';
 
 
 class NotificationService {
@@ -23,6 +25,9 @@ class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
+
+  final _sessionService = sl<SessionService>();
+  final _repository = sl<FirestoreBaseService>();
 
   StreamSubscription? _interactionsSubscription;
   StreamSubscription? _friendRequestsSubscription;
@@ -71,10 +76,11 @@ class NotificationService {
 
   Future<void> _saveTokenToFirestore(String token) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(UserDetails.uId)
-          .update({'fcmToken': token});
+      await _repository.updateDoc(
+          collectionPath: 'users',
+          data: {'fcmToken': token},
+          docId: _sessionService.currentUid
+      );
       debugPrint('FCM token saved successfully');
     } catch (e) {
       debugPrint('Error saving FCM token: $e');

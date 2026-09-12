@@ -1,17 +1,18 @@
+import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
+import '../../../constants/auth_strings.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/data/models/message_result.dart';
-import '../../../../../core/presentation/widgets/build_snack_bar.dart';
 
 
 class ForgetPasswordLayout extends StatefulWidget {
   final void Function({
   required String userEmail,
-  }) onUpdate;
+  }) onSubmit;
   final MessageResult messageResult;
   const ForgetPasswordLayout({
     super.key,
-    required this.onUpdate,
+    required this.onSubmit,
     required this.messageResult
   });
 
@@ -19,7 +20,10 @@ class ForgetPasswordLayout extends StatefulWidget {
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMixin{
+class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMixin<ForgetPasswordLayout>{
+  bool _isLocked = false;
+
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
 
   @override
@@ -36,24 +40,27 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
   @override
   void didUpdateWidget(covariant ForgetPasswordLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.messageResult.message != null) {
-      _showMessageResult(widget.messageResult);
-    }
-    setState(() {});
+    handleMessageResult(
+      messageResult: widget.messageResult,
+      onNavigate: _navigateToBack,
+    );
   }
 
-  void _showMessageResult(MessageResult messageResult) {
-    BuildSnackBar.show(
-        context: context,
-        message: messageResult.message!,
-        backgroundColor: messageResult.color!
-    );
+  void _navigateToBack() {
     Navigator.pop(context);
   }
 
+  void _updateLockButton(bool value) {
+    setState(() => _isLocked = value);
+  }
+
   Future<void> _sendResetEmail() async {
+    if (!validateForm(_formKey)) return;
+    _updateLockButton(true);
+    hideKeyboard(context);
     final email = _emailController.text.trim();
-    widget.onUpdate(userEmail: email);
+    widget.onSubmit(userEmail: email);
+    _updateLockButton(false);
   }
 
   @override
@@ -69,14 +76,15 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
             children: [
               TextField(
                 controller: _emailController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: AuthStrings.emailLabel,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _sendResetEmail,
+                style: buttonStyle(),
+                onPressed: _isLocked ? null : _sendResetEmail,
                 child: const Text('Send reset link'),
               ),
             ],

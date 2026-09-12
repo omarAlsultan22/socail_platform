@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import '../../constants/auth_strings.dart';
+import '../widgets/loading_widget.dart';
 import '../../constants/auth_text_style.dart';
 import '../widgets/navigator_with_delay.dart';
-import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_borders.dart';
 import '../../../../core/constants/app_paddings.dart';
-import 'package:test_app/core/constants/app_borders.dart';
-import '../../../../core/data/models/message_result_model.dart';
-import '../../../../core/presentation/widgets/loading_widget.dart';
+import 'package:social_app/core/themes/app_theme.dart';
+import '../../../../core/data/models/message_result.dart';
 import '../../../../core/presentation/widgets/build_snack_bar.dart';
 
 
@@ -19,15 +18,6 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
 
   bool validateForm(GlobalKey<FormState> formKey) {
     return formKey.currentState?.validate() ?? false;
-  }
-
-  BoxDecoration buildBackgroundDecoration() {
-    return const BoxDecoration(
-      image: DecorationImage(
-        image: AssetImage(AuthStrings.backgroundCover),
-        fit: BoxFit.cover,
-      ),
-    );
   }
 
   void handleMessageResult({
@@ -66,12 +56,11 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
   Widget buildPasswordVisibilityToggle({
     required bool isObscure,
     required VoidCallback onToggle,
-    Color iconColor = AppColors.amber,
   }) {
     return IconButton(
       icon: Icon(
         isObscure ? Icons.visibility_off : Icons.visibility,
-        color: iconColor,
+        color: AppTheme.getAdaptiveColor(context),
       ),
       onPressed: onToggle,
     );
@@ -84,15 +73,14 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
   }) {
     if (isLoading) {
       return isSaveButton
-          ? const SizedBox(
+          ? SizedBox(
         width: 20,
         height: 20,
         child: CircularProgressIndicator(
           strokeWidth: 2.0,
-          color: AppColors.white,
+          color: AppTheme.getAdaptiveColor(context),
         ),
-      )
-          : LoadingWidget.sizedBox;
+      ) : LoadingWidget.sizedBox;
     }
 
     return Text(
@@ -107,9 +95,9 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
 
   ButtonStyle buttonStyle({EdgeInsetsGeometry? padding}) {
     return ElevatedButton.styleFrom(
-      backgroundColor: AppColors.blue700,
+      backgroundColor: AppTheme.getAdaptiveColor(context),
       padding: padding ?? AppPaddings.verticalSymmetric,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: AppBorders.borderRadius_16,
       ),
       elevation: 2.0,

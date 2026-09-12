@@ -1,10 +1,12 @@
 import '../../cubit.dart';
 import '../cubits/public_cubit.dart';
 import 'package:flutter/material.dart';
+import '../widgets/layouts/public_layout.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/user_details.dart';
 import '../../../../shared/componentes/public_components.dart';
-import '../widgets/layouts/public_layout.dart';
+import '../../../../core/presentation/widgets/states/initial_state.dart';
+import 'package:social_app/features/public/presentation/states/public_state.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -61,41 +63,48 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PublicCubit, CubitStates>(
+    return BlocBuilder<PublicCubit, PublicState>(
       builder: (context, state) {
-        return SingleChildScrollView(
-          controller: _scrollControllerPosts,
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: [
-              PostInput(
-                context: context,
-              ),
+        return state.when(
+          onInitial: () => const InitialStateWidget(),
+          onLoading: () => const Center(child: CircularProgressIndicator()),
+          onLoaded: (data) {
+            return SingleChildScrollView(
+              controller: _scrollControllerPosts,
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: [
+                  PostInput(
+                    context: context,
+                  ),
 
-              Container(
-                height: 1.0,
-                color: Colors.grey,
+                  Container(
+                    height: 1.0,
+                    color: Colors.grey,
+                  ),
+                  HomeBuilder(
+                    homeStatuses: _cubit.homeStatusesList,
+                    homePosts: _cubit.homePostsList,
+                    deletePost: (postModel) {
+                      if (postModel.userId == UserDetails.uId) {
+                        ProfileCubit.get(context).deletePost(postModel: postModel);
+                      }
+                      _cubit.deletePost(postModel: postModel);
+                    },
+                    deleteStatus: (statusModel) {
+                      _cubit.deleteStatus(
+                          statusModel: statusModel);
+                    },
+                    hasMorePosts: _cubit.hasMorePosts,
+                    hasMoreStatuses: _cubit.hasMoreStatuses,
+                    homeCubit: _cubit, hasMoreStatuses: null,
+                    loadMoreStatus: () => _cubit.getHomeStatus(),
+                  )
+                ],
               ),
-              HomeBuilder(
-                homeStatus: _cubit.homeStatusesList,
-                homeData: _cubit.homePostsList,
-                deletePost: (postModel) {
-                  if (postModel.userId == UserDetails.uId) {
-                    ProfileCubit.get(context).deletePost(postModel: postModel);
-                  }
-                  _cubit.deletePost(postModel: postModel);
-                },
-                deleteStatus: (statusModel) {
-                  _cubit.deleteStatus(
-                      statusModel: statusModel);
-                },
-                loadMoreStatus: () => _cubit.getHomeStatus(),
-                hasMoreStatuses: _cubit.hasMoreStatuses,
-                hasMorePosts: _cubit.hasMorePosts,
-                homeCubit: _cubit, hasMoreStatuses: null,
-              )
-            ],
-          ),
+            );
+          },
+          onError: (error) => error.buildErrorWidget(),
         );
       },
     );

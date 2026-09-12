@@ -10,32 +10,32 @@ abstract class PublicRepository {
     required int limit,
   });
 
-  Future<QuerySnapshot> getDeletedPosts();
-
-  Future<DocumentSnapshot> getAccountData(String userId);
-
   Future<QuerySnapshot> getFriendsForStatus({
     required DocumentSnapshot? lastStatusDoc,
     required int limit,
   });
 
-  Future<QuerySnapshot> getDeletedStatuses();
-
-  Future<QuerySnapshot> getStatusesForUser(String userId);
-
-  Future<void> addPostToFirestore(PostModel postModel);
-
-  Future<void> addStatusToFirestore(PostModel statusModel);
-
-  Future<void> deletePostFromFirestore(String postId);
-
   Future<void> addToDeletedPosts(String postId);
-
-  Future<void> deleteStatusFromFirestore(String statusId);
 
   Future<void> addToDeletedStatuses(String statusId);
 
-  Future<QuerySnapshot> getFriendsList({required String uId});
+  Future<void> deletePostFromFirestore(String postId);
+
+  Future<void> addPostToFirestore(PostModel postModel);
+
+  Future<DocumentSnapshot> getAccountData(String userId);
+
+  Future<void> deleteStatusFromFirestore(String statusId);
+
+  Future<QuerySnapshot> getStatusesForUser(String userId);
+
+  Future<void> addStatusToFirestore(PostModel statusModel);
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getFriendsList();
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getDeletedPosts();
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getDeletedStatuses();
 
   Future<Map<String, dynamic>> getAccountMap(DocumentSnapshot userDoc);
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:social_app/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/features/main/data/repositories_impl/firestore_main_repository.dart';
@@ -9,6 +10,10 @@ class MainUseCases {
 
   MainUseCases({required FirestoreMainRepository repository})
       : _repository = repository;
+
+  Future<QuerySnapshot<Object?>> getMessages() async {
+    return await _repository.getAllMessages();
+    }
 
   Future<List<UserModel>> executeCheckOnAnyFriends(
       {required String uId}) async {

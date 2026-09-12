@@ -26,11 +26,11 @@ class SearchLayout extends StatelessWidget {
         padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
-            Container(
+            SizedBox(
               width: 40.0,
               height: 40.0,
               child: ClipOval(
-                child: Image.network(
+                child: Image.network(/add for all images error image
                   userModel.userImage!,
                   fit: BoxFit.cover,
                 ),
@@ -39,7 +39,7 @@ class SearchLayout extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(
                   left: 10.0),
-              child: Text(userModel.userName!,
+              child: Text(userModel.fullName!,
                 style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold

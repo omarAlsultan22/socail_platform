@@ -527,7 +527,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       for (final coverDoc in coversSnapshot.docs) {
         try {
-          final postFields = coverDoc.data() as Map<String, dynamic>;
+          final postFields = coverDoc.data();
           final docRef = firebase.collection('posts').doc(coverDoc.id);
 
           final likes = (await docRef.collection('likesList').count().get()).count;
