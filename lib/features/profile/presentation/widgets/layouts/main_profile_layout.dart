@@ -1,4 +1,6 @@
 import '../../../cubit.dart';
+import '../build_camera_icon.dart';
+import '../build_buttons_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/core/data/models/post_model.dart';
@@ -135,7 +137,8 @@ class _MainProfileLayoutState extends State<MainProfileLayout> {
           onTap: () {
             BuildNavigator.build(
               context: context,
-              link: ViewImageScreen(postModel: widget.profileInfoModel.coverImage!),
+              link: ViewImageScreen(
+                  postModel: widget.profileInfoModel.coverImage!),
             );
           },
           child: Container(
@@ -191,7 +194,8 @@ class _MainProfileLayoutState extends State<MainProfileLayout> {
             onTap: () {
               BuildNavigator.build(
                   context: context,
-                  link: ViewImageScreen(postModel: widget.profileInfoModel.profileImage!));
+                  link: ViewImageScreen(
+                      postModel: widget.profileInfoModel.profileImage!));
             },
             child:
             SizedBox(
@@ -267,133 +271,7 @@ class _MainProfileLayoutState extends State<MainProfileLayout> {
 }
 
 
-class BuildButtonsList extends StatefulWidget {
-  final List<ButtonModel> items;
-  final Function(int)? onTap;
 
-  const BuildButtonsList({
-    required this.items,
-    this.onTap,
-    super.key,
-  });
-
-  @override
-  State<BuildButtonsList> createState() => _BuildButtonsListState();
-}
-
-class _BuildButtonsListState extends State<BuildButtonsList> {
-  late int _activeButtonId;
-
-  @override
-  void initState() {
-    super.initState();
-    _activeButtonId = 0;
-  }
-
-  void changeIndex(int id) {
-    _activeButtonId = id;
-    widget.onTap!(id);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: widget.items.length,
-            itemBuilder: (context, index) {
-              final button = widget.items[index];
-              final isActive = button.id == _activeButtonId;
-
-              return ButtonItem(
-                  button: button,
-                  isActive: isActive,
-                  onTap: () {
-                    changeIndex(button.id);
-                  },
-              );
-            },
-          ),
-    );
-  }
-}
-
-
-class ButtonItem extends StatelessWidget {
-  final ButtonModel button;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const ButtonItem({
-    required this.button,
-    required this.isActive,
-    required this.onTap,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isActive ? Colors.black : Colors.white,
-          borderRadius: BorderRadius.circular(30.0),
-          border: Border.all(color: Colors.black),
-        ),
-        child: TextButton(
-          onPressed: onTap,
-          child: Center(
-            child: Text(
-              button.label,
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w700,
-                color: isActive ? Colors.white : Colors.black,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-
-class BuildCameraIcon extends StatelessWidget {
-  final double left;
-  final double top;
-  final VoidCallback onTap;
-
-  const BuildCameraIcon({
-    required this.left,
-    required this.top,
-    required this.onTap,
-    super.key
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: left, top: top),
-      child: ClipOval(
-        child: Material(
-          child: InkWell(
-            splashColor: Colors.blue,
-            onTap: onTap,
-            child:
-            SizedBox(
-              width: 30.0,
-              height: 30.0,
-              child: Icon(Icons.camera),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 
 
