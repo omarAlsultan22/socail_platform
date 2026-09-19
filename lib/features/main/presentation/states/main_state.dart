@@ -1,85 +1,76 @@
 import 'package:social_app/core/data/models/user_model.dart';
-import '../../../../core/presentation/states/app_sub_states.dart';
-import '../../../../core/errors/exceptions/base/app_exception.dart';
-import '../../../../core/presentation/states/base/main_app_sub_state.dart';
-import 'package:social_app/features/main/data/models/main_success_state.dart';
-import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart';
 
 
-class MainState extends MainAppSupState {
-  final int currentScreenIndex;
-  final int friendRequestsCounter;
-  final int notificationsCounter;
-  final int messagesCounter;
+class MainState {
+  final int currentScreen;
+  final int friendshipCount;
+  final int notificationsCount;
+  final int messagesCount;
   final Set<String> friendRequestsDocIds;
   final Set<String> notificationsDocIds;
-  final Set<String> messagesDocIds;
+  final Set<String> messagesIds;
   final List<UserModel> suggestsList;
-  final bool isMessageListenerActive;
+  final bool isMessageActive;
 
   const MainState({
-    required super.subState,
-    this.messagesCounter = 0,
-    this.currentScreenIndex = 0,
-    this.notificationsCounter = 0,
-    this.friendRequestsCounter = 0,
+    this.messagesCount = 0,
+    this.currentScreen = 0,
+    this.notificationsCount = 0,
+    this.friendshipCount = 0,
     this.suggestsList = const [],
-    this.messagesDocIds = const {},
+    this.messagesIds = const {},
     this.notificationsDocIds = const {},
     this.friendRequestsDocIds = const {},
-    this.isMessageListenerActive = false,
+    this.isMessageActive = false,
   });
 
   factory MainState.initial() {
     return MainState(
-      subState: InitialState(),
-      messagesCounter: 0,
-      currentScreenIndex: 0,
-      notificationsCounter: 0,
-      friendRequestsCounter: 0,
+      messagesCount: 0,
+      currentScreen: 0,
+      notificationsCount: 0,
+      friendshipCount: 0,
       suggestsList: const [],
-      messagesDocIds: const {},
+      messagesIds: const {},
       notificationsDocIds: const {},
       friendRequestsDocIds: const {},
-      isMessageListenerActive: false,
+      isMessageActive: false,
     );
   }
 
   MainState copyWith({
-    int? firstModel,
-    Never? thirdModel,
-    int? messagesCounter,
-    UserModel? secondModel,
-    int? currentScreenIndex,
-    int? notificationsCounter,
-    MainAppSubState? subState,
-    int? friendRequestsCounter,
-    Set<String>? messagesDocIds,
+    int? messagesCount,
+    int? currentScreen,
+    bool? isMessageActive,
+    int? notificationsCount,
+    int? friendshipCount,
+    Set<String>? messagesIds,
     List<UserModel>? suggestsList,
-    bool? isMessageListenerActive,
     Set<String>? notificationsDocIds,
     Set<String>? friendRequestsDocIds,
   }) {
     return MainState(
-      subState: subState ?? this.subState,
       suggestsList: suggestsList ?? this.suggestsList,
-      messagesDocIds: messagesDocIds ?? this.messagesDocIds,
-      messagesCounter: messagesCounter ?? this.messagesCounter,
-      currentScreenIndex: currentScreenIndex ?? this.currentScreenIndex,
+      messagesIds: messagesIds ?? this.messagesIds,
+      messagesCount: messagesCount ?? this.messagesCount,
+      currentScreen: currentScreen ?? this.currentScreen,
       notificationsDocIds: notificationsDocIds ?? this.notificationsDocIds,
-      notificationsCounter: notificationsCounter ?? this.notificationsCounter,
+      notificationsCount: notificationsCount ?? this.notificationsCount,
       friendRequestsDocIds: friendRequestsDocIds ?? this.friendRequestsDocIds,
-      friendRequestsCounter: friendRequestsCounter ??
-          this.friendRequestsCounter,
-      isMessageListenerActive: isMessageListenerActive ??
-          this.isMessageListenerActive,
+      friendshipCount: friendshipCount ??
+          this.friendshipCount,
+      isMessageActive: isMessageActive ??
+          this.isMessageActive,
     );
+  }
+
+  MainState successState() {
+    return copyWith();
   }
 
   MainState changeScreen(int index) {
     return copyWith(
-      currentScreenIndex: index,
-      subState: SuccessState(),
+      currentScreen: index,
     );
   }
 
@@ -88,9 +79,8 @@ class MainState extends MainAppSupState {
     required Set<String> docIds,
   }) {
     return copyWith(
-      friendRequestsCounter: counter,
+      friendshipCount: counter,
       friendRequestsDocIds: docIds,
-      subState: SuccessState(),
     );
   }
 
@@ -99,7 +89,7 @@ class MainState extends MainAppSupState {
     required Set<String> docIds,
   }) {
     return copyWith(
-      notificationsCounter: counter,
+      notificationsCount: counter,
       notificationsDocIds: docIds,
     );
   }
@@ -109,8 +99,8 @@ class MainState extends MainAppSupState {
     required Set<String> docIds,
   }) {
     return copyWith(
-      messagesCounter: counter,
-      messagesDocIds: docIds,
+      messagesCount: counter,
+      messagesIds: docIds,
     );
   }
 
@@ -121,27 +111,27 @@ class MainState extends MainAppSupState {
   }
 
   MainState decrementFriendRequest() {
-    if (friendRequestsCounter > 0) {
+    if (friendshipCount > 0) {
       return copyWith(
-        friendRequestsCounter: friendRequestsCounter - 1,
+        friendshipCount: friendshipCount - 1,
       );
     }
     return this;
   }
 
   MainState decrementNotification() {
-    if (notificationsCounter > 0) {
+    if (notificationsCount > 0) {
       return copyWith(
-        notificationsCounter: notificationsCounter - 1,
+        notificationsCount: notificationsCount - 1,
       );
     }
     return this;
   }
 
   MainState decrementMessage() {
-    if (messagesCounter > 0) {
+    if (messagesCount > 0) {
       return copyWith(
-        messagesCounter: messagesCounter - 1,
+        messagesCount: messagesCount - 1,
       );
     }
     return this;
@@ -149,44 +139,7 @@ class MainState extends MainAppSupState {
 
   MainState setMessageListenerActive(bool active) {
     return copyWith(
-      isMessageListenerActive: active,
-    );
-  }
-
-  int get messagesCount => messagesCounter;
-
-  int get currentScreen => currentScreenIndex;
-
-  Set<String> get messagesIds => messagesDocIds;
-
-  int get notificationsCount => notificationsCounter;
-
-  bool get isMessageActive => isMessageListenerActive;
-
-  int get friendRequestsCount => friendRequestsCounter;
-
-
-  @override
-  MainSuccessState get dataModels => MainSuccessState(
-      suggestsList: suggestsList,
-      messagesDocIds: messagesDocIds,
-      currentScreenIndex: currentScreenIndex,
-      notificationsDocIds: notificationsDocIds,
-      friendRequestsDocIds: friendRequestsDocIds
-  );
-
-  @override
-  R when<R>({
-    required R Function() onInitial,
-    required R Function() onLoading,
-    required R Function(MainSuccessState) onLoaded,
-    required R Function(AppException) onError
-  }) {
-    return subState.when(
-        onInitial: onInitial,
-        onLoading: onLoading,
-        onLoaded: () => onLoaded.call(dataModels),
-        onError: (failure) => onError.call(failure)
+      isMessageActive: active,
     );
   }
 }

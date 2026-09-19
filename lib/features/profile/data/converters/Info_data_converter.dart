@@ -1,6 +1,6 @@
-import '../../../../core/data/models/profile_info_model.dart';
 import '../../../../core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/data/models/profile_info_model.dart';
 
 
 class InfoDataConverter {

@@ -1,11 +1,12 @@
 import 'dart:async';
+import '../../../../core/data/models/user_model.dart';
 import '../repositories/public_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/services/online_status_service.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/services/user_account_service.dart';
-import 'package:social_app/features/public/data/models/public_posts.dart';
+import 'package:social_app/core/data/models/paginated_posts.dart';
 import 'package:social_app/features/public/data/models/public_statuses.dart';
 
 
@@ -23,13 +24,13 @@ class PublicUseCase {
         _sessionService = sessionService,
         _userAccountService = userAccountService;
 
-  Future<PublicPosts> executeGetHomePosts({
+  Future<PaginatedPosts> executeGetHomePosts({
     required DocumentSnapshot? lastPostDoc,
     required bool hasMorePosts,
   }) async {
     if (!hasMorePosts) {
-      return PublicPosts(
-          homePostsList: [],
+      return PaginatedPosts(
+          postsList: [],
           hasMorePosts: false,
           lastPostDoc: lastPostDoc
       );
@@ -55,8 +56,8 @@ class PublicUseCase {
         .toList();
 
     if (querySnapshot.docs.isEmpty) {
-      return PublicPosts(
-          homePostsList: [],
+      return PaginatedPosts(
+          postsList: [],
           hasMorePosts: false,
           lastPostDoc: lastPostDoc
       );
@@ -106,8 +107,8 @@ class PublicUseCase {
 
     posts.sort((a, b) => b.dateTime!.compareTo(a.dateTime!));
 
-    return PublicPosts(
-      homePostsList: posts,
+    return PaginatedPosts(
+      postsList: posts,
       lastPostDoc: newLastDoc,
       hasMorePosts: posts.isNotEmpty,
     );
@@ -251,11 +252,11 @@ class PublicUseCase {
     }
   }
 
-  Future<void> executeGetUserAccount() async {
+  Future<UserModel> executeGetUserAccount() async {
     final userModel = await _userAccountService.getUserModelData(
-        id: _sessionService.currentUid);
-    UserDetails.name = userModel.userName!;
-    UserDetails.image = userModel.userImage!;
+        id: _sessionService.currentUid
+    );
+    return userModel;
   }
 
   Stream<bool> executeGetUserOnlineStatus(

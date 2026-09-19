@@ -1,6 +1,6 @@
-import 'package:social_app/features/profile/profile_layout/photos_screen.dart';
-import 'package:social_app/features/profile/profile_layout/posts_screen.dart';
-import 'package:social_app/features/profile/profile_layout/videos_screen.dart';
+import 'package:social_app/features/profile/presentation/widgets/layouts/photos_screen.dart';
+import 'package:social_app/features/profile/presentation/widgets/layouts/posts_screen.dart';
+import 'package:social_app/features/profile/presentation/widgets/layouts/videos_screen.dart';
 
 import '../../core/presentation/states/app_sub_states.dart';
 import '../../core/data/models/post_model.dart';
@@ -33,7 +33,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     AlbumsButtons(id: 2, albumImage: null, albumText: 'Cover Photos'),
   ];
 
-  ProfileInfoModel? profileInfoList;
+  ProfileInfoModel? profileInfoModel;
 
   List<PostModel> videosList = [];
 
@@ -145,7 +145,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     try {
       final fireStore = FirebaseFirestore.instance;
       UserModel friendsInfo = UserModel(
-          userId: UserDetails.uId,
+          userId: UserDetails._uId,
           dateTime: DateTime.now()
       );
       await fireStore.collection('users').doc(userId)
@@ -168,7 +168,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     try {
       await FirebaseFirestore.instance.collection('users').doc(userId)
           .collection(
-          'requests').doc(UserDetails.uId).delete();
+          'requests').doc(UserDetails._uId).delete();
       emit(SuccessState.empty());
     }
     catch (error) {
@@ -183,12 +183,12 @@ class ProfileCubit extends Cubit<CubitStates> {
     emit(LoadingState());
     try {
       await Future.wait([
-        FirebaseFirestore.instance.collection('users').doc(UserDetails.uId)
+        FirebaseFirestore.instance.collection('users').doc(UserDetails._uId)
             .collection(
             'friends').doc(userId).delete(),
         FirebaseFirestore.instance.collection('users').doc(userId)
             .collection(
-            'friends').doc(UserDetails.uId).delete()
+            'friends').doc(UserDetails._uId).delete()
       ]);
       emit(SuccessState.empty());
     }
@@ -216,7 +216,7 @@ class ProfileCubit extends Cubit<CubitStates> {
       InfoDataConverter profileInfoInstance = await InfoDataConverter
           .fromDocumentSnapshot(
           userInfo as DocumentSnapshot, userAccount as DocumentSnapshot);
-      profileInfoList = profileInfoInstance.infoModel;
+      profileInfoModel = profileInfoInstance.infoModel;
       setUserId(uid);
       emit(SuccessState.empty());
     } catch (e) {
@@ -238,10 +238,10 @@ class ProfileCubit extends Cubit<CubitStates> {
       if (getUserInfo.exists) {
         final userInfo = getUserInfo.data() as Map<String, dynamic>;
 
-        profileInfoList = ProfileInfoModel.fromJson(userInfo);
+        profileInfoModel = ProfileInfoModel.fromJson(userInfo);
 
-        print(profileInfoList!.userRelational);
-        print(profileInfoList!.userState);
+        print(profileInfoModel!.userRelational);
+        print(profileInfoModel!.userState);
         emit(SuccessState.empty());
       }
     } catch (e) {
@@ -289,7 +289,7 @@ class ProfileCubit extends Cubit<CubitStates> {
 
       if (postModel.postType == 'profileImage') {
         profileImagesList.insert(0, postModel);
-        profileInfoList?.profileImage = postModel;
+        profileInfoModel?.profileImage = postModel;
         await insertImage(
           postModel: postModel,
           collection: 'accounts',
@@ -300,7 +300,7 @@ class ProfileCubit extends Cubit<CubitStates> {
         }
       } else {
         coverImagesList.insert(0, postModel);
-        profileInfoList?.coverImage = postModel;
+        profileInfoModel?.coverImage = postModel;
         await insertImage(
           postModel: postModel,
           collection: 'info',
@@ -323,7 +323,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     final firestore = FirebaseFirestore.instance;
     final docRef = firestore.collection('posts').doc();
 
-    await firestore.collection(collection).doc(UserDetails.uId).set({
+    await firestore.collection(collection).doc(UserDetails._uId).set({
       imageType: docRef.path,
     }, SetOptions(merge: true));
 
@@ -680,7 +680,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     emit(LoadingState());
     try {
       final docRef = FirebaseFirestore.instance.collection('users').doc(
-          UserDetails.uId)
+          UserDetails._uId)
           .collection('requests').doc(userId);
 
       final doc = await docRef.get();
@@ -699,7 +699,7 @@ class ProfileCubit extends Cubit<CubitStates> {
     emit(LoadingState());
     try {
       final docRef = FirebaseFirestore.instance.collection('users').doc(
-          UserDetails.uId)
+          UserDetails._uId)
           .collection('friends').doc(userId);
 
       final doc = await docRef.get();

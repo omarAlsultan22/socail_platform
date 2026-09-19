@@ -1,33 +1,63 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/di/service _locator.dart';
 import '../../../../public/presentation/screens/public_screen.dart';
 import '../../../../search/presentation/screens/search_screen.dart';
-import '../../../../profile/presentation/screens/my_profile_screen.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import '../../../../profile/presentation/screens/user_profile_screen.dart';
 import '../../../../notifications/presentation/screens/notifications_screen.dart';
 import 'package:social_app/features/settings/presentation/screens/settings_screen.dart';
-import '../../../../friends_interactions/presentation/screens/friends_interactions_screen.dart';
+import 'package:social_app/features/friendship/presentation/screens/friendship_screen.dart';
 
 
 class MainLayout extends StatelessWidget {
   final int currentScreen;
+  final int friendshipCount;
+  final int notificationsCount;
+  final TabController tabController;
 
   const MainLayout({
     super.key,
+    required this.tabController,
     required this.currentScreen,
+    required this.friendshipCount,
+    required this.notificationsCount,
   });
 
   static const List<Widget> mainScreens = [
-    HomeScreen(),
+    PublicScreen(),
     NotificationsScreen(),
-    FriendInteractionsScreen(),
-    ChatScreen(),
-    ProfileScreen(),
+    FriendshipScreen(),
+    UserProfileScreen(),
   ];
+
+  Widget _buildTabIcon({
+    int? count,
+    required int index,
+    required IconData activeIcon,
+    required IconData inactiveIcon,
+  }) {
+    return Stack(
+      children: [
+        Tab(icon: Icon(
+            tabController.index == index ? activeIcon : inactiveIcon)),
+        if (count != null && count > 0)
+          Positioned(
+            top: 0,
+            right: 0,
+            child: CircleAvatar(
+              radius: 8,
+              backgroundColor: Colors.red,
+              child: Text(
+                count.toString(),
+                style: const TextStyle(fontSize: 10),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    Scaffold(
+    return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
         scrolledUnderElevation: 0.0,
@@ -83,12 +113,17 @@ class MainLayout extends StatelessWidget {
           ),
           IconButton(
             onPressed: () =>
-    BuildNavigator.build(context: context, link:  const SettingsScreen()),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsScreen()
+                  ),
+                ),
             icon: const Icon(Icons.menu_outlined),
           ),
         ],
         bottom: TabBar(
-          controller: _tabController,
+          controller: tabController,
           tabs: [
             _buildTabIcon(
               index: 0,
@@ -99,22 +134,16 @@ class MainLayout extends StatelessWidget {
               index: 1,
               activeIcon: Icons.notifications,
               inactiveIcon: Icons.notifications_outlined,
-              count: _cubit.notificationsCount['counter'],
+              count: notificationsCount,
             ),
             _buildTabIcon(
               index: 2,
               activeIcon: Icons.group,
               inactiveIcon: Icons.group_outlined,
-              count: _cubit.friendRequestsCount['counter'],
+              count: friendshipCount,
             ),
             _buildTabIcon(
               index: 3,
-              activeIcon: CupertinoIcons.chat_bubble_2_fill,
-              inactiveIcon: CupertinoIcons.chat_bubble_2,
-              count: _cubit.messagesCount['counter'],
-            ),
-            _buildTabIcon(
-              index: 4,
               activeIcon: Icons.home,
               inactiveIcon:  Icons.home_outlined,
             ),

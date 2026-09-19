@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import '../../../di/service _locator.dart';
 import '../../../data/models/post_model.dart';
 import 'package:social_app/features/profile/cubit.dart';
+import 'package:social_app/core/services/session_service.dart';
 import '../../../../features/interactions/likes_list/cubit.dart';
 import '../../../../features/interactions/likes_list/likes_list.dart';
-import 'package:social_app/features/public/utils/time_ago_helper.dart';
+import 'package:social_app/core/utils/time_ago_helper.dart';
 import 'package:social_app/features/public/constants/public_constants.dart';
 import '../../../../features/interactions/comments_list/comments_list.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:social_app/core/presentation/widgets/new/icon_button_widget.dart';
-import 'package:social_app/features/public/presentation/screens/create_post_screen.dart';
+import 'package:social_app/features/public/presentation/cubits/public_cubit.dart';
+import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 
 
 class ViewImageScreen extends StatefulWidget {
@@ -227,6 +229,7 @@ class _ViewImageScreenState extends State<ViewImageScreen> {
                             titleName: 'Share Post',
                             buttonName: 'Share Now',
                             postModel: widget.postModel,
+                            uId: sl<SessionService>(),
                             onPressed: (postModel) {
                               BuildNavigator.build(
                                 context: context,
@@ -234,10 +237,11 @@ class _ViewImageScreenState extends State<ViewImageScreen> {
                                   titleName: 'Share Post',
                                   buttonName: 'Share Now',
                                   postModel: widget.postModel,
+                                  uId: sl<SessionService>(),
                                   onPressed: (newPostModel) {
-                                    HomeCubit
+                                    PublicCubit/
                                         .get(context).insertAndUpdatePosts(postModel: newPostModel);
-                                    ProfileCubit
+                                    ProfileCubit/
                                         .get(context)
                                         .insertAndUpdatePosts(postModel: newPostModel);
                                   },

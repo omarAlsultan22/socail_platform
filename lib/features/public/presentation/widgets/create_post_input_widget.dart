@@ -1,15 +1,19 @@
-import '../../../profile/cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:social_app/features/public/presentation/cubits/public_cubit.dart';
-import 'package:social_app/features/public/presentation/screens/create_post_screen.dart';
+import '../../../../core/di/service _locator.dart';
+import 'package:social_app/core/data/models/post_model.dart';
+import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 
 
 class PostCreationWidget extends StatelessWidget {
-  final BuildContext context;
-
+  final String? userImage;
+  final void Function(PostModel) insertAndUpdatePublicPosts;
+  final void Function(PostModel) insertAndUpdateProfilePosts;
   const PostCreationWidget({
-    required this.context,
     super.key,
+    this.userImage,
+    required this.insertAndUpdatePublicPosts,
+    required this.insertAndUpdateProfilePosts
   });
 
   @override
@@ -36,15 +40,13 @@ class PostCreationWidget extends StatelessWidget {
                 context, MaterialPageRoute(
                 builder: (context) =>
                     CreatePostScreen(
-                        titleName: 'Create Post',
-                        buttonName: 'Post',
-                        onPressed: (postModel) {/
-                          PublicCubit
-                              .get(context).insertAndUpdatePosts(postModel: postModel);
-                          ProfileCubit.get(context)
-                              .insertAndUpdatePosts(postModel:
-                          postModel);
-                        }
+                      titleName: 'Create Post',
+                      buttonName: 'Post',
+                      uId: sl<SessionService>(),
+                      onPressed: (postModel) {
+                        insertAndUpdatePublicPosts(postModel);
+                        insertAndUpdateProfilePosts(postModel);
+                      },
                     )
             )
             );
@@ -65,11 +67,11 @@ class PostCreationWidget extends StatelessWidget {
                           child: SizedBox(
                             width: 50.0,
                             height: 50.0,
-                            child:  UserDetails.image.isNotEmpty?
+                            child:  (userImage != null && userImage!.isNotEmpty)?
                             Image.network(
-                              UserDetails.image,
+                              userImage!,
                               fit: BoxFit.cover,
-                            ) : Icon(Icons.person),
+                            ) : Icon(Icons.person, size: 50.0),
                           ),
                         ),
                       ),

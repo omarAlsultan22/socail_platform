@@ -58,7 +58,7 @@ class _BuildUserInfoSectionState extends State<BuildUserInfoSection> {
                   value: e.value,
                   child: Row(
                     children: [
-                      e.icon,
+                      Icon(e.icon),
                       const SizedBox(width: 8.0),
                       Text(e.text),
                     ],

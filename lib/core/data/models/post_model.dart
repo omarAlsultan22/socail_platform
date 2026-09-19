@@ -53,8 +53,6 @@ class PostModel extends UserData{
     this.videoController
   });
 
-
-
   factory PostModel.fromFirestoreToPost(Map<String, dynamic> json) {
     final isShared = json['postType'] == 'shared';
     return PostModel(
@@ -105,6 +103,7 @@ class PostModel extends UserData{
   PostModel copyWith({
     File? file,
     String? docId,
+    bool? isOnline,
     bool? isActive,
     String? userId,
     String? userName,
@@ -116,8 +115,16 @@ class PostModel extends UserData{
     String? userImage,
     String? userState,
     int? sharesNumber,
+    DateTime? dateTime,
     int? commentsNumber,
+    String? friendId,
+    String? friendName,
+    String? friendImage,
+    String? friendText,
+    String? friendState,
+    bool? friendIsOnline,
     UserData? friendModel,
+    DateTime? originalDateTime,
     List<UserModel>? likesList,
     List<CommentModel>? commentsList,
     VideoPlayerController? videoController
@@ -143,6 +150,9 @@ class PostModel extends UserData{
         videoController: videoController ?? this.videoController
     );
   }
+
+  bool get userPostIsEmpty => userPost!.isEmpty;
+  double get aspectRatio => videoController!.value.aspectRatio;
 
   @override
   Map<String, dynamic> toJson() {

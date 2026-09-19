@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class UserAccount implements JsonModel{
+  bool? isOnline;
   final String userId;
   final String firstName;
   final String lastName;
   final String fullName;
-  bool? isOnline;
   final DocumentReference? userImage;
 
   UserAccount({

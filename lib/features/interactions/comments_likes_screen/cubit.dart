@@ -23,7 +23,7 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
     try {
       final fireStore = FirebaseFirestore.instance;
       UserModel friendsInfo = UserModel(
-          userId: UserDetails.uId,
+          userId: UserDetails._uId,
           dateTime: DateTime.now()
       );
       await fireStore.collection('users').doc(userId)
@@ -50,7 +50,7 @@ class CommentsLikesCubit extends Cubit<CubitStates> {
 
     final firebase = FirebaseFirestore.instance;
 
-    firebase.collection('users').doc(UserDetails.uId).collection('friends').get().then((friendsSnapshot) {
+    firebase.collection('users').doc(UserDetails._uId).collection('friends').get().then((friendsSnapshot) {
       final friendsList = friendsSnapshot.docs.map((doc) => doc.id).toList();
 
       _likesSubscription = firebase.collection('posts')

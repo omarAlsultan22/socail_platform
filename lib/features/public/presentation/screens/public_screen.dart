@@ -1,30 +1,37 @@
-import '../../cubit.dart';
+import '../widgets/public_builder.dart';
 import '../cubits/public_cubit.dart';
 import 'package:flutter/material.dart';
-import '../widgets/layouts/public_layout.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/user_details.dart';
-import '../../../../shared/componentes/public_components.dart';
+import '../../../../core/di/service _locator.dart';
+import '../../../../core/services/session_service.dart';
+import 'package:social_app/features/profile/cubit.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
+import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
 import 'package:social_app/features/public/presentation/states/public_state.dart';
+import 'package:social_app/features/public/presentation/widgets/create_post_input_widget.dart';
 
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class PublicScreen extends StatefulWidget {
+  const PublicScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<PublicScreen> createState() => _PublicScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _PublicScreenState extends State<PublicScreen> {
   final ScrollController _scrollControllerPosts = ScrollController();
-  late PublicCubit _cubit;
+  late PublicCubit _publicCubit;
+  late ProfileCubit _profileCubit;
+  late SessionService _sessionService;
+
   bool _isLoadingMore = false;
 
   @override
   void initState() {
     super.initState();
-    _cubit = PublicCubit.get(context);
+    _sessionService = sl<SessionService>();
+    _publicCubit = PublicCubit.get(context);
+    _profileCubit = ProfileCubit.get(context);
     _scrollControllerPosts.addListener(_onScrollPosts);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -33,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScrollPosts() {
-    if (_isLoadingMore || !_cubit.hasMorePosts) return;
+    if (_isLoadingMore || !_publicCubit.hasMorePosts) return;
 
     final double scrollPosition = _scrollControllerPosts.position.pixels;
     final double maxScrollExtent = _scrollControllerPosts.position
@@ -49,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_isLoadingMore) return;
 
     setState(() => _isLoadingMore = true);
-    await _cubit.getHomePosts().whenComplete(() =>
+    await _publicCubit.getHomePosts().whenComplete(() =>
         setState(() => _isLoadingMore = false)
     );
   }
@@ -67,38 +74,37 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, state) {
         return state.when(
           onInitial: () => const InitialStateWidget(),
-          onLoading: () => const Center(child: CircularProgressIndicator()),
+          onLoading: () => const LoadingStateWidget(),
           onLoaded: (data) {
             return SingleChildScrollView(
               controller: _scrollControllerPosts,
               scrollDirection: Axis.vertical,
               child: Column(
                 children: [
-                  PostInput(
-                    context: context,
+                  PostCreationWidget(
+                      userImage: data.userImage,
+                      insertAndUpdatePublicPosts: (postModel) =>
+                          _publicCubit.insertAndUpdatePosts(
+                              postModel: postModel),
+                      insertAndUpdateProfilePosts: (postModel) =>
+                          _profileCubit.insertAndUpdatePosts(postModel:
+                          postModel)
                   ),
-
                   Container(
                     height: 1.0,
                     color: Colors.grey,
                   ),
-                  HomeBuilder(
-                    homeStatuses: _cubit.homeStatusesList,
-                    homePosts: _cubit.homePostsList,
-                    deletePost: (postModel) {
-                      if (postModel.userId == UserDetails.uId) {
-                        ProfileCubit.get(context).deletePost(postModel: postModel);
-                      }
-                      _cubit.deletePost(postModel: postModel);
-                    },
-                    deleteStatus: (statusModel) {
-                      _cubit.deleteStatus(
-                          statusModel: statusModel);
-                    },
-                    hasMorePosts: _cubit.hasMorePosts,
-                    hasMoreStatuses: _cubit.hasMoreStatuses,
-                    homeCubit: _cubit, hasMoreStatuses: null,
-                    loadMoreStatus: () => _cubit.getHomeStatus(),
+                  PublicBuilder(
+                    userImage: data.userImage,
+                    homeStatuses: data.homeStatusesList,
+                    sessionService: _sessionService,
+                    homePosts: data.homePostsList,
+                    hasMorePosts: data.hasMorePosts,
+                    hasMoreStatuses: data.hasMoreStatuses,
+                    loadMoreStatus: () => _publicCubit.getHomeStatus(),
+                    insertAndUpdateStatuses: (statusModel) =>
+                        _publicCubit.insertAndUpdateStatuses(
+                            statusModel: statusModel),
                   )
                 ],
               ),

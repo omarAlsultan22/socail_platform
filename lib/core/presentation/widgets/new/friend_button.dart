@@ -7,7 +7,7 @@ class FriendButton extends StatefulWidget {//public components
   final Color? backgroundColor;
   final VoidCallback onPressed;
 
-  FriendButton({
+  const FriendButton({
     required this.buttonName,
     this.textColor,
     this.backgroundColor,

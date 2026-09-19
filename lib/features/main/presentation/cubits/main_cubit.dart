@@ -5,7 +5,6 @@ import '../../domain/useCases/main_use_case.dart';
 import '../../../../core/services/notification_service.dart';
 import 'package:social_app/core/services/user_account_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
-import 'package:social_app/core/presentation/states/app_sub_states.dart';
 
 
 class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
@@ -36,7 +35,7 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
   }
 
   void deleteRequest() {
-    if (state.friendRequestsCount > 0) {
+    if (state.friendshipCount > 0) {
       emit(state.decrementFriendRequest());
     }
   }
@@ -54,18 +53,16 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
   }
 
   Future<void> checkOnAnyFriends({required String uId}) async {
-    emit(state.copyWith(subState: LoadingState()));
+    emit(state.successState());
 
     try {
       final suggests = await _useCases.executeCheckOnAnyFriends(uId: uId);
       emit(state.updateSuggestsList(suggests));
-      emit(state.copyWith(subState: SuccessState()));
+      emit(state.successState());
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(
-                  subState: ErrorState(failure: failure)
-              )
+              state.copyWith()
       );
     }
   }
@@ -82,14 +79,12 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
       ]);
 
       emit(state.setMessageListenerActive(true));
-      emit(state.copyWith(subState: SuccessState()));
+      emit(state.successState());
     } catch (e, stackTrace) {
       emit(state.setMessageListenerActive(true));
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(
-                  subState: ErrorState(failure: failure)
-              )
+              state.copyWith()
       );
     }
   }
@@ -124,7 +119,7 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
           if (state.isMessageActive) {
             _notificationService.sendInteractionNotification({
               ...doc.data() as Map<String, dynamic>,
-              'friendName': userModel.fullName,
+              'friendName': userModel.userName,
             });
           }
         }
@@ -133,7 +128,7 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
           counter: data.count,
           docIds: newDocIds,
         ));
-        emit(state.copyWith(subState: SuccessState()));
+        emit(state.successState());
       },
     );
   }
@@ -157,7 +152,7 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
           counter: data.count,
           docIds: newDocIds,
         ));
-        emit(state.copyWith(subState: SuccessState()));
+        emit(state.successState());
       },
     );
   }
@@ -187,7 +182,7 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
           counter: data.count,
           docIds: data.docIds,
         ));
-        emit(state.copyWith(subState: SuccessState()));
+        emit(state.successState());
       });
 
       _messagesSubs.add(subscription);
@@ -196,7 +191,7 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
 
   void changeIsMessage() {
     emit(state.setMessageListenerActive(false));
-    emit(state.copyWith(subState: SuccessState()));
+    emit(state.successState());
   }
 
   @override

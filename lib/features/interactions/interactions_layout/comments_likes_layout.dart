@@ -29,7 +29,7 @@ class CommentsLikesLayout extends StatelessWidget {
                     userId: userId,
                     onPressed: () =>
                         CommentsLikesCubit.get(context).insertFriendsRequests(
-                          userId: UserDetails.uId,
+                          userId: UserDetails._uId,
                         ),
                   ),
               fallback: Center(

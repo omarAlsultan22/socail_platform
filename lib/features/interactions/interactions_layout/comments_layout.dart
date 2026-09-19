@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../models/comment_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../modules/main_screen/cubit.dart';
-import '../../shared/constants/user_details.dart';
-import '../../shared/cubit_states/cubit_states.dart';
-import '../../shared/componentes/post_components.dart';
-import '../../shared/componentes/public_components.dart';
-import '../../modules/interactions/comments_list/cubit.dart';
-import '../../modules/profile_screen/user_profile_screen.dart';
-import '../../modules/interactions/comments_likes_screen/comments_likes_screen.dart';
+import '../../../core/data/models/comment_model.dart';
 
 
 class CommentsLayout extends StatelessWidget {
@@ -106,8 +98,8 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
   }
 
   void deleteComment() {
-    if (widget.userId == UserDetails.uId ||
-        widget.comment.userId == UserDetails.uId) {
+    if (widget.userId == UserDetails._uId ||
+        widget.comment.userId == UserDetails._uId) {
       showExitDialog(
           type: 'comment',
           context: context,
@@ -121,7 +113,7 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
     if (widget.userId != null && widget.userId == widget.comment.userId) {
     Navigator.of(context).popUntil((route) => route.settings.name == '/user_profile');
     }
-    else if (widget.comment.userId != UserDetails.uId) {
+    else if (widget.comment.userId != UserDetails._uId) {
       navigator(context, UserProfile(userId: widget.comment.userId!));
     }
     else {

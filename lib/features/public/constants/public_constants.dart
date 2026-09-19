@@ -15,7 +15,7 @@ class PublicConstants {
     StatusElement(value: 'friends', icon: Icons.person, text: 'Friends'),
   ];
 
-  static IconData getStatus(String status){
+  static IconData getStatus(String? status){
     return postStatuses[status] ?? Icons.public;
   }
 }

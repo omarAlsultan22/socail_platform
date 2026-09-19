@@ -1,6 +1,6 @@
-import '../features/main/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:social_app/features/profile/presentation/cubits/user_profile_cubit.dart';
 import '../features/profile/cubit.dart';
 import '../core/di/service _locator.dart';
 import '../core/themes/theme_notifier.dart';
@@ -14,6 +14,7 @@ import '../features/search/presentation/cubits/search_cubit.dart';
 import 'package:social_app/core/data/data_sources/local/cache_helper.dart';
 import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
 import '../features/notifications/presentation/cubits/notifications_cubit.dart';
+import 'package:social_app/features/public/presentation/cubits/public_cubit.dart';
 
 
 class MyApp extends StatelessWidget {
@@ -21,7 +22,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cacheHelper = CacheHelper();
     final lightTheme = ThemeData(
       colorScheme: ColorScheme.light(
         primary: Colors.black,
@@ -95,27 +95,26 @@ class MyApp extends StatelessWidget {
         sl<MainCubit>()
           ..checkOnAnyFriends(uId: sl<SessionService>())
           ..startListeningToCounters()), //
-        BlocProvider<HomeCubit>(
+    BlocProvider<CommentsCubit>(create: (context) =>
+    CommentsCubit()),/check all providers
+    BlocProvider<PublicCubit>(
             create: (context) =>
-            HomeCubit(
-                firestore: FirebaseFirestore.instance)
+            sl<PublicCubit>()
               ..getHomePosts()
               ..getHomeStatus()
               ..getUserAccount()
         ),
 
-        BlocProvider<ProfileCubit>(
-          create: (context) => ProfileCubit(),/
-          key: const ValueKey('myProfile'),
+        BlocProvider<UserProfileCubit>(
+          create: (context) => sl<UserProfileCubit>(),
         ),
 
         BlocProvider<NotificationsCubit>(
             create: (context) => sl<NotificationsCubit>()),
         BlocProvider<FriendsCubit>(create: (context) => FriendsCubit()),
-        BlocProvider<CommentsCubit>(create: (context) => CommentsCubit()),/check all providers
       ],
       child: ChangeNotifierProvider(
-      create: (_) => ThemeNotifier(cacheHelper: cacheHelper),
+      create: (_) => ThemeNotifier(cacheHelper: sl<CacheHelper>()),
       child: Consumer<ThemeNotifier>(
         builder: (context, themeNotifier, child) {
           return MaterialApp(

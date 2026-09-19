@@ -1,7 +1,8 @@
-import '../../data/models/public_posts.dart';
+import '../../../../core/data/models/paginated_posts.dart';
 import '../../data/models/public_statuses.dart';
 import '../../../../core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/data/models/user_details.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
@@ -11,70 +12,69 @@ import 'package:social_app/features/public/data/models/public_success_state.dart
 
 class PublicState extends MainAppSupState {
   final bool? isOnline;
-  final bool isLoadingPosts;
-  final PublicPosts postsModel;
+  final PaginatedPosts postsModel;
+  final UserDetails userDetails;
   final PublicStatuses statusesModel;
 
   const PublicState({
     this.isOnline,
     required super.subState,
-    this.isLoadingPosts = false,
     required this.postsModel,
+    required this.userDetails,
     required this.statusesModel,
   });
 
   factory PublicState.initial() {
     return PublicState(
       isOnline: null,
-      isLoadingPosts: false,
       subState: InitialState(),
-      postsModel: const PublicPosts(),
+      userDetails: UserDetails(),
+      postsModel: const PaginatedPosts(),
       statusesModel: const PublicStatuses(),
     );
   }
 
   PublicState copyWith({
     PublicStatuses? statusesModel,
-    PublicPosts? postsModel,
-    List<PostModel>? thirdModel,
     MainAppSubState? subState,
-    bool? isLoadingPosts,
+    UserDetails? userDetails,
+    PaginatedPosts? postsModel,
     bool? isOnline,
   }) {
     return PublicState(
+      isOnline: isOnline ?? this.isOnline,
       subState: subState ?? this.subState,
       postsModel: postsModel ?? this.postsModel,
+      userDetails: userDetails ?? this.userDetails,
       statusesModel: statusesModel ?? this.statusesModel,
-      isLoadingPosts: isLoadingPosts ?? this.isLoadingPosts,
-      isOnline: isOnline ?? this.isOnline,
     );
   }
 
   PublicState updatePostsList(List<PostModel> newPosts, {bool append = false}) {
-    final currentPosts = postsModel.homePostsList;
+    final currentPosts = postsModel.postsList;
     final updatedPosts = append ? [...currentPosts, ...newPosts] : newPosts;
 
     return copyWith(
       postsModel: postsModel.copyWith(
-        homePostsList: updatedPosts,
+        postsList: updatedPosts,
       ),
     );
   }
 
   PublicState addPostAtBeginning(PostModel post) {
-    final currentPosts = postsModel.homePostsList;
+    final currentPosts = postsModel.postsList;
     return copyWith(
       postsModel: postsModel.copyWith(
-        homePostsList: [post, ...currentPosts],
+        postsList: [post, ...currentPosts],
       ),
     );
   }
 
   PublicState removePost(String postId) {
-    final currentPosts = postsModel.homePostsList;
+    final currentPosts = postsModel.postsList;
     return copyWith(
       postsModel: postsModel.copyWith(
-        homePostsList: currentPosts.where((p) => p.docId != postId).toList(),
+        postsList: currentPosts.where((p) => p.docId != postId).toList(),
       ),
     );
   }
@@ -84,10 +84,10 @@ class PublicState extends MainAppSupState {
     required DocumentSnapshot? lastDoc,
     required bool hasMore,
   }) {
-    final currentPosts = postsModel.homePostsList;
+    final currentPosts = postsModel.postsList;
     return copyWith(
       postsModel: postsModel.copyWith(
-        homePostsList: [...currentPosts, ...newPosts],
+        postsList: [...currentPosts, ...newPosts],
         lastPostDoc: lastDoc,
         hasMorePosts: hasMore,
       ),
@@ -194,8 +194,16 @@ class PublicState extends MainAppSupState {
 
   // ✅ Status functions
 
-  PublicState setLoadingPosts(bool loading) {
-    return copyWith(isLoadingPosts: loading);
+  PublicState setLoadingState() {
+    return copyWith(subState: LoadingState());
+  }
+
+  PublicState setSuccessState() {
+    return copyWith(subState: SuccessState());
+  }
+
+  PublicState setErrorState(AppException failure) {
+    return copyWith(subState: ErrorState(failure: failure));
   }
 
   PublicState setOnlineStatus(bool? isOnline) {
@@ -212,7 +220,7 @@ class PublicState extends MainAppSupState {
 
   DocumentSnapshot? get lastPostDoc => postsModel.lastPostDoc;
 
-  List<PostModel> get homePostsList => postsModel.homePostsList;
+  List<PostModel> get homePostsList => postsModel.postsList;
 
   DocumentSnapshot? get lastStatusDoc => statusesModel.lastStatusDoc;
 
@@ -222,6 +230,7 @@ class PublicState extends MainAppSupState {
   PublicSuccessState get dataModels =>
       PublicSuccessState(
           postsModel: postsModel,
+          userDetails: userDetails,
           statusesModel: statusesModel
       );
 

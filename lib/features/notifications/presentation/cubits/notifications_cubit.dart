@@ -10,43 +10,20 @@ import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
 
 
 class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixin<NotificationsState> {
+  final MainCubit _mainCubit;
   final NotificationsUseCase _useCases;
 
   StreamSubscription? _notificationsSubscription;
 
-  NotificationsCubit({required NotificationsUseCase useCase})
+  NotificationsCubit({
+    required MainCubit mainCubit,
+    required NotificationsUseCase useCase
+  })
       : _useCases = useCase,
+        _mainCubit = mainCubit,
         super(NotificationsState.initial());
 
   static NotificationsCubit get(context) => BlocProvider.of(context);
-
-  Future<void> insertNotifications({
-    required final String userUid,
-    required final String userImage,
-    required final String userName,
-    required final String userAction,
-  }) async {
-    emit(state.copyWith(messageResult: MessageResult.loading()));
-
-    try {
-      await _useCases.executeInsertNotification(
-        userUid: userUid,
-        userImage: userImage,
-        fullName: userName,
-        userAction: userAction,
-      );
-
-      emit(state.copyWith(messageResult: MessageResult.success()));/
-
-    } catch (e, stackTrace) {
-      handleError(e, stackTrace,
-          onError: (failure) =>
-              state.copyWith(
-                  messageResult: MessageResult.error(error: failure)
-              )
-      );
-    }
-  }
 
   void getNotifications() {
     emit(state.copyWith(subState: LoadingState()));
@@ -56,8 +33,15 @@ class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixi
       _notificationsSubscription =
           _useCases.executeGetNotificationsStream().listen(
                 (notifications) {
-              emit(state.copyWith(subState: SuccessState()));
-            },
+                  if(notifications.isEmpty){
+                    emit(state.copyWith(subState: InitialState()));
+                    return;
+                  }
+                  emit(state.copyWith(
+                    subState: SuccessState(),
+                    notificationsList: notifications)
+                  );
+                },
             onError: (error) {
               handleError(error, StackTrace.current,
                   onError: (failure) =>
@@ -77,39 +61,12 @@ class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixi
     }
   }
 
-  Future<void> getPostData({
-    required String userId,
-    required String postId,
-  }) async {
-    emit(state.copyWith(subState: LoadingState()));
-
-    try {
-      final result = await _useCases.executeGetPostData(
-        userId: userId,
-        postId: postId,
-      );
-
-      emit(state.copyWith(
-        postModel: result.post,
-        commentsList: result.comments,
-      ));
-
-    } catch (e, stackTrace) {
-      handleError(e, stackTrace,
-          onError: (failure) =>
-              state.copyWith(
-                  subState: ErrorState(failure: failure)
-              )
-      );
-    }
-  }
-
   Future<void> updateNotificationsCounter({
     required String docId,
     required BuildContext context,
   }) async {
     await _useCases.executeUpdateNotificationsCounter(docId: docId);
-    MainCubit.get(context).deleteNotification();/
+    _mainCubit.deleteNotification();
     emit(state.copyWith(subState: SuccessState()));
   }
 

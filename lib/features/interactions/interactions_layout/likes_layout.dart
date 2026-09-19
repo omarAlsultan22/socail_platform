@@ -28,7 +28,7 @@ class LikesLayout extends StatelessWidget {
                     userId: userId,
                     onPressed: () =>
                         LikesCubit.get(context).insertFriendsRequests(
-                          userId: UserDetails.uId,
+                          userId: UserDetails._uId,
                         ),
                   ),
               fallback: Center(

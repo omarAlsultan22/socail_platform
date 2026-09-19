@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 class SmallMenuWidget extends StatelessWidget {
   final String buttonName;
-  final Future<void> Function() onPressed;
   final BuildContext context;
+  final Future<void> Function() onPressed;
 
   const SmallMenuWidget({
     required this.buttonName,

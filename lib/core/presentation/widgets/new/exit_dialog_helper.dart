@@ -16,7 +16,7 @@ class ExitDialogHelper {
             onPressed: () {
               onPressed(true);
               Navigator.of(context).popUntil((route) => route.isFirst);
-              ScaffoldMessenger.of(context).showSnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(/
                 const SnackBar(
                   content: Text('Deleted Successfully'),
                   backgroundColor: Colors.green,

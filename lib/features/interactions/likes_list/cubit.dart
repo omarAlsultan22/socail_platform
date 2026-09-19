@@ -24,7 +24,7 @@ class LikesCubit extends Cubit<CubitStates> {
     try {
       final fireStore = FirebaseFirestore.instance;
       UserModel friendsInfo = UserModel(
-          userId: UserDetails.uId,
+          userId: UserDetails._uId,
           dateTime: DateTime.now()
       );
       await fireStore.collection('users').doc(userId)
@@ -45,7 +45,7 @@ class LikesCubit extends Cubit<CubitStates> {
     UserModel userModel;
     try {
       final data = await FirebaseFirestore.instance
-          .collection('accounts').doc(UserDetails.uId).get();
+          .collection('accounts').doc(UserDetails._uId).get();
       final json = await getAccountMap(userDoc: data);
 
       json['docId'] = (postModel.likesList!.length + 1).toString();
@@ -64,7 +64,7 @@ class LikesCubit extends Cubit<CubitStates> {
       final docRef = FirebaseFirestore.instance
           .collection('posts')
           .doc(postId);
-      if(userId == UserDetails.uId) {
+      if(userId == UserDetails._uId) {
         docRef.update({'isActive': true});
       }
       final action = docRef.collection('likesList').doc(userId);
@@ -94,7 +94,7 @@ class LikesCubit extends Cubit<CubitStates> {
 
     final firebase = FirebaseFirestore.instance;
 
-    firebase.collection('users').doc(UserDetails.uId).collection('friends').get().then((friendsSnapshot) {
+    firebase.collection('users').doc(UserDetails._uId).collection('friends').get().then((friendsSnapshot) {
       final friendsList = friendsSnapshot.docs.map((doc) => doc.id).toList();
 
       _likesSubscription = firebase.collection('posts')
@@ -146,7 +146,7 @@ class LikesCubit extends Cubit<CubitStates> {
       final docRef = FirebaseFirestore.instance
           .collection('posts')
           .doc(postId);
-      if(userId == UserDetails.uId) {
+      if(userId == UserDetails._uId) {
         docRef.update({'isActive': false});
       }
       final action = docRef.collection('likesList').doc(userId);

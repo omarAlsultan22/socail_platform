@@ -25,7 +25,7 @@ class UserModelLayout extends StatelessWidget {
       Navigator.of(context).popUntil((route) =>
       route.settings.name == '/user_profile');
     }
-    else if (like.userId != UserDetails.uId) {
+    else if (like.userId != UserDetails._uId) {
       navigator(context, UserProfile(userId: like.userId!));
     }
     else {

@@ -1,33 +1,40 @@
 import 'dart:async';
 import 'dart:convert';
-import '../di/service _locator.dart';
 import 'package:flutter/material.dart';
-import '../../features/main/cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/navigation/navigation_keys.dart';
+import '../../features/main/presentation/cubits/main_cubit.dart';
 import '../../features/main/presentation/screens/main_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
-import '../../features/notifications/presentation/widgets/layouts/notifications_layout.dart';
+import 'package:social_app/features/post_detail/presentation/screens/post_detail_screen.dart';
 import 'package:social_app/core/data/data_sources/remote/firestore/firestore_base_service.dart';
 
 
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
+  static NotificationService? _instance;
 
-  factory NotificationService() => _instance;
+  factory NotificationService({
+    required MainCubit cubit,
+    required SessionService sessionService,
+    required FirestoreBaseService repository
+  }) {
+    _instance ??= NotificationService._internal(cubit, sessionService, repository);
+    return _instance!;
+  }
 
-  NotificationService._internal();
+  NotificationService._internal(this._cubit, this._sessionService, this._repository);
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
 
-  final _sessionService = sl<SessionService>();
-  final _repository = sl<FirestoreBaseService>();
+  late MainCubit _cubit;
+  final SessionService _sessionService;
+  final FirestoreBaseService _repository;
 
   StreamSubscription? _interactionsSubscription;
   StreamSubscription? _friendRequestsSubscription;
@@ -38,6 +45,7 @@ class NotificationService {
     if (_initialized) return;
 
     try {
+      _cubit = MainCubit.get(NavigationKeys.context);
       await _setupFirebase();
       await _setupLocalNotifications();
       _setupInteractedMessage();
@@ -157,18 +165,16 @@ class NotificationService {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-  static Future<void> _firebaseMessagingBackgroundHandler(
+  Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     debugPrint("Handling a background message: ${message.messageId}");
     await handleBackgroundNotification(message);
   }
 
-  static Future<void> handleBackgroundNotification(
+  Future<void> handleBackgroundNotification(
       RemoteMessage message) async {
     await setupBackgroundIsolate();
-    final notificationService = NotificationService();
-    await notificationService.initialize();
-    notificationService.handleNotification(message.data);
+    handleNotification(message.data);
   }
 
   void handleNotification(Map<String, dynamic> data) {
@@ -176,38 +182,46 @@ class NotificationService {
       final type = data['type'];
       debugPrint('Handling notification of type: $type');
 
-      switch (type) {
-        case 'friends_request':
-          NavigationKeys.currentState?.push(
-            MaterialPageRoute(
-                builder: (context) {
-                  MainLayoutCubit.get(context).changeIndexScreen(2);
-                  return MainScreen();
-                }
-            ),
-          );
-          break;
-        case 'thumb_up':
-        case 'mode_comment':
-        case 'share':
-          NavigationKeys.currentState?.push(
-            MaterialPageRoute(
-                builder: (context) {
-                  MainLayoutCubit.get(context).changeIndexScreen(1);
-                  return ShowPost(notificationsModel: NotificationsModel(
-                      userId: data['data']['userId'] ?? '',
-                      userAction: data['data']['userAction'] ?? '',
-                      iconName: data['data']['iconName'] ?? '',
-                      friendId: data['data']['friendId'] ?? '',
-                      postId: data['data']['postId'] ?? '',
-                      docId: data['data']['docId'] ?? ''));
-                }
-            ),
-          );
-          break;
-        default:
-          debugPrint('Unknown notification type: $type');
-      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (NavigationKeys.currentState == null) {
+          debugPrint('Navigator not ready yet');
+          return;
+        }
+
+        switch (type) {
+          case 'friends_request':
+            NavigationKeys.currentState?.push(
+              MaterialPageRoute(
+                  builder: (context) {
+                    _cubit.changeIndexScreen(2);
+                    return MainScreen();
+                  }
+              ),
+            );
+            break;
+          case 'thumb_up':
+          case 'mode_comment':
+          case 'share':
+            NavigationKeys.currentState?.push(
+              MaterialPageRoute(
+                  builder: (context) {
+                    _cubit.changeIndexScreen(1);
+                    return PostDetailScreen(
+                        notificationsModel: NotificationsModel(/handle this
+                            userId: data['data']['userId'] ?? '',
+                            userAction: data['data']['userAction'] ?? '',
+                            iconName: data['data']['iconName'] ?? '',
+                            friendId: data['data']['friendId'] ?? '',
+                            postId: data['data']['postId'] ?? '',
+                            docId: data['data']['docId'] ?? ''));
+                  }
+              ),
+            );
+            break;
+          default:
+            debugPrint('Unknown notification type: $type');
+        }
+      });
     } catch (e) {
       debugPrint('Error handling notification: $e');
     }

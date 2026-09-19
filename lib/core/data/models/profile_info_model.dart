@@ -12,8 +12,8 @@ class ProfileInfoModel extends UserModel{
   late PostModel? coverImage;
 
   ProfileInfoModel({
-    super.userName,
     super.userId,
+    super.userName,
     super.isOnline,
     this.coverImage,
     this.profileImage,
@@ -48,6 +48,8 @@ class ProfileInfoModel extends UserModel{
         isOnline: json['isOnline'] ?? false
     );
   }
+
+  String? get userPost => coverImage!.userPost;
 
   ProfileInfoModel copyWith({
     String? userId,

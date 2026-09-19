@@ -6,12 +6,15 @@ import 'package:social_app/core/presentation/widgets/new/publishing_confirmation
 
 
 class BuildImageUploadSection<T> extends StatefulWidget {
-  final PostModel? postModel;
+  final String uId;
+  PostModel? postModel;
   final void Function(PostModel) onTap;
-  const BuildImageUploadSection({
+  BuildImageUploadSection({
+    super.key,
     this.postModel,
-    required this.onTap,
-    super.key});
+    required this.uId,
+    required this.onTap
+    });
 
   @override
   State<BuildImageUploadSection<T>> createState() => _BuildImageUploadSection<T>();
@@ -21,10 +24,11 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
 
   void _setMedia(File file, String pathType) {
     setState(() {
-      widget.postModel!
-        ..file = file
-        ..userPost = file.path
-        ..pathType = pathType;
+      widget.postModel = widget.postModel!.copyWith(
+        file: file,
+        userPost: file.path,
+        pathType: pathType
+      );
     });
     widget.onTap(widget.postModel!);
   }
@@ -98,7 +102,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
         child: Column(
           children: [
             if(widget.postModel!.userText != null &&
-                widget.postModel!.userId != UserDetails.uId)...[
+                widget.postModel!.userId != widget.uId)...[
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Text(

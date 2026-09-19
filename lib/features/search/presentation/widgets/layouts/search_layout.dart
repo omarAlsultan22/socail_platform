@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:social_app/core/data/models/user_model.dart';
-import '../../../../profile/presentation/screens/user_profile_screen.dart';
+import '../../../../profile/presentation/screens/friend_profile_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
@@ -20,7 +20,7 @@ class SearchLayout extends StatelessWidget {
     return InkWell(
       onTap: () {
         BuildNavigator.build(
-            context: context, link: UserProfile(userId: userModel.userId!));
+            context: context, link: FriendProfileScreen(userId: userModel.userId!));
       },
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -30,7 +30,7 @@ class SearchLayout extends StatelessWidget {
               width: 40.0,
               height: 40.0,
               child: ClipOval(
-                child: Image.network(/add for all images error image
+                child: Image.network(
                   userModel.userImage!,
                   fit: BoxFit.cover,
                 ),
@@ -39,7 +39,7 @@ class SearchLayout extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(
                   left: 10.0),
-              child: Text(userModel.fullName!,
+              child: Text(userModel.userName!,
                 style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold

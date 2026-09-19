@@ -8,6 +8,7 @@ import '../data/data_sources/local/cache_helper.dart';
 import '../errors/exceptions/components_exception.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../features/public/data/services/online_status_service.dart';
+import '../data/data_sources/remote/firestore/firestore_base_service.dart';
 
 
 class InitializationController {
@@ -54,7 +55,10 @@ class InitializationController {
     _onlineStatusService = sl<OnlineStatusService>();
     await _onlineStatusService.initialize();
 
-    _notificationService = NotificationService();
+    _notificationService = NotificationService(
+        sessionService: sl<SessionService>(),
+        repository: sl<FirestoreBaseService>()
+    );
     await _notificationService.initialize();
 
     _initialMessage = await FirebaseMessaging.instance.getInitialMessage();

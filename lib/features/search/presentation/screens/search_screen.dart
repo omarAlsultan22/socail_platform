@@ -1,8 +1,9 @@
-import '../../../../core/di/service _locator.dart';
 import '../cubits/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/service _locator.dart';
 import 'package:social_app/features/search/utils/search_debouncer.dart';
+import '../../../../core/presentation/widgets/states/loading_state.dart';
 import 'package:social_app/core/presentation/widgets/states/initial_state.dart';
 import 'package:social_app/features/search/presentation/states/search_state.dart';
 import 'package:social_app/features/search/presentation/widgets/search_text_field.dart';
@@ -68,7 +69,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget _buildBody(SearchState state) {
     return state.when(
       onInitial: () => const InitialStateWidget(),
-      onLoading: () => const Center(child: CircularProgressIndicator()),
+      onLoading: () => const LoadingStateWidget(),
       onLoaded: (data) {
         if (!data.queryIsEmpty && data.dataIsEmpty) {
           return InitialStateWidget(

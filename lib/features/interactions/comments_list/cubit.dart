@@ -86,7 +86,7 @@ class CommentsCubit extends Cubit<CubitStates> {
   }) async {
     try {
       final firestore = FirebaseFirestore.instance;
-      final accountFields = await firestore.collection('accounts').doc(UserDetails.uId).get();
+      final accountFields = await firestore.collection('accounts').doc(UserDetails._uId).get();
       final docRef = firestore
           .collection('posts')
           .doc(postId)
@@ -147,14 +147,14 @@ class CommentsCubit extends Cubit<CubitStates> {
       final postRef = FirebaseFirestore.instance
           .collection('posts')
           .doc(comment.postId).collection('commentsList').doc(comment.docId);
-      if(comment.userId == UserDetails.uId) {
+      if(comment.userId == UserDetails._uId) {
         postRef.update({'isActive': true});
       }
       final docRef = postRef.collection(
-          'commentsLikes').doc(UserDetails.uId);
+          'commentsLikes').doc(UserDetails._uId);
 
       UserModel userModel = UserModel(
-          userId: UserDetails.uId,
+          userId: UserDetails._uId,
           dateTime: DateTime.now()
       );
       await docRef.set(userModel.toJson());
@@ -173,11 +173,11 @@ class CommentsCubit extends Cubit<CubitStates> {
       final postRef = FirebaseFirestore.instance
           .collection('posts')
           .doc(comment.postId).collection('commentsList').doc(comment.docId);
-      if(comment.userId == UserDetails.uId) {
+      if(comment.userId == UserDetails._uId) {
         postRef.update({'isActive': false});
       }
       final docRef = postRef.collection(
-          'commentsLikes').doc(UserDetails.uId);
+          'commentsLikes').doc(UserDetails._uId);
       await docRef.delete();
       emit(SuccessState.empty());
     } catch (e) {

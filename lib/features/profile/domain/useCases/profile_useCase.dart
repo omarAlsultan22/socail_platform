@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import '../../../../core/data/models/paginated_posts.dart';
 import '../repositories/profile_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/converters/Info_data_converter.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/data/models/user_model.dart';
-import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/services/user_account_service.dart';
 import 'package:social_app/core/data/models/profile_info_model.dart';
 
@@ -25,7 +25,7 @@ class ProfileUseCase {
     if (data.info != null) return data.info;
 
     if (data.account != null) {
-      final converter = InfoDataConverter(/
+      final converter = InfoDataConverter(
         infoModel: data.info!,
       );
       return converter.infoModel;
@@ -37,7 +37,7 @@ class ProfileUseCase {
     return await _repository.getInfo(uid);
   }
 
-  Future<({bool hasMore, QueryDocumentSnapshot<Object?>? lastDoc, List<dynamic> posts})> executeGetProfileData(String userId, DocumentSnapshot? lastDoc) async {
+  Future<PaginatedPosts> executeGetProfileData(String userId, DocumentSnapshot? lastDoc) async {
     final snapshot = await _repository.getPosts(
       userId: userId,
       postType: 'post',
@@ -46,7 +46,11 @@ class ProfileUseCase {
     );
 
     if (snapshot.docs.isEmpty) {
-      return (posts: [], lastDoc: null, hasMore: false);
+      return PaginatedPosts(
+          postsList: [],
+          lastPostDoc: null,
+          hasMorePosts: false
+      );
     }
 
     final newLastDoc = snapshot.docs.last;
@@ -55,14 +59,16 @@ class ProfileUseCase {
     for (final doc in snapshot.docs) {
       try {
         final postFields = doc.data() as Map<String, dynamic>;
-        final accountData = await _repository.getAccountData(postFields['userId']);
+        final accountData = await _repository.getAccountData(
+            postFields['userId']);
         final counts = await _repository.getPostCounts(doc.id);
 
         final isActive = postFields['friendId'] != null;
         Map<String, dynamic> friendAccount = {};
 
         if (isActive) {
-          final friendAccountDoc = await _repository.getAccountData(postFields['friendId']);
+          final friendAccountDoc = await _repository.getAccountData(
+              postFields['friendId']);
           friendAccount = friendAccountDoc;
         }
 
@@ -81,10 +87,14 @@ class ProfileUseCase {
     }
 
     posts.sort((a, b) => b.dateTime!.compareTo(a.dateTime!));
-    return (posts: posts, lastDoc: newLastDoc, hasMore: snapshot.docs.length == 10);
+    return PaginatedPosts(
+        postsList: posts,
+        lastPostDoc: newLastDoc,
+        hasMorePosts: snapshot.docs.length == 10
+    );
   }
 
-  Future<({bool hasMore, List<dynamic> images, QueryDocumentSnapshot<Object?>? lastDoc})> executeGetProfileImages(String userId, DocumentSnapshot? lastDoc) async {
+  Future<PaginatedPosts> executeGetProfileImages(String userId, DocumentSnapshot? lastDoc) async {
     final snapshot = await _repository.getPosts(
       userId: userId,
       postType: 'profileImage',
@@ -93,7 +103,11 @@ class ProfileUseCase {
     );
 
     if (snapshot.docs.isEmpty) {
-      return (images: [], lastDoc: null, hasMore: false);
+      return PaginatedPosts(
+          postsList: [],
+          lastPostDoc: null,
+          hasMorePosts: false
+      );
     }
 
     final newLastDoc = snapshot.docs.last;
@@ -119,10 +133,14 @@ class ProfileUseCase {
     }
 
     images.sort((a, b) => b.dateTime!.compareTo(a.dateTime!));
-    return (images: images, lastDoc: newLastDoc, hasMore: snapshot.docs.length == 10);
+    return PaginatedPosts(
+        postsList: images,
+        lastPostDoc: newLastDoc,
+        hasMorePosts: snapshot.docs.length == 10
+    );
   }
 
-  Future<({List<dynamic> covers, bool hasMore, QueryDocumentSnapshot<Object?>? lastDoc})> executeGetCoverImages(String userId, DocumentSnapshot? lastDoc) async {
+  Future<PaginatedPosts> executeGetCoverImages(String userId, DocumentSnapshot? lastDoc) async {
     final snapshot = await _repository.getPosts(
       userId: userId,
       postType: 'coverImage',
@@ -131,7 +149,11 @@ class ProfileUseCase {
     );
 
     if (snapshot.docs.isEmpty) {
-      return (covers: [], lastDoc: null, hasMore: false);
+      return PaginatedPosts(
+          postsList: [],
+          lastPostDoc: null,
+          hasMorePosts: false
+      );
     }
 
     final newLastDoc = snapshot.docs.last;
@@ -157,10 +179,14 @@ class ProfileUseCase {
     }
 
     covers.sort((a, b) => b.dateTime!.compareTo(a.dateTime!));
-    return (covers: covers, lastDoc: newLastDoc, hasMore: snapshot.docs.length == 10);
+    return PaginatedPosts(
+        postsList: covers,
+        lastPostDoc: newLastDoc,
+        hasMorePosts: snapshot.docs.length == 10
+    );
   }
 
-  Future<({bool hasMore, QueryDocumentSnapshot<Object?>? lastDoc, List<dynamic> videos})> executeGetVideosPosts(String userId, DocumentSnapshot? lastDoc) async {
+  Future<PaginatedPosts> executeGetVideosPosts(String userId, DocumentSnapshot? lastDoc) async {
     final snapshot = await _repository.getVideos(
       userId: userId,
       lastDoc: lastDoc,
@@ -168,7 +194,11 @@ class ProfileUseCase {
     );
 
     if (snapshot.docs.isEmpty) {
-      return (videos: [], lastDoc: null, hasMore: false);
+      return PaginatedPosts(
+          postsList: [],
+          lastPostDoc: null,
+          hasMorePosts: false
+      );
     }
 
     final newLastDoc = snapshot.docs.last;
@@ -194,7 +224,11 @@ class ProfileUseCase {
     }
 
     videos.sort((a, b) => b.dateTime!.compareTo(a.dateTime!));
-    return (videos: videos, lastDoc: newLastDoc, hasMore: snapshot.docs.length == 10);
+    return PaginatedPosts(
+        postsList: videos,
+        lastPostDoc: newLastDoc,
+        hasMorePosts: snapshot.docs.length == 10
+    );
   }
 
   Future<void> executeInsertPost(PostModel postModel) async {

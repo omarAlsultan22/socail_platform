@@ -1,4 +1,6 @@
 import '../service _locator.dart';
+import 'package:social_app/core/services/session_service.dart';
+import '../../../features/main/presentation/cubits/main_cubit.dart';
 import 'package:social_app/features/notifications/domain/useCases/notifications_useCase.dart';
 import 'package:social_app/features/notifications/presentation/cubits/notifications_cubit.dart';
 import '../../../features/notifications/data/data_sources/remote/firestore_notifications_service.dart';
@@ -17,11 +19,16 @@ class NotificationsDependencies {
     // UseCase
     sl.registerLazySingleton(() =>
         NotificationsUseCase(
-            repository: sl<FirestoreNotificationsRepository>()));
+            sessionService: sl<SessionService>(),
+            repository: sl<FirestoreNotificationsRepository>()
+        )
+    );
 
     // Cubit
     sl.registerFactory(() =>
-        NotificationsCubit(useCase: sl<NotificationsUseCase>()
+        NotificationsCubit(
+            mainCubit: sl<MainCubit>(),
+            useCase: sl<NotificationsUseCase>()
         )
     );
   }

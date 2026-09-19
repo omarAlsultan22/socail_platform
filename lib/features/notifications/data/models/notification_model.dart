@@ -55,7 +55,6 @@ class NotificationsModel extends UserModel {
     };
   }
 
-
   Icon get icon {
     switch (iconName) {
       case 'thumb_up':

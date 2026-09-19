@@ -1,60 +1,22 @@
+import 'package:flutter/cupertino.dart';
+
+import '../../../../core/presentation/widgets/new/friend_button.dart';
 import '../../cubit.dart';
-import '../../profile_layout/photos_screen.dart';
+import '../../data/models/profile_success_state.dart';
+import '../widgets/layouts/photos_screen.dart';
 import '../../../../core/data/models/post_model.dart';
 import '../../../../core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/data/models/profile_info_model.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
+import '../../../../core/errors/exceptions/base/app_exception.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
 import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart';
 
+import '../widgets/layouts/posts_screen.dart';
+import '../widgets/layouts/videos_screen.dart';
 
-ProfileCubit? profileCubit;
-
-List<PostModel> usersProfileDataList = [];
-
-List<PostModel> imagesList = [];
-
-ProfileCubit? profileCubit;
-
-List<AlbumsButtons> albumsButtons = [
-  AlbumsButtons(id: 0,albumImage: null, albumText: 'posts Images'),
-  AlbumsButtons(id: 1, albumImage: null, albumText: 'Profile Pictures'),
-  AlbumsButtons(id: 2, albumImage: null, albumText: 'Cover Photos'),
-];
-
-ProfileInfoModel? profileInfoList;
-
-List<PostModel> videosList = [];
-
-bool _hasMoreFriends = false;
-DocumentSnapshot? lastFriendDoc;
-List<UserModel> friendsList = [];
-
-
-bool _hasMorePosts = false;
-DocumentSnapshot? lastPostDoc;
-List<PostModel> postsDataList = [];
-
-
-bool _hasMoreProfileImages = false;
-List<PostModel> profileImagesList = [];
-DocumentSnapshot? lastProfileImageDoc;
-
-
-bool _hasMoreCoverImages = false;
-List<PostModel> coverImagesList = [];
-DocumentSnapshot? lastCoverImageDoc;
-
-
-String uId = '';
-String userId = '';
-int currentButton = 0; //toggle buttons
-int currentIndex = 0; // toggle albums
-bool isRequest = false;// check friend
-bool isFriend = false;// check friemd
-bool isLoadingMore = true;
 
 class ProfileState extends MainAppSupState{
   final List<PostModel> postsDataList;
@@ -72,22 +34,30 @@ class ProfileState extends MainAppSupState{
   final List<UserModel> friendsList;
 
   // ✅ State message
-  final MessageResult messageResult;/this state need this
+  final MessageResult messageResult;
+
+  // ✅ Profile Info Data
+  final ProfileInfoModel? profileInfoModel;
+
+  // ✅ Friend Button
+  final FriendButton friendButton;
 
   // ✅ Pagination variables
   final DocumentSnapshot? lastPostDoc;
-  final DocumentSnapshot? lastProfileImageDoc;
+  final DocumentSnapshot? lastVideoDoc;
+  final DocumentSnapshot? lastFriendDoc;
   final DocumentSnapshot? lastCoverImageDoc;
+  final DocumentSnapshot? lastProfileImageDoc;
 
   // ✅ State variables
   final String uId;
   final String userId;
   final int currentButton;
   final int currentIndex;
-  final bool isRequest;
-  final bool isFriend;
   final bool isLoadingMore;
   final bool hasMorePosts;
+  final bool hasMoreVideos;
+  final bool hasMoreFriends;
   final bool hasMoreProfileImages;
   final bool hasMoreCoverImages;
 
@@ -98,6 +68,8 @@ class ProfileState extends MainAppSupState{
   const ProfileState({
     required super.subState,
     required this.messageResult,
+    required this.friendButton
+    this.profileInfoModel,
     this.postsDataList = const [],
     this.usersProfileDataList = const [],
     this.imagesList = const [],
@@ -108,16 +80,18 @@ class ProfileState extends MainAppSupState{
     this.albumsScreens = const [],
     this.friendsList = const [],
     this.lastPostDoc,
+    this.lastVideoDoc,
+    this.lastFriendDoc,
     this.lastProfileImageDoc,
     this.lastCoverImageDoc,
     this.uId = '',
     this.userId = '',
     this.currentButton = 0,
     this.currentIndex = 0,
-    this.isRequest = false,
-    this.isFriend = false,
     this.isLoadingMore = true,
     this.hasMorePosts = false,
+    this.hasMoreVideos = false,
+    this.hasMoreFriends = false,
     this.hasMoreProfileImages = false,
     this.hasMoreCoverImages = false,
     this.buttons = const [],
@@ -126,9 +100,14 @@ class ProfileState extends MainAppSupState{
 
   factory ProfileState.initial() {
     return ProfileState(
-      firstModel: null,
-      secondModel: const [],
-      thirdModel: const [],
+      friendButton: FriendButton(
+          buttonName: 'Add Friend',
+          backgroundColor: Colors.blue.shade900,
+          textColor: Colors.white,
+          onPressed: () =>
+              widget.insertFriendsRequests(_uId);
+      ),
+      profileInfoModel: null,
       listenerScreens: [],
       subState: const InitialState(),
       messageResult: MessageResult.initial(),
@@ -150,18 +129,44 @@ class ProfileState extends MainAppSupState{
     );
   }
 
+  ProfileInfoModel updateProfileInfo({
+    String? userId,
+    bool? isOnline,
+    String? userName,
+    String? userLive,
+    String? userFrom,
+    String? userWork,
+    String? userState,
+    PostModel? coverImage,
+    String? userRelational,
+    PostModel? profileImage,
+  }) {
+    return profileInfoModel!.copyWith(
+        userId: userId,
+        userName: userName,
+        userWork: userWork,
+        userLive: userLive,
+        userFrom: userFrom,
+        isOnline: isOnline,
+        userState: userState,
+        coverImage: coverImage,
+        profileImage: profileImage,
+        userRelational: userRelational
+    );
+  }
+
   ProfileState copyWith({
-    InfoModel? firstModel,
+    ProfileInfoModel? profileInfo,
     List<PostModel>? secondModel,
     List<UserModel>? thirdModel,
+    FriendButton friendButton,
     String? uId,
     String? userId,
     int? currentButton,
     int? currentIndex,
-    bool? isRequest,
-    bool? isFriend,
     bool? isLoadingMore,
     bool? hasMorePosts,
+    bool? hasMoreVideos,
     bool? hasMoreProfileImages,
     bool? hasMoreCoverImages,
     List<ButtonModel>? buttons,
@@ -177,12 +182,14 @@ class ProfileState extends MainAppSupState{
     List<ImagesScreen>? albumsScreens,
     List<UserModel>? friendsList,
     DocumentSnapshot? lastPostDoc,
+    DocumentSnapshot? lastVideoDoc,
     DocumentSnapshot? lastProfileImageDoc,
     DocumentSnapshot? lastCoverImageDoc,
     List<void Function()>? listenerScreens
   }) {
     return ProfileState(
       subState: subState ?? this.subState,
+      messageResult: messageResult ?? this.messageResult,
       postsDataList: postsDataList ?? this.postsDataList,
       usersProfileDataList: usersProfileDataList ?? this.usersProfileDataList,
       imagesList: imagesList ?? this.imagesList,
@@ -193,16 +200,16 @@ class ProfileState extends MainAppSupState{
       albumsScreens: albumsScreens ?? this.albumsScreens,
       friendsList: friendsList ?? this.friendsList,
       lastPostDoc: lastPostDoc ?? this.lastPostDoc,
+      lastVideoDoc: lastVideoDoc ?? this.lastVideoDoc,
       lastProfileImageDoc: lastProfileImageDoc ?? this.lastProfileImageDoc,
       lastCoverImageDoc: lastCoverImageDoc ?? this.lastCoverImageDoc,
       uId: uId ?? this.uId,
       userId: userId ?? this.userId,
       currentButton: currentButton ?? this.currentButton,
       currentIndex: currentIndex ?? this.currentIndex,
-      isRequest: isRequest ?? this.isRequest,
-      isFriend: isFriend ?? this.isFriend,
-      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       hasMorePosts: hasMorePosts ?? this.hasMorePosts,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      hasMoreVideos: hasMoreVideos ?? this.hasMoreVideos,
       hasMoreProfileImages: hasMoreProfileImages ?? this.hasMoreProfileImages,
       hasMoreCoverImages: hasMoreCoverImages ?? this.hasMoreCoverImages,
       buttons: buttons ?? this.buttons,
@@ -269,10 +276,14 @@ class ProfileState extends MainAppSupState{
   }
 
   ProfileState updateLastProfileImageDoc(DocumentSnapshot? doc) {
-    return copyWith(lastProfileImageDoc: doc);
+    return copyWith(lastVideoDoc: doc);
   }
 
   ProfileState updateLastCoverImageDoc(DocumentSnapshot? doc) {
+    return copyWith(lastCoverImageDoc: doc);
+  }
+
+  ProfileState updateLastVideoDoc(DocumentSnapshot? doc) {
     return copyWith(lastCoverImageDoc: doc);
   }
 
@@ -282,6 +293,10 @@ class ProfileState extends MainAppSupState{
 
   ProfileState setHasMoreCoverImages(bool hasMore) {
     return copyWith(hasMoreCoverImages: hasMore);
+  }
+
+  ProfileState setHasMoreVideos(bool hasMore) {
+    return copyWith(hasMoreVideos: hasMore);
   }
 
   // ✅ Album modification functions
@@ -320,18 +335,14 @@ class ProfileState extends MainAppSupState{
     return copyWith(uId: id);
   }
 
-  ProfileState updateProfileInfo(InfoModel info) {
-    return copyWith(firstModel: info);
-  }
-
   ProfileState updateProfileImage(PostModel image) {
-    final updatedInfo = firstModel?.copyWith(profileImage: image);
-    return copyWith(firstModel: updatedInfo);
+    final updatedInfo = profileInfoModel!.copyWith(profileImage: image);
+    return copyWith(profileInfo: updatedInfo);
   }
 
   ProfileState updateCoverImage(PostModel image) {
-    final updatedInfo = firstModel?.copyWith(coverImage: image);
-    return copyWith(firstModel: updatedInfo);
+    final updatedInfo = profileInfoModel!.copyWith(coverImage: image);
+    return copyWith(profileInfo: updatedInfo);
   }
 
   // ✅ Friend modification functions
@@ -368,35 +379,25 @@ class ProfileState extends MainAppSupState{
 
   // ✅ State functions
 
-  ProfileState setLoadingWithKey(String stateKey) {
-    return copyWith(subState: LoadingState(stateKey: stateKey));
+  ProfileState setLoadingState() {
+    return copyWith(subState: LoadingState());
   }
 
-  ProfileState setErrorWithKey(String message, String stateKey) {
-    return copyWith(subState: ErrorState(message: message, stateKey: stateKey));
+  ProfileState setSuccessState() {
+    return copyWith(subState: SuccessState());
+  }
+
+  ProfileState setErrorState(AppException failure) {
+    return copyWith(subState: ErrorState(failure: failure));
   }
 
   // ✅ Getters
-
-  InfoModel? get profileInfo => firstModel;
-  List<PostModel> get posts => postsDataList;
-  List<PostModel> get profileImages => profileImagesList;
-  List<PostModel> get coverImages => coverImagesList;
-  List<PostModel> get videos => videosList;
   List<UserModel> get friends => friendsList;
-  int get currentScreenIndex => currentIndex;
-  int get currentButtonIndex => currentButton;
-  bool get isLoading => subState is LoadingState;
-  bool get isSuccess => subState is SuccessState;
-  bool get hasError => subState is ErrorState;
-  String? get errorMessage => subState is ErrorState
-      ? (subState as ErrorState).message
-      : null;
 
   @override
-  LoadedState get dataModels =>
-      TripleModelSuccessState<InfoModel, List<PostModel>, List<UserModel>>(
-        firstModel: firstModel,
+  ProfileSuccessState get dataModels =>
+      ProfileSuccessState(
+        firstModel: profileInfo,
         secondModel: secondModel ?? const [],
         thirdModel: thirdModel ?? const [],
       );
@@ -405,7 +406,7 @@ class ProfileState extends MainAppSupState{
   R when<R>({
     required R Function() onInitial,
     required R Function() onLoading,
-    required R Function(LoadedState) onLoaded,
+    required R Function(ProfileSuccessState) onLoaded,
     required R Function(AppException) onError
   }) {
     return subState.when(

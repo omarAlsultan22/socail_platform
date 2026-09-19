@@ -1,3 +1,5 @@
+import 'package:social_app/core/data/models/account_model.dart';
+
 import '../repositories/auth_repository.dart';
 import '../repositories/sign_up_repository.dart';
 import '../../../../core/data/models/user_model.dart';
@@ -29,14 +31,14 @@ class SignUpUseCase {
 
       final user = userCredential.user;
       if (user != null && user.email != null && !user.isAnonymous) {
-        UserModel userModel = UserModel(
+        UserAccount userAccount = UserAccount(
             userId: user.uid,
             firstName: firstName,
             lastName: lastName,
             fullName: '$firstName''$lastName'.trim()
         );
         await _signUpRepository.createUserInfo(
-            userModel: userModel
+            userModel: userAccount
         );
       }
     } catch (e) {

@@ -1,8 +1,8 @@
-import '../../../../core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/account_model.dart';
 
 
 abstract class SignUpRepository {
   Future<void> createUserInfo({
-    required UserModel userModel
+    required UserAccount userModel
   });
 }
