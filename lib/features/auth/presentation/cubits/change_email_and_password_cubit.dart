@@ -2,8 +2,8 @@ import '../states/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/network/connectivity_service.dart';
 import '../../../../core/data/models/message_result.dart';
-import '../../domain/useCases/change_email_and_password_useCase.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
+import '../../domain/use_cases/change_email_and_password_use_case.dart';
 import 'package:social_app/core/errors/exceptions/network_app_exception.dart';
 
 
@@ -42,7 +42,7 @@ class ChangeEmailAndPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixi
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              AuthState(messageResult: MessageResult.error(error: failure)
+              AuthState(messageResult: MessageResult.error(failure: failure)
               )
       );
     }

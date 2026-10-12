@@ -1,9 +1,8 @@
-import 'package:social_app/core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/data/models/post_model.dart';
 
 
-abstract class PublicRepository {
-
+abstract class PublicRepository{
   Future<QuerySnapshot> fetchPostsQuery({
     required List<String> friendsUIds,
     required DocumentSnapshot? lastPostDoc,
@@ -14,6 +13,8 @@ abstract class PublicRepository {
     required DocumentSnapshot? lastStatusDoc,
     required int limit,
   });
+
+  Future<bool> hasMeLiked(String docId);
 
   Future<void> addToDeletedPosts(String postId);
 

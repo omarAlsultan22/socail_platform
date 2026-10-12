@@ -37,7 +37,7 @@ class NotificationsLayout extends StatelessWidget {
                   child: ClipOval(
                     child: CachedNetworkImage(
                       fit: BoxFit.cover,
-                      imageUrl: notificationsModel.userImage ?? '',
+                      imageUrl: notificationsModel.myImageUrl ?? '',
                     ),
                   ),
                 ),
@@ -50,7 +50,7 @@ class NotificationsLayout extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    notificationsModel.userName ?? 'Unknown User',
+                    notificationsModel.myName ?? 'Unknown User',
                     // Fallback for null name
                     style: const TextStyle(
                       fontSize: 18.0,

@@ -12,11 +12,11 @@ class FirestorePostDetailService extends FirestoreBaseService {
     required String postId,
     required String userId,
   }) async {
-    final postRef = firestore.collection('posts').doc(postId);
+    final postRef = getDocRef(docId: postId, collectionPath: 'posts');
 
     final results = await Future.wait([
       postRef.get().timeout(duration),
-      getSupDoc(docId: userId, collectionPath: 'accounts'),
+      getDoc(docId: userId, collectionPath: 'accounts'),
       postRef.collection('commentsList').get().timeout(duration),
     ]);
 
@@ -27,36 +27,17 @@ class FirestorePostDetailService extends FirestoreBaseService {
     );
   }
 
-  Future<int> getPostLikesCount({
-    required String postId,
-  }) async {
-    final likesCount = await firestore
-        .collection('posts')
-        .doc(postId)
-        .collection('likesList')
-        .count()
-        .get()
-        .timeout(duration);
-    return likesCount.count ?? 0;
-  }
-
-  Future<
-      List<QueryDocumentSnapshot<Map<String, dynamic>>>> getCommentsWithLikes({
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getCommentsWithLikes({
     required String postId,
     required QuerySnapshot<Map<String, dynamic>> commentsDocs,
   }) async {
     final commentsWithLikes = await Future.wait(
       commentsDocs.docs.map((doc) async {
-        final likesCount = await firestore
-            .collection('posts')
-            .doc(postId)
-            .collection('commentsList')
-            .doc(doc.id)
-            .collection('likesList')
-            .count()
-            .get()
-            .timeout(duration);
-
+        final postRef = getDocRef(docId: postId, collectionPath: 'posts');
+        final commentRef = getSpecificDocRef(
+            docId: doc.id, collectionPath: 'commentsList', docRef: postRef);
+        final likesCount = await getCount(
+            collectionPath: 'commentsLikes', docRef: commentRef);
         final commentData = doc.data();
         commentData['likesNumber'] = likesCount.count;
         return doc;

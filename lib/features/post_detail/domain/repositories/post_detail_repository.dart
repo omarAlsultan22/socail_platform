@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
 
 
 abstract class PostDetailRepository {
+  Future<bool> hasMeLiked(String postId);
+
   Future<({
   DocumentSnapshot postDoc,
   DocumentSnapshot userDoc,
@@ -13,7 +15,7 @@ abstract class PostDetailRepository {
     required String userId,
   });
 
-  Future<int> getPostLikesCount({required String postId});
+  Future<int?> getPostLikes({required String postId});
 
   Future<List<CommentModel>> getCommentsWithUsers({
     required String postId,
@@ -21,6 +23,6 @@ abstract class PostDetailRepository {
   });
 
   Future<void> insertNotification({
-    required UserModel notificationData,
+    required MyModel notificationData,
   });
 }

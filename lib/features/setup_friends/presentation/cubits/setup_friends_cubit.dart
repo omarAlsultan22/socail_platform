@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/setup_friends_useCase.dart';
+import '../../domain/use_cases/setup_friends_use_case.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
@@ -51,7 +51,7 @@ class SetupFriendsCubit extends Cubit<SetupFriendsState> with ErrorHandlerMixin<
       handleError(e, stackTrace,
           onError: (failure) =>
               state.copyWith(
-                  messageResult: MessageResult.error(error: failure)
+                  messageResult: MessageResult.error(failure: failure)
               )
       );
     }

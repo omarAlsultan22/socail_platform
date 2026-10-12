@@ -1,4 +1,4 @@
-import '../../../../core/data/models/user_model.dart';
+import '../../../../core/data/models/my_model.dart';
 import '../../data/models/friendship_success_state.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
@@ -9,8 +9,9 @@ import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart
 
 class FriendshipState extends MainAppSupState {
   final MessageResult messageResult;
-  final List<UserModel> friendsRequestsList;
-  final List<UserModel> friendsSuggestsList;
+  final List<MyModel> friendsRequestsList;
+  final List<MyModel> friendsSuggestsList;
+
   const FriendshipState({
     required this.friendsRequestsList,
     required this.friendsSuggestsList,
@@ -27,13 +28,11 @@ class FriendshipState extends MainAppSupState {
     );
   }
 
-  bool get friendsRequestsListIsEmpty => friendsRequestsList.isEmpty;
-
   FriendshipState copyWith({
     MainAppSubState? subState,
     MessageResult? messageResult,
-    List<UserModel>? friendsRequestsList,
-    List<UserModel>? friendsSuggestsList,
+    List<MyModel>? friendsRequestsList,
+    List<MyModel>? friendsSuggestsList,
   }) {
     return FriendshipState(
       subState: subState ?? this.subState,
@@ -44,9 +43,10 @@ class FriendshipState extends MainAppSupState {
   }
 
   FriendshipState addFriendSuggest(int index) {
-    if (friendsSuggestsList.isEmpty || index >= friendsSuggestsList.length) return this;
+    if (friendsSuggestsList.isEmpty || index >= friendsSuggestsList.length)
+      return this;
 
-    final newSuggestsList = List<UserModel>.from(friendsSuggestsList)
+    final newSuggestsList = List<MyModel>.from(friendsSuggestsList)
       ..removeAt(index);
 
     return copyWith(
@@ -59,7 +59,7 @@ class FriendshipState extends MainAppSupState {
   FriendshipState confirmFriend(int index) {
     if (friendsRequestsList.isEmpty) return this;
 
-    final newRequestsList = List<UserModel>.from(friendsRequestsList)
+    final newRequestsList = List<MyModel>.from(friendsRequestsList)
       ..removeAt(index);
 
     return copyWith(
@@ -72,23 +72,23 @@ class FriendshipState extends MainAppSupState {
   FriendshipState declineFriendRequest(int index) {
     if (friendsRequestsList.isEmpty) return this;
 
-    final newRequestsList = List<UserModel>.from(friendsRequestsList)
+    final newRequestsList = List<MyModel>.from(friendsRequestsList)
       ..removeAt(index);
 
     return copyWith(
-      friendsRequestsList: newRequestsList,
-      messageResult: MessageResult.success(message: 'Deleted Successfully')
+        friendsRequestsList: newRequestsList,
+        messageResult: MessageResult.success(message: 'Deleted Successfully')
     );
   }
 
-  FriendshipState updateFriendsRequestsList(List<UserModel> newList) {
+  FriendshipState updateFriendsRequestsList(List<MyModel> newList) {
     return copyWith(
       friendsRequestsList: newList,
       subState: SuccessState(),
     );
   }
 
-  FriendshipState updateFriendsSuggestsList(List<UserModel> newList) {
+  FriendshipState updateFriendsSuggestsList(List<MyModel> newList) {
     return copyWith(
       friendsSuggestsList: newList,
       subState: SuccessState(),
@@ -96,26 +96,45 @@ class FriendshipState extends MainAppSupState {
   }
 
   FriendshipState deleteFriendSuggest(int index) {
-    if (friendsSuggestsList.isEmpty || index >= friendsSuggestsList.length) return this;
+    if (friendsSuggestsList.isEmpty || index >= friendsSuggestsList.length)
+      return this;
 
-    final newSuggestsList = List<UserModel>.from(friendsSuggestsList)
+    final newSuggestsList = List<MyModel>.from(friendsSuggestsList)
       ..removeAt(index);
 
     return copyWith(
-      friendsSuggestsList: newSuggestsList,
-      messageResult: MessageResult.success(message: 'Deleted Successfully')
+        friendsSuggestsList: newSuggestsList,
+        messageResult: MessageResult.success(message: 'Deleted Successfully')
     );
   }
 
-  String? getUid(UserModel userModel) => userModel.userId;
-  UserModel getFriendRequestByIndex(int index) => friendsRequestsList[index];
-  UserModel getFriendSuggestByIndex(int index) => friendsSuggestsList[index];
+  String? getUid(MyModel userModel) => userModel.myId;
+
+  MyModel getFriendRequestByIndex(int index) => friendsRequestsList[index];
+
+  MyModel getFriendSuggestByIndex(int index) => friendsSuggestsList[index];
+
+  // ✅ State functions
+
+  FriendshipState setLoadingMessage() {
+    return copyWith(messageResult: MessageResult.loading());
+  }
+
+  FriendshipState setErrorMessage(AppException failure) {
+    return copyWith(messageResult: MessageResult.error(failure: failure));
+  }
+
+  // ✅ Getters
+
+  bool get allListsIsEmpty =>
+      friendsRequestsList.isEmpty && friendsSuggestsList.isEmpty;
 
   @override
-  FriendshipSuccessState get dataModels => FriendshipSuccessState(
-      friendsRequestsList: friendsRequestsList,
-      friendsSuggestsList: friendsSuggestsList
-  );
+  FriendshipSuccessState get dataModels =>
+      FriendshipSuccessState(
+          friendsRequestsList: friendsRequestsList,
+          friendsSuggestsList: friendsSuggestsList
+      );
 
   @override
   R when<R>({

@@ -1,17 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/data/models/user_model.dart';
-import 'package:social_app/core/data/models/comment_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/services/session_service.dart';
 import '../../domain/repositories/post_detail_repository.dart';
+import 'package:social_app/core/data/models/comment_model.dart';
+import '../../../../core/presentation/mixins/base_like_mixin.dart';
 import '../data_sources/remote/firestore_post_detail_service.dart';
 
 
-class FirestorePostDetailRepository implements PostDetailRepository {
+class FirestorePostDetailRepository with BaseLikeMixin implements PostDetailRepository {
+  final SessionService _sessionService;
   final FirestorePostDetailService _repository;
 
   FirestorePostDetailRepository({
+    required SessionService sessionService,
     required FirestorePostDetailService repository
   })
-      : _repository = repository;
+      : _repository = repository,
+        _sessionService = sessionService;
+
+  @override
+  String get likeCollectionPath => throw UnimplementedError();
+
+  @override
+  FirestorePostDetailService get repository => _repository;
+
+  @override
+  SessionService get sessionService => _sessionService;
 
   @override
   Future<({
@@ -22,15 +36,23 @@ class FirestorePostDetailRepository implements PostDetailRepository {
     required String postId,
     required String userId,
   }) async {
-    return await _repository.getPostData(
+    return await repository.getPostData(
       postId: postId,
       userId: userId,
     );
   }
 
   @override
-  Future<int> getPostLikesCount({required String postId}) async {
-    return await _repository.getPostLikesCount(postId: postId);
+  Future<int?> getPostLikes({required String postId}) async {
+    {
+      final postRef = repository.getDocRef(
+          docId: postId,
+          collectionPath: 'posts'
+      );
+      final likesCount = await repository.getCount(
+          docRef: postRef, collectionPath: 'likesList');
+      return likesCount.count;
+    }
   }
 
   @override
@@ -38,7 +60,7 @@ class FirestorePostDetailRepository implements PostDetailRepository {
     required String postId,
     required QuerySnapshot<Map<String, dynamic>> commentsDocs,
   }) async {
-    final commentsWithLikes = await _repository.getCommentsWithLikes(
+    final commentsWithLikes = await repository.getCommentsWithLikes(
       postId: postId,
       commentsDocs: commentsDocs,
     );
@@ -46,13 +68,13 @@ class FirestorePostDetailRepository implements PostDetailRepository {
     final comments = await Future.wait(
       commentsWithLikes.map((doc) async {
         final commentData = doc.data();
-        final commentUserDoc = await _repository.getSupDoc(
+        final commentUserDoc = await repository.getDoc(
             docId: commentData['userId'], collectionPath: 'accounts'
         );
 
         if (!commentUserDoc.exists) return null;
 
-        final userAccount = await _repository.getAccountMap(
+        final userAccount = await repository.getAccountMap(
           userDoc: commentUserDoc,
         );
 
@@ -69,11 +91,11 @@ class FirestorePostDetailRepository implements PostDetailRepository {
 
   @override
   Future<void> insertNotification({
-    required UserModel notificationData,
+    required MyModel notificationData,
   }) async {
-    await _repository.setSupDoc(
+    await repository.setSupDoc(
       isMerge: false,
-      docId: notificationData.userId,
+      docId: notificationData.myId,
       data: notificationData.toJson(),
       collectionPath: 'notifications',
     );

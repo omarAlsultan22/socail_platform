@@ -1,43 +1,63 @@
+import 'public_status_widget.dart';
 import '../cubits/public_cubit.dart';
 import 'package:flutter/material.dart';
-import 'public_status_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/service _locator.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/widgets/new/post_card.dart';
+import '../../../../core/presentation/widgets/current_user_selector.dart';
+import '../../../../core/presentation/mixins/message_result_mixin.dart';
+import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:social_app/features/public/presentation/states/public_state.dart';
+import 'package:social_app/features/public/presentation/widgets/post_template.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:social_app/features/public/presentation/widgets/user_by_userId_selector.dart';
+import 'package:social_app/features/public/presentation/widgets/statuses_template.dart';
 
 
 class PublicBuilder extends StatefulWidget {
-  final String? userImage;
+  final String currentUid;
   final bool hasMorePosts;
   final bool hasMoreStatuses;
   final List<PostModel> homePosts;
-  final SessionService sessionService;
+  final MessageResult messageResult;
+  final void Function(PostModel) onAdd;
   final List<List<PostModel>> homeStatuses;
+  final void Function(UserDetails) onUpdate;
+  final void Function(PostModel) onUpsertPost;
+  final void Function(PostModel) onRemovePost;
   final Future<void> Function() loadMoreStatus;
-  final void Function(PostModel) insertAndUpdateStatuses;
+  final void Function(bool, PostModel) onToggle;
+  final void Function(PostModel) onUpsertStatus;
+  final void Function(PostModel) onRemoveStatus;
 
   const PublicBuilder({
     super.key,
-    this.userImage,
+    required this.onAdd,
+    required this.onUpdate,
+    required this.onToggle,
     required this.homePosts,
+    required this.currentUid,
     required this.homeStatuses,
     required this.hasMorePosts,
-    required this.sessionService,
+    required this.onUpsertPost,
+    required this.onRemovePost,
+    required this.messageResult,
+    required this.onUpsertStatus,
+    required this.onRemoveStatus,
     required this.loadMoreStatus,
-    required this.hasMoreStatuses,
-    required this.insertAndUpdateStatuses
+    required this.hasMoreStatuses
   });
 
   @override
   State<PublicBuilder> createState() => _PublicBuilderState();
 }
 
-class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserver {
+class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserver, MessageResultMixin<PublicBuilder> {
   final ScrollController _scrollControllerStatus = ScrollController();
   bool _isLoadingStatuses = false;
   bool animationToggle = true;
@@ -48,6 +68,14 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
     animationRepeat();
     _scrollControllerStatus.addListener(_onScrollStatus);
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didUpdateWidget(covariant PublicBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    handleMessageResult(
+        messageResult: widget.messageResult,
+        onNavigate: () => Navigator.pop(context));
   }
 
   void animationRepeat() {
@@ -105,81 +133,93 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                   height: 200,
                   child: Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 3.0, left: 10.0),
-                        child: Container(
-                          height: 180.0,
-                          width: 90.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(color: Colors.grey, width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 4.0,
-                                offset: Offset(2.0, 2.0),
-                              )
-                            ],
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              BuildNavigator.build(
-                                context: context,
-                                link: CreatePostScreen(
-                                  buttonName: 'Publish',
-                                  titleName: 'Create status',
-                                  onPressed: (statusModel) {
-                                    widget.insertAndUpdateStatuses(statusModel);
-                                  }, uId: widget.sessionService,
+                      CurrentUserSelector(
+                          builder: (userDetails) {
+                            widget.onUpdate(userDetails);
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 3.0, left: 10.0),
+                              child: Container(
+                                height: 180.0,
+                                width: 90.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                      color: Colors.grey, width: 1.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4.0,
+                                      offset: Offset(2.0, 2.0),
+                                    )
+                                  ],
                                 ),
-                              );
-                            },
-                            child: Stack(
-                              alignment: AlignmentDirectional.topCenter,
-                              children: [
-                                SizedBox(
-                                  height: 120.0,
-                                  width: double.infinity,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10.0),
-                                      topRight: Radius.circular(10.0),
-                                    ),
-                                    child: (widget.userImage != null &&
-                                        widget.userImage!.isNotEmpty) ?
-                                    Image(
-                                      image: NetworkImage(
-                                          widget.userImage!),
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error,
-                                          stackTrace) {
-                                        return Container(color: Colors.grey);
-                                      },
-                                    ) : Icon(Icons.person, size: 50.0),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 45.0,
-                                  child: Container(
-                                    height: 30.0,
-                                    width: 30.0,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      color: Colors.blue.shade900,
-                                    ),
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.add,
-                                        size: 25.0,
-                                        color: Colors.white,
+                                child: InkWell(
+                                  onTap: () {
+                                    BuildNavigator.build(
+                                      context: context,
+                                      link: CreatePostScreen(
+                                        buttonName: 'Publish',
+                                        titleName: 'Create status',
+                                        userDetails: userDetails,
+                                        messageResult: widget.messageResult,
+                                        onPressed: (statusModel) {
+                                          widget.onUpsertStatus(statusModel);
+                                        },
+                                        currentId: widget.currentUid,
                                       ),
-                                    ),
+                                    );
+                                  },
+                                  child: Stack(
+                                    alignment: AlignmentDirectional.topCenter,
+                                    children: [
+                                      SizedBox(
+                                        height: 120.0,
+                                        width: double.infinity,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10.0),
+                                            topRight: Radius.circular(10.0),
+                                          ),
+                                          child: (!userDetails
+                                              .myImageUrlIsEmpty) ?
+                                          Image(
+                                            image: NetworkImage(
+                                                userDetails.myImageUrl),
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error,
+                                                stackTrace) {
+                                              return Container(
+                                                  color: Colors.grey);
+                                            },
+                                          ) : Icon(Icons.person, size: 50.0),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 45.0,
+                                        child: Container(
+                                          height: 30.0,
+                                          width: 30.0,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius
+                                                .circular(50.0),
+                                            color: Colors.blue.shade900,
+                                          ),
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.add,
+                                              size: 25.0,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
+                              ),
+                            );
+                          }
                       ),
                       Expanded(
                         child: ConditionalBuilder(
@@ -192,8 +232,20 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                                   (widget.hasMoreStatuses ? 1 : 0),
                               itemBuilder: (context, index) {
                                 if (index < widget.homeStatuses.length) {
-                                  return PublicStateWidget(
-                                    statusesList: widget.homeStatuses[index],
+                                  final statusModel = widget.homeStatuses[index]
+                                      .first;
+                                  return UserByUserIdSelector(
+                                      postModel: statusModel,
+                                      builder: (userDetails) =>
+                                          PublicStateWidget(
+                                              userDetails: userDetails,
+                                              onUpsert: widget.onUpsertStatus,
+                                              onRemove: widget.onRemoveStatus,
+                                              messageResult: widget
+                                                  .messageResult,
+                                              statusesList: widget
+                                                  .homeStatuses[index]
+                                          )
                                   );
                                 } else if (_isLoadingStatuses) {
                                   return Padding(padding: EdgeInsets.all(8.0),
@@ -221,14 +273,15 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                               },
                             );
                           },
-                          fallback: (context) => _statusesTemplate(),
+                          fallback: (context) =>
+                              StatusesTemplate(
+                                  animationToggle: animationToggle),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Container(height: 1.0, color: Colors.grey),
-
                 // Posts Section
                 ConditionalBuilder(
                   condition: widget.homePosts.isNotEmpty,
@@ -240,9 +293,19 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                           (widget.hasMorePosts ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index < widget.homePosts.length) {
-                          return PostCard(
-                            sessionService: widget.sessionService,
-                            postModel: widget.homePosts[index],
+                          final postModel = widget.homePosts[index];
+                          return UserByUserIdSelector(
+                              postModel: postModel,
+                              builder: (userDetails) =>
+                                  PostCard(
+                                    onAdd: widget.onAdd,
+                                    onToggle: widget.onToggle,
+                                    onUpsert: widget.onUpsertPost,
+                                    onRemove: widget.onRemovePost,
+                                    postModel: widget.homePosts[index],
+                                    messageResult: widget.messageResult,
+                                    sessionService: sl<SessionService>(),
+                                  )
                           );
                         }
                         else {
@@ -260,142 +323,13 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                       },
                     );
                   },
-                  fallback: (context) => _postsTemplate(),
+                  fallback: (context) =>
+                      PostTemplate(animationToggle: animationToggle),
                 ),
               ],
             ),
           );
-        });
-  }
-
-  Widget _postsTemplate() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-            left: 12.0,
-            bottom: 15.0,
-            right: 15.0,
-          ),
-          child: ClipOval(
-            child: Material(
-              child: InkWell(
-                child: AnimatedContainer(
-                  duration: Duration(seconds: 1),
-                  curve: Curves.easeInOut,
-                  decoration: BoxDecoration(
-                      color: Theme
-                          .of(context)
-                          .brightness == Brightness.light ?
-                      animationToggle ? Colors.transparent : Colors.black12 :
-                      animationToggle ? Colors.transparent : Colors.black87,
-                      borderRadius: BorderRadius.circular(50.0),
-                      border: Border.all(
-                          color: Colors.grey.shade400,
-                          width: 1.0),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 4.0
-
-                        )
-                      ]),
-                  width: 50.0,
-                  height: 50.0,
-                ),
-              ),
-            ),
-          ),
-        ),
-        AnimatedContainer(
-          duration: Duration(seconds: 1),
-          width: double.infinity,
-          height: 400.0,
-          curve: Curves.easeInOut,
-          decoration: BoxDecoration(
-              color: Theme
-                  .of(context)
-                  .brightness == Brightness.light ?
-              animationToggle ? Colors.transparent : Colors.black12 :
-              animationToggle ? Colors.transparent : Colors.black87,
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                  color: Colors.grey.shade400,
-                  width: 1.0),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 4.0
-                )
-              ]),
-        ),
-      ],
-    );
-  }
-
-  Widget _statusesTemplate() {
-    return ListView(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        children: List.generate(10, (index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-                vertical: 10.0, horizontal: 3.0),
-            child: Stack(
-              children: [
-                AnimatedContainer(
-                  duration: Duration(seconds: 1),
-                  height: 180.0,
-                  width: 90.0,
-                  curve: Curves.easeInOut,
-                  decoration: BoxDecoration(
-                    color: Theme
-                        .of(context)
-                        .brightness == Brightness.light ?
-                    animationToggle ? Colors.transparent : Colors.black12 :
-                    animationToggle ? Colors.transparent : Colors.black87,
-                    borderRadius: BorderRadius.circular(10.0),
-                    border: Border.all(color: Colors.grey, width: 1.0),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 4.0,
-                          offset: Offset(2.0, 2.0))
-                    ],
-                  ),
-                ),
-                Positioned(
-                  top: 8.0,
-                  left: 8.0,
-                  child: AnimatedContainer(
-                    duration: Duration(seconds: 1),
-                    height: 25.0,
-                    width: 25.0,
-                    curve: Curves.easeInOut,
-                    decoration: BoxDecoration(
-                      color: Theme
-                          .of(context)
-                          .brightness == Brightness.light ?
-                      animationToggle ? Colors.transparent : Colors.black12 :
-                      animationToggle ? Colors.transparent : Colors.black87,
-                      borderRadius: BorderRadius.circular(50.0),
-                      border: Border.all(color: Colors.grey, width: 1.0),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 4.0,
-                            offset: Offset(2.0, 2.0))
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        })
+        }
     );
   }
 }

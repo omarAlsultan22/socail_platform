@@ -30,7 +30,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         builder: (context, state) {
           return state.when(
               onInitial: () =>
-                  InitialStateWidget(text: 'No notifications found',),
+                  InitialStateWidget(text: 'No notifications found'),
               onLoading: () => LoadingStateWidget(),
               onLoaded: (data) =>
                   SingleChildScrollView(

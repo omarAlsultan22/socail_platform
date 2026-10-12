@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:social_app/core/utils/validate_input.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/presentation/widgets/app_spaces.dart';
+import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 
 
@@ -25,7 +26,7 @@ class SignUpLayout extends StatefulWidget {
   State<SignUpLayout> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout> {
+class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout>, MessageResultMixin<SignUpLayout> {
   bool _isLocked = false;
   bool _isObscure = false;
 
@@ -55,7 +56,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
   Future<void> _submitForm() async {
     if (!validateForm(_formKey)) return;
     _updateLockButton(true);
-    hideKeyboard(context);
+    hideKeyboard();
     widget.onSignUp(
       firstName: _firstNameController.text.trim(),
       lastName: _lastNameController.text.trim(),

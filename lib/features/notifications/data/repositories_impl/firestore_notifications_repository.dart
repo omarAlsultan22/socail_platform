@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../converters/notification_data_converter.dart';
-import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
 import '../../domain/repositories/notifications_repository.dart';
 import '../data_sources/remote/firestore_notifications_service.dart';
@@ -32,7 +32,7 @@ class FirestoreNotificationsRepository implements NotificationsRepository {
     await Future.wait(notifications.map((notificationDoc) async {
       try {
         final userId = notificationDoc['friendId'];
-        final userAccount = await _repository.getSupDoc(
+        final userAccount = await _repository.getDoc(
           docId: userId, collectionPath: 'accounts',
         );
 
@@ -84,7 +84,7 @@ class FirestoreNotificationsRepository implements NotificationsRepository {
     final comments = await Future.wait(
       commentsWithLikes.map((doc) async {
         final commentData = doc.data();
-        final commentUserDoc = await _repository.getSupDoc(
+        final commentUserDoc = await _repository.getDoc(
             docId: commentData['userId'], collectionPath: 'accounts'
         );
 
@@ -107,11 +107,11 @@ class FirestoreNotificationsRepository implements NotificationsRepository {
 
   @override
   Future<void> insertNotification({
-    required UserModel notificationData,
+    required MyModel notificationData,
   }) async {
     await _repository.setSupDoc(
       isMerge: false,
-      docId: notificationData.userId,
+      docId: notificationData.myId,
       data: notificationData.toJson(),
       collectionPath: 'notifications',
     );

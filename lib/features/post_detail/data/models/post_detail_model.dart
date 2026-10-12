@@ -10,7 +10,7 @@ class PostDetailModel {
 
   int get commentsListLength => commentsList!.length;
 
-  String? getUserId(int index) => getCommentModel(index).userId;
+  String? getUserId(int index) => getCommentModel(index).myId;
 
   CommentModel getCommentModel(int index) => commentsList![index];
 }

@@ -1,80 +1,94 @@
-import '../../../../core/data/models/paginated_posts.dart';
+import '../../data/models/user_details.dart';
 import '../../data/models/public_statuses.dart';
 import '../../../../core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/data/models/user_details.dart';
+import '../../../../core/data/models/paginated_posts.dart';
+import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
-import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart';
+import '../../../../core/presentation/states/base/main_app_sup_state.dart';
 import 'package:social_app/features/public/data/models/public_success_state.dart';
 
 
 class PublicState extends MainAppSupState {
-  final bool? isOnline;
+  final String currentUid;
   final PaginatedPosts postsModel;
-  final UserDetails userDetails;
+  final MessageResult messageResult;
   final PublicStatuses statusesModel;
+  final Map<String, UserDetails> usersDetailsMap;
 
   const PublicState({
-    this.isOnline,
     required super.subState,
+    required this.currentUid,
     required this.postsModel,
-    required this.userDetails,
+    required this.usersDetailsMap,
     required this.statusesModel,
+    required this.messageResult
   });
 
   factory PublicState.initial() {
     return PublicState(
-      isOnline: null,
-      subState: InitialState(),
-      userDetails: UserDetails(),
-      postsModel: const PaginatedPosts(),
-      statusesModel: const PublicStatuses(),
+        currentUid: '',
+        usersDetailsMap: {},
+        subState: InitialState(),
+        postsModel: const PaginatedPosts(),
+        statusesModel: const PublicStatuses(),
+        messageResult: MessageResult.initial()
     );
   }
 
+  PublicState updateUserDetailsMap(UserDetails userDetails, {String? uid}) {
+    final newUserDetailsMap = Map<String, UserDetails>.from(usersDetailsMap);
+    newUserDetailsMap[currentUid] = userDetails;
+    return copyWith(usersDetailsMap: newUserDetailsMap);
+  }
+
   PublicState copyWith({
-    PublicStatuses? statusesModel,
-    MainAppSubState? subState,
-    UserDetails? userDetails,
-    PaginatedPosts? postsModel,
     bool? isOnline,
+    String? currentUid,
+    UserDetails? userDetails,
+    MainAppSubState? subState,
+    PaginatedPosts? postsModel,
+    MessageResult? messageResult,
+    PublicStatuses? statusesModel,
+    Map<String, UserDetails>? usersDetailsMap
   }) {
     return PublicState(
-      isOnline: isOnline ?? this.isOnline,
-      subState: subState ?? this.subState,
-      postsModel: postsModel ?? this.postsModel,
-      userDetails: userDetails ?? this.userDetails,
-      statusesModel: statusesModel ?? this.statusesModel,
+        subState: subState ?? this.subState,
+        postsModel: postsModel ?? this.postsModel,
+        currentUid: currentUid ?? this.currentUid,
+        usersDetailsMap: usersDetailsMap ?? this.usersDetailsMap,
+        statusesModel: statusesModel ?? this.statusesModel,
+        messageResult: messageResult ?? MessageResult.initial()
     );
   }
 
   PublicState updatePostsList(List<PostModel> newPosts, {bool append = false}) {
-    final currentPosts = postsModel.postsList;
+    final currentPosts = postsModel.dataList;
     final updatedPosts = append ? [...currentPosts, ...newPosts] : newPosts;
 
     return copyWith(
       postsModel: postsModel.copyWith(
-        postsList: updatedPosts,
+        dataList: updatedPosts,
       ),
     );
   }
 
-  PublicState addPostAtBeginning(PostModel post) {
-    final currentPosts = postsModel.postsList;
+  PublicState upsertPost(PostModel post) {
+    final currentPosts = postsModel.dataList;
     return copyWith(
       postsModel: postsModel.copyWith(
-        postsList: [post, ...currentPosts],
+        dataList: [post, ...currentPosts],
       ),
     );
   }
 
-  PublicState removePost(String postId) {
-    final currentPosts = postsModel.postsList;
+  PublicState removePost(String? postId) {
+    final currentPosts = postsModel.dataList;
     return copyWith(
       postsModel: postsModel.copyWith(
-        postsList: currentPosts.where((p) => p.docId != postId).toList(),
+        dataList: currentPosts.where((p) => p.myDocId != postId).toList(),
       ),
     );
   }
@@ -84,19 +98,19 @@ class PublicState extends MainAppSupState {
     required DocumentSnapshot? lastDoc,
     required bool hasMore,
   }) {
-    final currentPosts = postsModel.postsList;
+    final currentPosts = postsModel.dataList;
     return copyWith(
       postsModel: postsModel.copyWith(
-        postsList: [...currentPosts, ...newPosts],
+        dataList: [...currentPosts, ...newPosts],
         lastPostDoc: lastDoc,
-        hasMorePosts: hasMore,
+        hasMoreData: hasMore,
       ),
     );
   }
 
   PublicState setHasMorePosts(bool hasMore) {
     return copyWith(
-      postsModel: postsModel.copyWith(hasMorePosts: hasMore),
+      postsModel: postsModel.copyWith(hasMoreData: hasMore),
     );
   }
 
@@ -123,7 +137,7 @@ class PublicState extends MainAppSupState {
     List<List<PostModel>> newStatuses;
 
     if (currentStatuses.isNotEmpty &&
-        currentStatuses.first.first.userId == currentUId) {
+        currentStatuses.first.first.myId == currentUId) {
       final updatedMyStatuses = [status, ...myStatusesList];
       newStatuses = [
         updatedMyStatuses,
@@ -166,7 +180,7 @@ class PublicState extends MainAppSupState {
     final List<List<PostModel>> newStatuses = [];
 
     for (var innerList in currentStatuses) {
-      final filteredList = innerList.where((item) => item.docId != statusId)
+      final filteredList = innerList.where((item) => item.myDocId != statusId)
           .toList();
       if (filteredList.isNotEmpty) {
         newStatuses.add(filteredList);
@@ -212,15 +226,15 @@ class PublicState extends MainAppSupState {
 
   // ✅ Getters
 
-  bool get hasMorePosts => postsModel.hasMorePosts;
+  bool get hasMorePosts => postsModel.hasMoreData;
+
+  List<PostModel> get homePostsList => postsModel.dataList;
 
   bool get hasMoreStatuses => statusesModel.hasMoreStatuses;
 
   List<PostModel> get myStatuses => statusesModel.myStatuses;
 
   DocumentSnapshot? get lastPostDoc => postsModel.lastPostDoc;
-
-  List<PostModel> get homePostsList => postsModel.postsList;
 
   DocumentSnapshot? get lastStatusDoc => statusesModel.lastStatusDoc;
 
@@ -230,8 +244,10 @@ class PublicState extends MainAppSupState {
   PublicSuccessState get dataModels =>
       PublicSuccessState(
           postsModel: postsModel,
-          userDetails: userDetails,
-          statusesModel: statusesModel
+          currentUid: currentUid,
+          statusesModel: statusesModel,
+          messageResult: messageResult,
+          usersDetailsMap: usersDetailsMap,
       );
 
   @override

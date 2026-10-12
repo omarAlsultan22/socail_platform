@@ -4,18 +4,21 @@ import '../../../../core/data/models/message_result.dart';
 import '../../data/models/post_detail_success_state.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
+import 'package:social_app/features/public/data/models/user_details.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
 import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart';
 
 
 class PostDetailState extends MainAppSupState {
   final PostModel postModel;
+  final UserDetails userDetails;
   final MessageResult messageResult;
   final List<CommentModel> commentsList;
 
   const PostDetailState({
     required super.subState,
     required this.postModel,
+    required this.userDetails,
     required this.commentsList,
     required this.messageResult,
   });
@@ -25,12 +28,14 @@ class PostDetailState extends MainAppSupState {
         postModel: PostModel(),
         commentsList: const [],
         subState: InitialState(),
+        userDetails: UserDetails(),
         messageResult: MessageResult.initial()
     );
   }
 
   PostDetailState copyWith({
     PostModel? postModel,
+    UserDetails? userDetails,
     MainAppSubState? subState,
     MessageResult? messageResult,
     List<CommentModel>? commentsList,
@@ -38,6 +43,7 @@ class PostDetailState extends MainAppSupState {
     return PostDetailState(
       subState: subState ?? this.subState,
       postModel: postModel ?? this.postModel,
+      userDetails: userDetails ?? this.userDetails,
       commentsList: commentsList ?? this.commentsList,
       messageResult: messageResult ?? this.messageResult,
     );
@@ -47,6 +53,7 @@ class PostDetailState extends MainAppSupState {
   PostDetailSuccessState get dataModels =>
       PostDetailSuccessState(
           postModel: postModel,
+          userDetails: userDetails,
           commentsList: commentsList,
           messageResult: messageResult
       );

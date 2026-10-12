@@ -1,41 +1,29 @@
-import 'package:social_app/core/data/models/base/json_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 
 
-class UserModel implements JsonModel{
-  String? userId;
-  bool? isOnline;
-  String? userName;
-  final bool isFriend;
+class UserModel extends MyModel {
+  late String? userId;
+  late String? userName;
+  late String? userText;
   late String? userImage;
-  late DateTime? dateTime;
+  late String? userState;
+  late String? userDocId;
+  late bool? userIsOnline;
+  late DateTime? originalDateTime;
 
   UserModel({
-    this.isOnline,
+    super.myId,
+    super.myState,
+    super.meIsOnline,
     this.userId,
     this.userName,
+    this.userText,
+    super.myDateTime,
     this.userImage,
-    this.dateTime,
-    this.isFriend = false,
+    this.userState,
+    this.userDocId,
+    this.userIsOnline,
+    this.originalDateTime
   });
-
-  factory UserModel.fromJson(Map<String, dynamic> json){
-    return UserModel(
-        userId: json['userId'] ?? '',
-        userName: json['fullName'] ?? '',
-        userImage: json['userImage'] ?? '',
-        isOnline: json['isOnline'] ?? false
-    );
-  }
-
-  @override
-  Map<String, dynamic> toJson(){
-    return {
-      'userId': userId,
-      'dateTime': dateTime
-    };
-  }
 }
-
-
-
 

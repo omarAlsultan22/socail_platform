@@ -1,10 +1,16 @@
+import '../../../features/interactions/comments_likes/data/datasources/comments_likes_remote_datasource.dart';
 import '../../../features/notifications/data/data_sources/remote/firestore_notifications_service.dart';
 import '../../../features/post_detail/data/data_sources/remote/firestore_post_detail_service.dart';
 import '../../../features/search/data/data_sources/remote/firestore/firestore_search_service.dart';
+import '../../../features/interactions/comments/data/datasources/comments_remote_datasource.dart';
+import '../../../features/interactions/shares/data/datasources/shares_remote_datasource.dart';
+import '../../../features/interactions/likes/data/datasources/likes_remote_datasource.dart';
 import '../../../features/profile/data/data_sources/remote/firestore_profile_service.dart';
 import '../../../features/public/data/data_sources/remote/firestore_public_service.dart';
+import '../../data/data_sources/remote/firestore/post_operations_remote_datasource.dart';
 import '../../../features/main/data/data_sources/remote/firestore_main_service.dart';
 import '../../data/data_sources/remote/firestore/firestore_base_service.dart';
+import '../../../features/profile/data/converters/Info_data_converter.dart';
 import '../../../features/public/data/services/online_status_service.dart';
 import '../../../features/auth/data/network/connectivity_service.dart';
 import '../../data/data_sources/remote/firebase_auth_service.dart';
@@ -28,11 +34,55 @@ class CoreDependencies {
     sl.registerLazySingleton(() => FirestorePostDetailService());
     sl.registerLazySingleton(() => FirestoreNotificationsService());
     sl.registerLazySingleton(() =>
-        SessionService(cacheHelper: sl<CacheHelper>()));
+        SessionService(cacheHelper: sl<CacheHelper>()
+        )
+    );
+
+    sl.registerLazySingleton(() =>
+        AccountDataConverter(
+            sessionService: sl<SessionService>(),
+            repository: sl<FirestoreBaseService>()
+        )
+    );
+
+    sl.registerLazySingleton(() =>
+        PostOperationsRemoteDataSourceImpl(
+            sessionService: sl<SessionService>()
+        )
+    );
+
     sl.registerLazySingleton(() =>
         UserAccountService(
             sessionService: sl<SessionService>(),
             repository: sl<FirestoreBaseService>()
+        )
+    );
+
+    sl.registerLazySingleton(() =>
+        LikesRemoteDataSourceImpl(
+            sessionService: sl<SessionService>(),
+            userAccountService: sl<UserAccountService>()
+        )
+    );
+
+    sl.registerLazySingleton(() =>
+        CommentsRemoteDataSourceImpl(
+            sessionService: sl<SessionService>(),
+            userAccountService: sl<UserAccountService>()
+        )
+    );
+
+    sl.registerLazySingleton(() =>
+        CommentsLikesRemoteDataSourceImpl(
+            sessionService: sl<SessionService>(),
+            userAccountService: sl<UserAccountService>()
+        )
+    );
+
+    sl.registerLazySingleton(() =>
+        SharesRemoteDataSourceImpl(
+            sessionService: sl<SessionService>(),
+            userAccountService: sl<UserAccountService>()
         )
     );
   }

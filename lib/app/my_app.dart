@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:social_app/features/profile/presentation/cubits/user_profile_cubit.dart';
-import '../features/profile/cubit.dart';
 import '../core/di/service _locator.dart';
 import '../core/themes/theme_notifier.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/navigation/navigation_keys.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../features/interactions/comments_list/cubit.dart';
-import 'package:social_app/core/services/session_service.dart';
 import '../features/main/presentation/screens/main_screen.dart';
-import '../features/search/presentation/cubits/search_cubit.dart';
+import '../features/friendship/presentation/cubits/friendship_cubit.dart';
 import 'package:social_app/core/data/data_sources/local/cache_helper.dart';
 import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
 import '../features/notifications/presentation/cubits/notifications_cubit.dart';
 import 'package:social_app/features/public/presentation/cubits/public_cubit.dart';
+import 'package:social_app/features/profile/presentation/cubits/my_profile_cubit.dart';
+import 'package:social_app/features/user_details/presentation/cubits/user_details_cubit.dart';
 
 
 class MyApp extends StatelessWidget {
@@ -90,48 +87,53 @@ class MyApp extends StatelessWidget {
     );
 
     return MultiBlocProvider(
-      providers: [
-        BlocProvider<MainCubit>(create: (context) =>
-        sl<MainCubit>()
-          ..checkOnAnyFriends(uId: sl<SessionService>())
-          ..startListeningToCounters()), //
-    BlocProvider<CommentsCubit>(create: (context) =>
-    CommentsCubit()),/check all providers
-    BlocProvider<PublicCubit>(
-            create: (context) =>
-            sl<PublicCubit>()
-              ..getHomePosts()
-              ..getHomeStatus()
-              ..getUserAccount()
-        ),
+        providers: [
+          BlocProvider<MainCubit>(create: (context) =>
+          sl<MainCubit>()
+            ..checkOnAnyFriends()
+            ..startListeningToCounters()),
+          BlocProvider<UserDetailsCubit>(
+              create: (context) =>
+              sl<UserDetailsCubit>()
+                ..getUserDetails()
+          ),
+          BlocProvider<PublicCubit>(
+              create: (context) =>
+              sl<PublicCubit>()
+                ..getHomePosts()
+                ..getHomeStatus()
+          ),
 
-        BlocProvider<UserProfileCubit>(
-          create: (context) => sl<UserProfileCubit>(),
-        ),
-
-        BlocProvider<NotificationsCubit>(
-            create: (context) => sl<NotificationsCubit>()),
-        BlocProvider<FriendsCubit>(create: (context) => FriendsCubit()),
-      ],
-      child: ChangeNotifierProvider(
-      create: (_) => ThemeNotifier(cacheHelper: sl<CacheHelper>()),
-      child: Consumer<ThemeNotifier>(
-        builder: (context, themeNotifier, child) {
-          return MaterialApp(
-              navigatorKey: NavigationKeys.navigatorKey,
-              routes: {
-                '/friends_screen': (context) => MainScreen(targetScreen: 2),
-                '/notifications_screen': (context) =>
-                    MainScreen(targetScreen: 1),
-              },
-              theme: lightTheme,
-              darkTheme: darkTheme,
-              themeMode: themeNotifier.themeMode,
-              debugShowCheckedModeBanner: false,
-              home: MainScreen()
-          );
-        },
-      ),
+          BlocProvider<MyProfileCubit>(
+            create: (context) => sl<MyProfileCubit>(),
+          ),
+          BlocProvider<FriendshipCubit>(
+            create: (context) => sl<FriendshipCubit>(),
+          ),
+          BlocProvider<NotificationsCubit>(
+              create: (context) => sl<NotificationsCubit>()
+          ),
+        ],
+        child: ChangeNotifierProvider(
+          create: (_) => ThemeNotifier(cacheHelper: sl<CacheHelper>()),
+          child: Consumer<ThemeNotifier>(
+            builder: (context, themeNotifier, child) {
+              return MaterialApp(
+                  navigatorKey: NavigationKeys.navigatorKey,
+                  routes: {
+                    '/friends_screen': (context) => MainScreen(targetScreen: 2),
+                    '/notifications_screen': (context) =>
+                        MainScreen(targetScreen: 1),
+                  },
+                  theme: lightTheme,
+                  darkTheme: darkTheme,
+                  themeMode: themeNotifier.themeMode,
+                  debugShowCheckedModeBanner: false,
+                  home: MainScreen()
+              );
+            },
+          ),
+        )
     );
   }
 }

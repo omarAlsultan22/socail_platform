@@ -3,10 +3,14 @@ import '../../../../features/public/constants/public_constants.dart';
 
 
 class BuildUserInfoSection extends StatefulWidget {
+  final String myName;
+  final String myImageUrl;
   final Function(String) onPressed;
   const BuildUserInfoSection({
+    super.key,
+    required this.myName,
     required this.onPressed,
-    super.key
+    required this.myImageUrl
   });
 
   @override
@@ -27,15 +31,17 @@ class _BuildUserInfoSectionState extends State<BuildUserInfoSection> {
             width: 50.0,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50.0),
-              border: UserDetails.image.isEmpty? Border.all(color: Theme.of(context).brightness == Brightness.light?
+              border: widget.myImageUrl.isEmpty ? Border.all(color: Theme
+                  .of(context)
+                  .brightness == Brightness.light ?
               Colors.black : Colors.white
               ) : null,
               image: DecorationImage(
-                image: NetworkImage(UserDetails.image),
+                image: NetworkImage(widget.myImageUrl),
                 fit: BoxFit.cover,
               ),
             ),
-            child: UserDetails.image.isEmpty?
+            child: widget.myImageUrl.isEmpty ?
             Icon(Icons.person) : SizedBox(),
           ),
         ),
@@ -44,11 +50,11 @@ class _BuildUserInfoSectionState extends State<BuildUserInfoSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              UserDetails.name,
+              widget.myName,
               style: TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.bold,
-                fontFamily: UserDetails.name,
+                fontFamily: widget.myName,
               ),
             ),
             DropdownButton<String>(

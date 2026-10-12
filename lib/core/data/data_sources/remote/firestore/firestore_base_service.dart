@@ -22,8 +22,8 @@ class FirestoreBaseService {
     return ref.id;
   }
 
-  DocumentReference<Map<String, dynamic>> docRef({
-    required String docId,
+  DocumentReference<Map<String, dynamic>> getDocRef({
+    required String? docId,
     required String collectionPath
   }) {
     final docRef = firestore.collection(collectionPath).doc(docId);
@@ -34,7 +34,7 @@ class FirestoreBaseService {
     required String collectionPath,
   }) {
     return firestore
-        .collection(collectionPath).get();
+        .collection(collectionPath).get().timeout(duration);
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> getSubCollection({
@@ -45,7 +45,8 @@ class FirestoreBaseService {
     return firestore
         .collection(supCollectionPath)
         .doc(docId)
-        .collection(subCollectionPath).get();
+        .collection(subCollectionPath)
+        .get().timeout(duration);
   }
 
   Future<void> updateDoc({
@@ -76,7 +77,7 @@ class FirestoreBaseService {
         duration);
   }
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> getSupDoc({
+  Future<DocumentSnapshot<Map<String, dynamic>>> getDoc({
     required String docId,
     required String collectionPath,
   }) async {
@@ -118,5 +119,20 @@ class FirestoreBaseService {
         .collection(subCollectionPath)
         .snapshots()
         .timeout(duration);
+  }
+
+  Future<AggregateQuerySnapshot> getCount({
+    required String collectionPath,
+    required DocumentReference docRef
+  }) {
+    return docRef.collection(collectionPath).count().get().timeout(duration);
+  }
+
+  DocumentReference getSpecificDocRef({
+    required String docId,
+    required String collectionPath,
+    required DocumentReference docRef
+  }) {
+    return docRef.collection(collectionPath).doc(docId);
   }
 }

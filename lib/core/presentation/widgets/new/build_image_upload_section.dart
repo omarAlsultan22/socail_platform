@@ -102,7 +102,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
         child: Column(
           children: [
             if(widget.postModel!.userText != null &&
-                widget.postModel!.userId != widget.uId)...[
+                widget.postModel!.myId != widget.uId)...[
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Text(

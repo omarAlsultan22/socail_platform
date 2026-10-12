@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../../core/data/data_sources/remote/firestore/firestore_base_service.dart';
 import '../../../../../core/data/models/post_model.dart';
+import '../../../../../core/data/posts/constants/posts_collection.dart';
+import 'package:social_app/core/data/posts/queries/posts_query_builder.dart';
+import '../../../../../core/data/data_sources/remote/firestore/firestore_base_service.dart';
 
 
 class FirestoreProfileService extends FirestoreBaseService {
@@ -21,13 +23,6 @@ class FirestoreProfileService extends FirestoreBaseService {
     return docRef;
   }
 
-  Future<AggregateQuerySnapshot> getCount({
-    required String collectionPath,
-    required DocumentReference docRef
-  }) {
-    return docRef.collection(collectionPath).count().get();
-  }
-
   Future<DocumentSnapshot<Map<String, dynamic>>> getSubDoc({
     required String supDoc,
     required String subDoc,
@@ -42,22 +37,21 @@ class FirestoreProfileService extends FirestoreBaseService {
   }
 
   Future<QuerySnapshot> getPosts({
+    String? postType,
     required int limit,
     required String userId,
-    required String postType,
     required DocumentSnapshot? lastPostDoc,
   }) async {
     var query = firestore
         .collection('posts')
         .where('userId', isEqualTo: userId)
-        .where('postType', isEqualTo: postType)
-        .orderBy('dateTime', descending: true);
+        .where('postType', whereIn: [postType ?? PostsCollection.postTypesList]);
 
-    if (lastPostDoc != null) {
-      query = query.startAfterDocument(lastPostDoc);
-    }
-
-    return await query.limit(limit).get();
+    return PostsQueryBuilder.build(
+        limit: limit,
+        baseQuery: query,
+        lastPostDoc: lastPostDoc
+    ).get();
   }
 
   Future<String> uploadImage({
@@ -74,7 +68,7 @@ class FirestoreProfileService extends FirestoreBaseService {
       data: {imageType: docRef.path}
     );
 
-    postModel.docId = docRef.id;
+    postModel.myDocId = docRef.id;
     await docRef.set(postModel.postToMap(), SetOptions(merge: true));
     return
       docRef.id;

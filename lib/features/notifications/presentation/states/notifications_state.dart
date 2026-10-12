@@ -37,11 +37,14 @@ class NotificationsState extends MainAppSupState {
     );
   }
 
+  bool get notificationsListIsEmpty =>
+      notificationsList.isEmpty;
+
   @override
   NotificationsSuccessState get dataModels =>
       NotificationsSuccessState(
-          messageResult: messageResult,
-          notificationsList: notificationsList,
+        messageResult: messageResult,
+        notificationsList: notificationsList,
       );
 
   @override

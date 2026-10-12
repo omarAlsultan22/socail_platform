@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../data/data_sources/local/cache_helper.dart';
 import '../errors/exceptions/components_exception.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import '../../features/main/presentation/cubits/main_cubit.dart';
 import '../../features/public/data/services/online_status_service.dart';
 import '../data/data_sources/remote/firestore/firestore_base_service.dart';
 
@@ -56,6 +57,7 @@ class InitializationController {
     await _onlineStatusService.initialize();
 
     _notificationService = NotificationService(
+        cubit: sl<MainCubit>(),
         sessionService: sl<SessionService>(),
         repository: sl<FirestoreBaseService>()
     );

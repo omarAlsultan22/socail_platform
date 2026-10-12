@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../public/presentation/screens/public_screen.dart';
 import '../../../../search/presentation/screens/search_screen.dart';
-import '../../../../profile/presentation/screens/user_profile_screen.dart';
+import '../../../../profile/presentation/screens/my_profile_screen.dart';
 import '../../../../notifications/presentation/screens/notifications_screen.dart';
 import 'package:social_app/features/settings/presentation/screens/settings_screen.dart';
 import 'package:social_app/features/friendship/presentation/screens/friendship_screen.dart';
@@ -25,7 +25,7 @@ class MainLayout extends StatelessWidget {
     PublicScreen(),
     NotificationsScreen(),
     FriendshipScreen(),
-    UserProfileScreen(),
+    MyProfileScreen(),
   ];
 
   Widget _buildTabIcon({

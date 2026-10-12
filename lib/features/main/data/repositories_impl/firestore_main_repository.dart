@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../data_sources/remote/firestore_main_service.dart';
-import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/features/main/domain/repositories/main_repository.dart';
 
@@ -30,9 +30,9 @@ class FirestoreMainRepository implements MainRepository{
   }
 
   @override
-  List<UserModel> convertUsersToModels(QuerySnapshot snapshot) {
+  List<MyModel> convertUsersToModels(QuerySnapshot snapshot) {
     return snapshot.docs
-        .map((doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>))
+        .map((doc) => MyModel.fromJson(doc.data() as Map<String, dynamic>))
         .toList();
   }
 

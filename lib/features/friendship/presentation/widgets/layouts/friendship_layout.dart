@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../domain/enums/friendship_type.dart';
-import '../../../../../core/data/models/user_model.dart';
-import '../../../../profile/presentation/screens/friend_profile_screen.dart';
+import '../../../../../core/data/models/my_model.dart';
+import '../../../../profile/presentation/screens/user_profile_screen.dart';
 import '../../../../../core/presentation/widgets/navigation/navigator.dart';
 
 
@@ -10,7 +10,7 @@ class FriendshipLayout extends StatelessWidget {
   final FriendshipType friendshipType;
   final void Function(int) refuseButton;
   final void Function (int) acceptButton;
-  final List<UserModel> notificationData;
+  final List<MyModel> notificationData;
 
   const FriendshipLayout({
     super.key,
@@ -22,7 +22,7 @@ class FriendshipLayout extends StatelessWidget {
   });
 
   Widget _friendRequestItem({
-    required UserModel userModel,
+    required MyModel userModel,
     required BuildContext context,
     required FriendshipType labels,
     required VoidCallback acceptButton,
@@ -31,7 +31,7 @@ class FriendshipLayout extends StatelessWidget {
     return InkWell(
       onTap: () {
         BuildNavigator.build(
-            context: context, link: FriendProfileScreen(userId: userModel.userId!));
+            context: context, link: UserProfileScreen(friendId: userModel.myId!));
       },
       child: Padding(
         padding: const EdgeInsets.only(left: 10.0),
@@ -42,7 +42,7 @@ class FriendshipLayout extends StatelessWidget {
               height: 50.0,
               child: ClipOval(
                 child: Image.network(
-                    userModel.userImage!,
+                    userModel.myImageUrl!,
                     fit: BoxFit.cover
                 ),
               ),
@@ -53,7 +53,7 @@ class FriendshipLayout extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    userModel.userName!,
+                    userModel.myName!,
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,

@@ -1,14 +1,16 @@
 import 'dart:async';
 import '../states/main_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/main_use_case.dart';
+import '../../domain/use_cases/main_use_case.dart';
 import '../../../../core/services/notification_service.dart';
+import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/services/user_account_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 
 
 class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
   final MainUseCases _useCases;
+  final SessionService _sessionService;
   final UserAccountService _userAccountService;
   final NotificationService _notificationService;
 
@@ -18,10 +20,12 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
 
   MainCubit({
     required MainUseCases useCase,
+    required SessionService sessionService,
     required UserAccountService userAccountService,
     required NotificationService notificationService
   })
       : _useCases = useCase,
+        _sessionService = sessionService,
         _userAccountService = userAccountService,
         _notificationService = notificationService,
         super(MainState.initial());
@@ -52,11 +56,11 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
     }
   }
 
-  Future<void> checkOnAnyFriends({required String uId}) async {
+  Future<void> checkOnAnyFriends() async {
     emit(state.successState());
 
     try {
-      final suggests = await _useCases.executeCheckOnAnyFriends(uId: uId);
+      final suggests = await _useCases.executeCheckOnAnyFriends(uId: _sessionService.currentUid);
       emit(state.updateSuggestsList(suggests));
       emit(state.successState());
     } catch (e, stackTrace) {
@@ -119,7 +123,7 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
           if (state.isMessageActive) {
             _notificationService.sendInteractionNotification({
               ...doc.data() as Map<String, dynamic>,
-              'friendName': userModel.userName,
+              'friendName': userModel.myName,
             });
           }
         }

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 import '../../domain/repositories/friendship_repository.dart';
 import '../../../../core/data/data_sources/remote/firestore/firestore_base_service.dart';
 
@@ -13,12 +13,12 @@ class FirestoreFriendshipRepository implements FriendshipRepository {
   @override
   Future<void> addFriendRequestToFirestore({
     required String userId,
-    required UserModel friendInfo,
+    required MyModel friendInfo,
   }) async {
     await _repository.setSubDoc(
       supDocId: userId,
       data: friendInfo.toJson(),
-      subDocId: friendInfo.userId,
+      subDocId: friendInfo.myId,
       supCollectionPath: 'users',
       subCollectionPath: 'requests',
     );
@@ -48,9 +48,9 @@ class FirestoreFriendshipRepository implements FriendshipRepository {
   }
 
   @override
-  Stream<List<UserModel>> getConversationsStream({
+  Stream<List<MyModel>> getConversationsStream({
     required String userId,
-    required Future<UserModel> Function(String id) getUserModelData,
+    required Future<MyModel> Function(String id) getUserModelData,
   }) {
     return _repository.getSubCollectionStream(
         docId: userId,

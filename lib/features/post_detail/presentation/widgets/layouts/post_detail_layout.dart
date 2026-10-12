@@ -1,28 +1,41 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/di/service _locator.dart';
 import '../../../../../core/data/models/post_model.dart';
-import '../../../../interactions/comments_list/cubit.dart';
 import '../../../../../core/data/models/comment_model.dart';
 import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/comment_form.dart';
-import '../../../../interactions/interactions_layout/comments_layout.dart';
 import '../../../../../core/presentation/widgets/new/post_card.dart';
+import '../../../../interactions/comments/presentation/cubits/comments_cubit.dart';
+import '../../../../interactions/comments/presentation/layouts/comments_layout.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
 
 
 class PostDetailLayout extends StatefulWidget {
   final PostModel postModel;
+  final MessageResult messageResult;
+  final void Function(PostModel) onAdd;
   final List<CommentModel> commentsList;
   final String? Function(int index) getUId;
+  final void Function(PostModel) onUpsert;
+  final void Function(PostModel) onRemove;
   final NotificationsModel notificationsModel;
+  final void Function(bool, PostModel) onToggle;
   final CommentModel Function(int index) getCommentModel;
+
   const PostDetailLayout({
     super.key,
+    required this.onAdd,
     required this.getUId,
+    required this.onUpsert,
+    required this.onRemove,
+    required this.onToggle,
     required this.postModel,
     required this.commentsList,
+    required this.messageResult,
     required this.getCommentModel,
-    required this.notificationsModel});
+    required this.notificationsModel,
+  });
 
   @override
   State<PostDetailLayout> createState() => _PostDetailLayoutState();
@@ -31,8 +44,8 @@ class PostDetailLayout extends StatefulWidget {
 class _PostDetailLayoutState extends State<PostDetailLayout> {
   late CommentsCubit _commentsCubit;
   final GlobalKey _targetCommentKey = GlobalKey();
-  final ScrollController _scrollController = ScrollController();
   final commentController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -75,8 +88,14 @@ class _PostDetailLayoutState extends State<PostDetailLayout> {
             controller: _scrollController,
             child: Column(
               children: [
-                PostCard(postModel: widget.postModel,
-                    sessionService: sl<SessionService>()
+                PostCard(
+                  onAdd: widget.onAdd,
+                  onUpsert: widget.onUpsert,
+                  onRemove: widget.onRemove,
+                  onToggle: widget.onToggle,
+                  postModel: widget.postModel,
+                  messageResult: widget.messageResult,
+                  sessionService: sl<SessionService>(),
                 ),
                 if (widget.commentsList.isNotEmpty)
                   ListView.separated(
@@ -88,14 +107,18 @@ class _PostDetailLayoutState extends State<PostDetailLayout> {
                           widget.notificationsModel.friendId;
 
                       return CommentModelLayout(
-                        key: isTargetComment ? _targetCommentKey : ValueKey(
-                            index),
-                        comment: commentModel,
-                        onTap: (value) =>
-                            _commentsCubit.chickLike(
-                                isLike: value, comment: commentModel),
-                        onLongPressed: (value) =>
-                            _commentsCubit.deleteComment(comment: commentModel),
+                          sessionService: sl<SessionService>(),
+                          key: isTargetComment ? _targetCommentKey : ValueKey(
+                              index),
+                          comment: commentModel,
+                          onTap: (value) =>
+                              _commentsCubit.chickLike(
+                                  isLike: value, comment: commentModel),
+                          onLongPressed: (value) =>
+                              _commentsCubit.removeComment(
+                                  comment: commentModel),
+                          userId: widget.postModel.myId,
+                          messageResult: widget.messageResult
                       );
                     },
                     separatorBuilder: (context, index) =>

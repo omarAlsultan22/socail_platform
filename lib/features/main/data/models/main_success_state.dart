@@ -1,11 +1,11 @@
-import '../../../../core/data/models/user_model.dart';
+import '../../../../core/data/models/my_model.dart';
 import 'package:social_app/core/presentation/states/base/main_loaded_state.dart';
 
 
 class MainSuccessState extends LoadedState {
   final int currentScreenIndex;
   final Set<String> messagesDocIds;
-  final List<UserModel> suggestsList;
+  final List<MyModel> suggestsList;
   final Set<String> notificationsDocIds;
   final Set<String> friendRequestsDocIds;
 

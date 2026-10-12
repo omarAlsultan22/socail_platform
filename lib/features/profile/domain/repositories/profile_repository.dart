@@ -1,10 +1,9 @@
-import 'package:social_app/core/data/models/profile_info_model.dart';
-import 'package:social_app/core/data/models/post_model.dart';
-import 'package:social_app/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/data/models/post_model.dart';
 
 
-abstract class ProfileRepository {
+abstract class ProfileRepository{
 
   Future<String> uploadImage({
     required PostModel postModel,
@@ -13,10 +12,10 @@ abstract class ProfileRepository {
   });
 
   Future<QuerySnapshot> getPosts({
-    required String userId,
-    required String postType,
-    required DocumentSnapshot? lastDoc,
+    String? postType,
     required int limit,
+    required String userId,
+    DocumentSnapshot? lastDoc,
   });
 
   Future<QuerySnapshot> getVideos({
@@ -25,15 +24,9 @@ abstract class ProfileRepository {
     required int limit,
   });
 
-  Future<void> deletePost(String postId);
-
-  Future<String> addPost(PostModel postModel);
-
-  Future<void> updatePost(PostModel postModel);
+  Future<bool> hasMeLiked(String postId);
 
   Future<void> deleteFriendship(String userId);
-
-  Future<ProfileInfoModel?> getInfo(String uid);
 
   Future<bool> checkFriendExists(String userId);
 
@@ -41,15 +34,15 @@ abstract class ProfileRepository {
 
   Future<void> deleteFriendRequest(String userId);
 
-  Future<List<UserModel>> getFriends(String userId);
+  Future<List<MyModel>> getFriends(String userId);
 
   Future<Map<String, dynamic>> getAccountData(String userId);
 
-  Future<void> addFriend(String docId, UserModel friendInfo);
+  Future<void> addFriend(String docId, MyModel friendInfo);
 
   Future<({int? comments, int? likes})> getPostCounts(String postId);
 
-  Future<void> sendFriendRequest(String userId, UserModel friendInfo);
+  Future<void> sendFriendRequest(String userId, MyModel friendInfo);
 
-  Future<({ProfileInfoModel? info, UserModel? account})> getProfileInfo(String uid);
+  Future<({DocumentSnapshot? info, DocumentSnapshot? account})> getProfileInfo(String uId);
 }

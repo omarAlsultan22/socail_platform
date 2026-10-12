@@ -7,6 +7,7 @@ import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/presentation/widgets/app_spaces.dart';
+import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 
 
@@ -29,7 +30,7 @@ class ChangeEmailAndPasswordLayout extends StatefulWidget {
   State<ChangeEmailAndPasswordLayout> createState() => _ChangeEmailAndPasswordLayoutState();
 }
 
-class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLayout> with AuthMixin<ChangeEmailAndPasswordLayout> {
+class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLayout> with AuthMixin<ChangeEmailAndPasswordLayout> , MessageResultMixin {
   final _formKey = GlobalKey<FormState>();
   final _newEmailController = TextEditingController();
   final _currentPasswordController = TextEditingController();
@@ -70,7 +71,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     if (!_validateForm()) return;
 
     _updateLockButton(true);
-    hideKeyboard(context);
+    hideKeyboard();
     await widget.onUpdate(
       newEmail: _newEmailController.text,
       currentPassword: _currentPasswordController.text,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../constants/auth_strings.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/data/models/message_result.dart';
+import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 
 
 class ForgetPasswordLayout extends StatefulWidget {
@@ -20,7 +21,7 @@ class ForgetPasswordLayout extends StatefulWidget {
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMixin<ForgetPasswordLayout>{
+class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMixin<ForgetPasswordLayout>, MessageResultMixin<ForgetPasswordLayout>{
   bool _isLocked = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -57,7 +58,7 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
   Future<void> _sendResetEmail() async {
     if (!validateForm(_formKey)) return;
     _updateLockButton(true);
-    hideKeyboard(context);
+    hideKeyboard();
     final email = _emailController.text.trim();
     widget.onSubmit(userEmail: email);
     _updateLockButton(false);

@@ -1,34 +1,119 @@
 import 'dart:async';
+import 'package:social_app/features/public/data/models/user_details.dart';
+
 import '../states/public_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/public_use_cases.dart';
+import '../../domain/use_cases/public_use_cases.dart';
 import '../../../../core/data/models/post_model.dart';
 import '../../data/services/online_status_service.dart';
+import '../../../../core/data/models/message_result.dart';
 import '../../../../core/services/user_account_service.dart';
+import '../../../../core/domain/use_cases/post_use_case.dart';
 import 'package:social_app/core/services/session_service.dart';
-import 'package:social_app/core/data/models/user_details.dart';
+import 'package:social_app/core/domain/use_cases/like_use_case.dart';
+import 'package:social_app/core/domain/use_cases/share_use_case.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
+import '../../../../core/presentation/coordinators/post_syncable.dart';
+import '../../../../core/presentation/mixins/post_operations_mixin.dart';
+import 'package:social_app/features/user_details/domain/use_cases/user_details_use_case.dart';
 
 
-class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState> {
+class PublicCubit extends Cubit<PublicState> with PostOperationsMixin, ErrorHandlerMixin<PublicState> implements PostSyncable {
   final PublicUseCase _useCases;
+  final PostUseCase _postUseCase;
+  final LikeUseCase _likeUseCase;
+  final ShareUseCase _shareUseCase;
   final SessionService _sessionService;
-  final UserAccountService _userAccountService;
   StreamSubscription? _onlineSubscription;
+  final UserAccountService _userAccountService;
+  final UserDetailsUseCase _userDetailsUseCase;
 
   PublicCubit({
     required PublicUseCase useCase,
+    required PostUseCase postUseCase,
+    required LikeUseCase likeUseCase,
+    required ShareUseCase shareUseCase,
     required SessionService sessionService,
+    required UserDetailsUseCase userDetailsUseCase,
     required UserAccountService userAccountService
   })
       : _useCases = useCase,
+        _postUseCase = postUseCase,
+        _likeUseCase = likeUseCase,
+        _shareUseCase = shareUseCase,
         _sessionService = sessionService,
+        _userDetailsUseCase = userDetailsUseCase,
         _userAccountService = userAccountService,
-        super(PublicState.initial());
+        super(PublicState.initial()) {
+    emit(state.copyWith(currentUid: sessionService.currentUid));
+  }
 
   static PublicCubit get(context) => BlocProvider.of(context);
 
   bool get hasMorePosts => state.hasMorePosts;
+
+  @override
+  PostUseCase get postUseCase => _postUseCase;
+
+  @override
+  LikeUseCase get likeUseCase => _likeUseCase;
+
+  @override
+  ShareUseCase get shareUseCase => _shareUseCase;
+
+  @override
+  UserDetailsUseCase get userDetailsUseCase => _userDetailsUseCase;
+
+  @override
+  UserAccountService get userAccountService => _userAccountService;
+
+  @override
+  Future<void> upsertPostToRepository({required PostModel postModel}) async {
+    emit(state.copyWith(messageResult: MessageResult.loading()));
+    try {
+      await super.upsertPostToRepository(postModel: postModel)
+          .whenComplete(() =>
+          emit(state.copyWith(messageResult: MessageResult.success())
+          )
+      );
+    }
+    catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  messageResult: MessageResult.error(failure: failure))
+      );
+    }
+  }
+
+  @override
+  Future<void> removePostFromRepository({required PostModel postModel}) async {
+    emit(state.copyWith(messageResult: MessageResult.loading()));
+    try {
+      await super.removePostFromRepository(postModel: postModel)
+          .whenComplete(() =>
+          emit(state.copyWith(messageResult: MessageResult.success())
+          )
+      );
+    }
+    catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  messageResult: MessageResult.error(failure: failure))
+      );
+    }
+  }
+
+  @override
+  void upsertPostToList(PostModel postModel) {
+    emit(state.upsertPost(postModel));
+  }
+
+  @override
+  void removePostFromList(PostModel postModel) {
+    emit(state.removePost(postModel.myDocId));
+  }
 
   void getUserOnlineStatus(OnlineStatusService onlineStatusService,
       String userId) {
@@ -40,8 +125,8 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
     });
   }
 
-  void addPost(PostModel postModel) {
-    emit(state.addPostAtBeginning(postModel));
+  void updateUserDetails(UserDetails userDetails) {
+    emit(state.updateUserDetailsMap(userDetails));
   }
 
   void addStatus(PostModel statusModel) {
@@ -49,7 +134,7 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
     List<PostModel> newMyStatuses;
 
     if (state.homeStatusesList.isNotEmpty &&
-        state.homeStatusesList.first.first.userId ==
+        state.homeStatusesList.first.first.myId ==
             _sessionService.currentUid) {
       newMyStatuses = [statusModel, ...currentMyStatuses];
     } else {
@@ -65,22 +150,20 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
     );
   }
 
-  Future<void> insertAndUpdateStatuses({
+  Future<void> upsertStatus({
     required PostModel statusModel
   }) async {
     emit(state.setLoadingState());
     try {
-      if (statusModel.userId == null) {
-        final userModel = await _userAccountService.getUserAccountData();
-        final newStatusModel = statusModel.copyWith(
-          userId:  userModel.userId,
-          userName:  userModel.userName,
-          userImage: userModel.userImage
+      var newStatus = statusModel;
+      if (newStatus.myId.isEmpty) {
+        final userModel = await userAccountService.getUserAccountData();
+        newStatus = statusModel.copyWith(
+            myId: userModel.myId,
         );
-
-        addStatus(newStatusModel);
-        await _useCases.executeInsertStatus(newStatusModel);
       }
+      addStatus(newStatus);
+      await _useCases.executeInsertStatus(newStatus);
       emit(state.setSuccessState());
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
@@ -88,42 +171,6 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
               state.setErrorState(failure)
       );
     }
-  }
-
-  Future<void> insertAndUpdatePosts({
-    required PostModel postModel
-  }) async {
-    emit(state.setLoadingState());
-    try {
-      if (postModel.userId == null) {
-        final userModel = await _userAccountService.getUserAccountData();
-        postModel = postModel.copyWith(
-            userId:  userModel.userId,
-            userName:  userModel.userName,
-            userImage: userModel.userImage,
-            postType: postModel.postType ?? 'post'
-        );
-      }
-      addPost(postModel);
-      await _useCases.executeInsertPost(postModel);
-      emit(state.setSuccessState());
-    } catch (e, stackTrace) {
-      handleError(e, stackTrace,
-          onError: (failure) =>
-              state.setErrorState(failure)
-      );
-    }
-  }
-
-  Future<void> getUserAccount() async {
-    final userModel = await _useCases.executeGetUserAccount();
-    final userDetails = UserDetails(
-        userName: userModel.userName,
-        userImage: userModel.userImage
-    );
-    emit(
-        state.copyWith(userDetails: userDetails)
-    );
   }
 
   Future<void> getHomePosts() async {
@@ -138,8 +185,8 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
       );
 
       emit(state.updatePostsPagination(
-        newPosts: result.postsList,
-        hasMore: result.hasMorePosts,
+        newPosts: result.dataList,
+        hasMore: result.hasMoreData,
         lastDoc: result.lastPostDoc,
       ));
 
@@ -179,27 +226,13 @@ class PublicCubit extends Cubit<PublicState> with ErrorHandlerMixin<PublicState>
     }
   }
 
-  Future<void> deletePost({
-    required PostModel postModel
-  }) async {
-    final isMyPost = postModel.userId == _sessionService.currentUid;
-
-    emit(state.removePost(postModel.docId!));
-
-    await _useCases.executeDeletePost(
-      postModel: postModel,
-      isMyPost: isMyPost,
-    );
-    emit(state.setSuccessState());
-  }
-
-  Future<void> deleteStatus({
+  Future<void> removeStatus({
     required PostModel statusModel,
   }) async {
     try {
-      final isMyStatus = statusModel.userId == _sessionService.currentUid;
+      final isMyStatus = statusModel.myId == _sessionService.currentUid;
 
-      emit(state.removeStatus(statusModel.docId!));
+      emit(state.removeStatus(statusModel.myDocId));
 
       await _useCases.executeDeleteStatus(
         statusModel: statusModel,

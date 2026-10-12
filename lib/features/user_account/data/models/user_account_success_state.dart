@@ -1,4 +1,4 @@
-import '../../../../core/data/models/account_model.dart';
+import '../../../../core/data/models/user_account.dart';
 import '../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/presentation/states/base/main_loaded_state.dart';
 

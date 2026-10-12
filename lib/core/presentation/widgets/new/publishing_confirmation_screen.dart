@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:video_player/video_player.dart';
 
 
@@ -179,7 +178,7 @@ class _PublishingConfirmationScreenState extends State<PublishingConfirmationScr
       ),
     );
   }
-  /reuse
+
   String _formatDuration(Duration d) {
     return '${d.inMinutes}:${(d.inSeconds % 60).toString().padLeft(2, '0')}';
   }

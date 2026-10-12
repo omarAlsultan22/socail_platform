@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/post_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/services/media_picker_service.dart';
+import 'package:social_app/core/presentation/widgets/build_snack_bar.dart';
 
 
 class BuildSubmitButton extends StatefulWidget {
-  final String uId;
+  final String currentId;
   final String? state;
-  PostModel? postModel;
   final String folderName;
   final String buttonName;
+  final PostModel? postModel;
+  final MessageResult messageResult;
   final void Function(PostModel) onPressed;
   final TextEditingController textController;
-  BuildSubmitButton({
+  const BuildSubmitButton({
     super.key,
-    required this.uId,
+    required this.currentId,
     required this.state,
     required this.postModel,
     required this.onPressed,
     required this.folderName,
     required this.buttonName,
+    required this.messageResult,
     required this.textController
   });
 
@@ -29,102 +32,95 @@ class BuildSubmitButton extends StatefulWidget {
 }
 
 class _BuildSubmitButtonState extends State<BuildSubmitButton> {
-  bool isLoading = false;
+  late String _textValue;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _textValue = widget.textController.text;
+  }
+
+  void setButtonLock(bool value) {
+    setState(() {
+      _isLoading = value;
+    });
+  }
 
   void setData() async {
-    try {
-      setState(() => isLoading = true);
-
-      if ((widget.textController.text.isEmpty || widget.textController.text.trim() == '') &&
-          (widget.postModel!.userPost == null || widget.postModel!.userPost!.isEmpty)) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Please enter post details or add an image'),
+    setButtonLock(false);
+    if ((_textValue.isEmpty ||
+        widget.textController.text.trim() == '') &&
+        (widget.postModel!.userPost == null ||
+            widget.postModel!.userPostIsEmpty)) {
+      BuildSnackBar.show(
+          context: context,
           backgroundColor: Colors.red.shade700,
-        ));
-        return;
-      }
-
-      if(widget.postModel!.userId == widget.uId && widget.buttonName == 'Share Now'){
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('You cannot share your post'),
-          backgroundColor: Colors.red.shade700,
-        ));
-        return;
-      }
-
-      if(widget.postModel!.userId != widget.uId && widget.buttonName == 'Share Now') {
-        final newPostModel = PostModel();
-        final docId = await createDoc();
-        setState(() =>
-        newPostModel.copyWith(
-          docId: docId,
-          userPost: widget.postModel!.userPost,
-          userState: widget.state ?? 'public',
-          userText: widget.textController.text,
-          pathType: widget.postModel!.pathType,
-          postType: widget.postModel!.postType,
-          isOnline: true,
-          dateTime: DateTime.now(),
-            friendId: widget.postModel!.userId,
-            friendName: widget.postModel!.userName,
-            friendImage: widget.postModel!.userImage,
-            friendText: widget.postModel!.userText,
-            friendState: widget.postModel!.userState,
-            friendIsOnline: widget.postModel!.isOnline,
-            originalDateTime: widget.postModel!.dateTime,
-          videoController: widget.postModel!.videoController,
-          sharesNumber: 0,
-          likesNumber: 0,
-          commentsNumber: 0
-        ));
-        widget.onPressed(newPostModel);
-      }
-      else {
-        final map = await MediaPickerService.checkFile(widget.postModel!.file!);
-        final docId = await createDoc();
-        setState(() =>
-        widget.postModel = PostModel(
-            docId: docId,
-            userText: widget.textController.text,
-            userPost: map!['url'] ?? '',
-            userState: widget.state ?? 'public',
-            pathType: widget.postModel!.pathType ?? map['type'],
-            dateTime: DateTime.now(),
-            isOnline: true
-        )
-        );
-        widget.onPressed(widget.postModel!);
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(/
-          content: Text('The post has been published successfully'),
-          backgroundColor: Colors.green.shade700,
-        ));
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(/
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: Colors.red.shade700,
-        ));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => isLoading = false);
-      }
+          message: 'Please enter post details or add an image'
+      );
+      return;
     }
+
+    if (widget.postModel!.myId == widget.currentId &&
+        widget.buttonName == 'Share Now') {
+      BuildSnackBar.show(
+        context: context,
+        backgroundColor: Colors.red.shade700,
+        message: 'You cannot share your post',
+      );
+      return;
+    }
+
+    if (widget.postModel!.myId != widget.currentId &&
+        widget.buttonName == 'Share Now') {
+      late PostModel newPostModel;
+      setState(() =>
+      newPostModel = PostModel(
+        meIsOnline: true,
+        postIsShared: true,
+        myDateTime: DateTime.now(),
+        userPost: widget.postModel!.userPost,
+        myState: widget.state ?? 'public',
+        userText: widget.textController.text,
+        pathType: widget.postModel!.pathType,
+        postType: widget.postModel!.postType,
+        userModel: UserModel(
+          userId: widget.postModel!.myId,
+          userText: widget.postModel!.userText,
+          userName: widget.postModel!.myName,
+          userImage: widget.postModel!.myImageUrl,
+          userState: widget.postModel!.myState,
+          userDocId: widget.postModel!.myDocId,
+          userIsOnline: widget.postModel!.meIsOnline,
+          originalDateTime: widget.postModel!.myDateTime,
+        ),
+        videoController: widget.postModel!.videoController,
+      ));
+      widget.onPressed(newPostModel);
+    }
+    else {
+      final map = await MediaPickerService.checkFile(widget.postModel!.file!);
+      final newPostModel = widget.postModel!.copyWith(
+          userText: widget.textController.text,
+          userPost: map!['url'] ?? '',
+          myState: widget.state ?? 'public',
+          pathType: widget.postModel!.pathType ?? map['type'],
+          dateTime: DateTime.now(),
+          meIsOnline: true
+      );
+      widget.onPressed(newPostModel);
+    }
+    setButtonLock(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: MaterialButton(
-          onPressed: () => setData(),
+          onPressed: _isLoading ? () => setData() : null,
           color: Colors.blue.shade900,
-          child: isLoading ?
+          child: widget.messageResult.isLoading ?
           Center(child: CircularProgressIndicator(
               color: Colors.white)) :
           Text(
@@ -137,8 +133,5 @@ class _BuildSubmitButtonState extends State<BuildSubmitButton> {
           )
       ),
     );
-  }
-  Future<String>createDoc()async{
-    return FirebaseFirestore.instance.collection('posts').doc().id;
   }
 }

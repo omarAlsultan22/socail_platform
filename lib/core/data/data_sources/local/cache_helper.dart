@@ -79,11 +79,11 @@ class CacheHelper {
     }
   }
 
-  Future<bool?> getBool({
+  Future<bool> getBool({
     required String key,
   }) async {
     try {
-      return sharedPreferences.getBool(key);
+      return sharedPreferences.getBool(key) ?? false;
     }
     catch (e) {
       throw SharedPrefsReadException(error: e);

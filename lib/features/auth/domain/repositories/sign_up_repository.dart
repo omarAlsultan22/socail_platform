@@ -1,4 +1,4 @@
-import 'package:social_app/core/data/models/account_model.dart';
+import 'package:social_app/core/data/models/user_account.dart';
 
 
 abstract class SignUpRepository {

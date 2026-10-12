@@ -1,5 +1,4 @@
-import '../../../../core/data/models/post_model.dart';
-import '../../../../core/data/models/profile_info_model.dart';
+import '../../../../core/data/models/profile_info.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
@@ -10,43 +9,34 @@ import 'package:social_app/features/user_info/data/models/user_info_success_stat
 
 class UserInfoState extends MainAppSupState {
   final MessageResult messageResult;
-  final ProfileInfoModel? profileInfoModel;
+  final ProfileInfo? profileInfo;
+
   UserInfoState({
-    this.profileInfoModel,
+    this.profileInfo,
     required super.subState,
     required this.messageResult
   });
 
   factory UserInfoState.initial() {
     return UserInfoState(
-      profileInfoModel: null,
-      messageResult: MessageResult.initial(),
-      subState: InitialState(),
+        subState: InitialState(),
+        profileInfo: ProfileInfo.initial(),
+        messageResult: MessageResult.initial()
     );
   }
 
-  ProfileInfoModel profileInfoCopyWith({
-    String? userId,
-    bool? isOnline,
-    String? userName,
+  ProfileInfo profileInfoCopyWith({
     String? userLive,
     String? userFrom,
     String? userWork,
     String? userState,
-    PostModel? coverImage,
     String? userRelational,
-    PostModel? profileImage,
   }) {
-    return profileInfoModel!.copyWith(
-        userId: userId,
-        userName: userName,
+    return profileInfo!.copyWith(
         userWork: userWork,
         userLive: userLive,
         userFrom: userFrom,
-        isOnline: isOnline,
         userState: userState,
-        coverImage: coverImage,
-        profileImage: profileImage,
         userRelational: userRelational
     );
   }
@@ -54,20 +44,21 @@ class UserInfoState extends MainAppSupState {
   UserInfoState copyWith({
     MainAppSubState? subState,
     MessageResult? messageResult,
-    ProfileInfoModel? profileInfoModel,
+    ProfileInfo? profileInfo,
   }) {
     return UserInfoState(
         subState: subState ?? this.subState,
-        messageResult: messageResult ??  MessageResult.initial(),
-        profileInfoModel: profileInfoModel ?? this.profileInfoModel
+        messageResult: messageResult ?? MessageResult.initial(),
+        profileInfo: profileInfo ?? this.profileInfo
     );
   }
 
   @override
-  UserInfoSuccessState get dataModels => UserInfoSuccessState(
-      messageResult: messageResult,
-      profileInfoModel: profileInfoModel!
-  );
+  UserInfoSuccessState get dataModels =>
+      UserInfoSuccessState(
+          messageResult: messageResult,
+          profileInfoModel: profileInfo!
+      );
 
   @override
   R when<R>({

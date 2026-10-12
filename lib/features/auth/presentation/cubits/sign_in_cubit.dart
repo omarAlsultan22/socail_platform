@@ -1,9 +1,8 @@
 import '../states/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/sign_in_useCase.dart';
+import '../../domain/use_cases/sign_in_use_case.dart';
 import '../../data/network/connectivity_service.dart';
 import '../../../../core/data/models/message_result.dart';
-import '../../../../core/errors/mappers/error_handler.dart';
 import '../../../../core/errors/exceptions/validation_exception.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import '../../../../core/errors/exceptions/network_app_exception.dart';
@@ -45,7 +44,7 @@ class SignInCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState> {
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              AuthState(messageResult: MessageResult.error(error: failure)
+              AuthState(messageResult: MessageResult.error(failure: failure)
               )
       );
     }

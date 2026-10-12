@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/validate_input.dart';
+import 'package:social_app/core/data/models/profile_info.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import 'package:social_app/core/data/models/profile_info_model.dart';
 import 'package:social_app/core/presentation/widgets/app_spaces.dart';
+import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 import 'package:social_app/features/auth/presentation/mixins/auth_mixin.dart';
 
@@ -16,7 +17,7 @@ class UserInfoLayout extends StatefulWidget {
   required String userRelational
   }) onUpdate;
   final MessageResult messageResult;
-  final ProfileInfoModel profileInfoModel;
+  final ProfileInfo profileInfoModel;
   const UserInfoLayout({
     super.key,
     required this.onUpdate,
@@ -28,7 +29,7 @@ class UserInfoLayout extends StatefulWidget {
   State<UserInfoLayout> createState() => _UserInfoLayoutState();
 }
 
-class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfoLayout> {
+class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfoLayout>, MessageResultMixin<UserInfoLayout>{
   bool _isLocked = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -73,7 +74,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
   Future<void> _submitForm() async {
     if (!validateForm(_formKey)) return;
     _updateLockButton(true);
-    hideKeyboard(context);
+    hideKeyboard();
     widget.onUpdate(
       userState: _stateController.text,
       userWork: _workController.text,

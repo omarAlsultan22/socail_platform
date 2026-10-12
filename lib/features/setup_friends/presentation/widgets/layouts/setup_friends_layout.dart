@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/data/models/user_model.dart';
+import '../../../../../core/data/models/my_model.dart';
 import '../../../../main/presentation/screens/main_screen.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
-import '../../../../interactions/interactions_layout/like_model_layout.dart';
+import '../../../../../core/presentation/widgets/layouts/user_row_layout.dart';
+import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 
 
 class AddNewFriendsLayout extends StatefulWidget {
   final int friendsNumber;
   final VoidCallback onSave;
-  final List<UserModel> friendsList;
+  final List<MyModel> friendsList;
   final MessageResult messageResult;
-  final void Function(UserModel) onAdd;
+  final void Function(MyModel) onAdd;
   const AddNewFriendsLayout({
     super.key,
     required this.onAdd,
@@ -27,8 +28,8 @@ class AddNewFriendsLayout extends StatefulWidget {
 class _AddNewFriendsLayoutState extends State<AddNewFriendsLayout> {
   bool isActive = false;
 
-  bool _checkButtonIsActive(int addsNumber) {
-    if (addsNumber >= 10) {
+  bool _checkButtonIsActive(int friendsNumber) {
+    if (friendsNumber >= 10) {
       setState(() {
         isActive = true;
       });
@@ -51,8 +52,8 @@ class _AddNewFriendsLayoutState extends State<AddNewFriendsLayout> {
             child: ListBuilder(
                 list: widget.friendsList,
                 object: (friend) =>
-                    UserModelLayout(
-                      like: friend,
+                    UserRowLayout(
+                      userRow: friend,
                       onPressed: () => widget.onAdd(friend),
                     ),
                 fallback: const Center(
@@ -63,11 +64,10 @@ class _AddNewFriendsLayoutState extends State<AddNewFriendsLayout> {
             width: double.infinity,
             color: isActive ? Colors.amber : null,
             child: MaterialButton(
-              onPressed: _checkButtonIsActive(widget.friendsNumber) ? () =>
-              {
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => MainScreen()))
-              } : null,
+              onPressed: _checkButtonIsActive(widget.friendsNumber)
+                  ? () =>
+                  BuildNavigator.build(context: context, link: MainScreen())
+                  : null,
               child: Text('Finish'),
             ),
           )

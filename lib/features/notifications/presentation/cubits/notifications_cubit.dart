@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import '../states/notifications_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/notifications_useCase.dart';
-import 'package:social_app/core/data/models/message_result.dart';
+import '../../domain/use_cases/notifications_use_case.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
 import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
@@ -33,7 +32,7 @@ class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixi
       _notificationsSubscription =
           _useCases.executeGetNotificationsStream().listen(
                 (notifications) {
-                  if(notifications.isEmpty){
+                  if(notifications.isEmpty && state.notificationsListIsEmpty){
                     emit(state.copyWith(subState: InitialState()));
                     return;
                   }

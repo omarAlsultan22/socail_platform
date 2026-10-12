@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
-import 'package:social_app/features/search/domain/useCases/search_useCase.dart';
+import 'package:social_app/features/search/domain/use_cases/search_use_case.dart';
 import 'package:social_app/features/search/presentation/states/search_state.dart';
 
 

@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import '../data_sources/remote/firestore_public_service.dart';
 import 'package:social_app/core/services/session_service.dart';
+import '../../../../core/presentation/mixins/base_like_mixin.dart';
 import 'package:social_app/features/public/domain/repositories/public_repository.dart';
 
 
-class FirestorePublicRepository extends PublicRepository {
+class FirestorePublicRepository with BaseLikeMixin implements PublicRepository {
   final SessionService _sessionService;
   final FirestorePublicService _repository;
 
@@ -17,11 +18,20 @@ class FirestorePublicRepository extends PublicRepository {
         _sessionService = sessionService;
 
   @override
+  String get likeCollectionPath => throw UnimplementedError();
+
+  @override
+  FirestorePublicService get repository => _repository;
+
+  @override
+  SessionService get sessionService => _sessionService;
+
+  @override
   Future<QuerySnapshot<Map<String, dynamic>>> getFriendsList() {
-    return _repository.getSubCollection(
+    return repository.getSubCollection(
       supCollectionPath: 'users',
       subCollectionPath: 'friends',
-      docId: _sessionService.currentUid,
+      docId: sessionService.currentUid,
     );
   }
 
@@ -31,9 +41,8 @@ class FirestorePublicRepository extends PublicRepository {
     required DocumentSnapshot? lastPostDoc,
     required int limit,
   }) async {
-    return await _repository.getDocumentsWithWhereIn(
+    return await repository.getDocumentsWithWhereIn(
       limit: limit,
-      postType: 'post',
       lastPostDoc: lastPostDoc,
       friendsUIds: friendsUIds,
     );
@@ -41,8 +50,8 @@ class FirestorePublicRepository extends PublicRepository {
 
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getDeletedPosts() {
-    return _repository.getSubCollection(
-        docId: _sessionService.currentUid,
+    return repository.getSubCollection(
+        docId: sessionService.currentUid,
         supCollectionPath: 'users',
         subCollectionPath: 'deleted_posts'
     );
@@ -50,16 +59,15 @@ class FirestorePublicRepository extends PublicRepository {
 
   @override
   Future<DocumentSnapshot> getAccountData(String userId) async {
-    return await _repository.getSupDoc(
+    return await repository.getDoc(
         docId: userId,
         collectionPath: 'accounts'
     );
   }
 
   @override
-  Future<({int? commentsCount, int? likesCount})> getPostCounts(
-      String postId) async {
-    return _repository.getPostCounts(postId);
+  Future<({int? commentsCount, int? likesCount})> getPostCounts(String postId) async {
+    return repository.getPostCounts(postId);
   }
 
   @override
@@ -67,36 +75,36 @@ class FirestorePublicRepository extends PublicRepository {
     required int limit,
     required DocumentSnapshot? lastStatusDoc
   }) async {
-    return await _repository.getQuery(
+    return await repository.getQuery(
         limit: limit,
         supCollectionPath: 'users',
         subCollectionPath: 'friends',
         lastStatusDoc: lastStatusDoc,
-        docId: _sessionService.currentUid
+        docId: sessionService.currentUid
     );
   }
 
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getDeletedStatuses() {
-    return _repository.getSubCollection(
+    return repository.getSubCollection(
         supCollectionPath: 'users',
         subCollectionPath: 'deleted_statuses',
-        docId: _sessionService.currentUid
+        docId: sessionService.currentUid
     );
   }
 
   @override
   Future<QuerySnapshot> getStatusesForUser(String userId) async {
-    return await _repository.getStatusesByUser(
+    return await repository.getStatusesByUser(
       userId: userId,
     );
   }
 
   @override
   Future<void> addPostToFirestore(PostModel postModel) async {
-    await _repository.getRefAndSetDoc(
+    await repository.getRefAndSetDoc(
       isMerge: true,
-      docId: postModel.docId,
+      docId: postModel.myDocId,
       collectionPath: 'posts',
       data: postModel.toJson(),
     );
@@ -104,9 +112,9 @@ class FirestorePublicRepository extends PublicRepository {
 
   @override
   Future<void> addStatusToFirestore(PostModel statusModel) async {
-    await _repository.getRefAndSetDoc(
+    await repository.getRefAndSetDoc(
       isMerge: true,
-      docId: statusModel.docId,
+      docId: statusModel.myDocId,
       collectionPath: 'status',
       data: statusModel.toJson(),
     );
@@ -114,33 +122,33 @@ class FirestorePublicRepository extends PublicRepository {
 
   @override
   Future<void> deletePostFromFirestore(String postId) async {
-    await _repository.deleteSupDoc(collectionPath: 'posts', docId: postId);
+    await repository.deleteSupDoc(collectionPath: 'posts', docId: postId);
   }
 
   @override
   Future<void> addToDeletedPosts(String postId) async {
-    await _repository.setSubDoc(
+    await repository.setSubDoc(
         data: {},
         subDocId: postId,
         supCollectionPath: 'users',
         subCollectionPath: 'deleted_posts',
-        supDocId: _sessionService.currentUid
+        supDocId: sessionService.currentUid
     );
   }
 
   @override
   Future<void> deleteStatusFromFirestore(String statusId) async {
-    await _repository.deleteSupDoc(collectionPath: 'status', docId: statusId);
+    await repository.deleteSupDoc(collectionPath: 'status', docId: statusId);
   }
 
   @override
   Future<void> addToDeletedStatuses(String statusId) async {
-    await _repository.setSubDoc(
+    await repository.setSubDoc(
         data: {},
         subDocId: statusId,
         supCollectionPath: 'users',
         subCollectionPath: 'deleted_statuses',
-        supDocId: _sessionService.currentUid
+        supDocId: sessionService.currentUid
     );
   }
 

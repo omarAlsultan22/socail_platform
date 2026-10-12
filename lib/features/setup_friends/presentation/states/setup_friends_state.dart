@@ -1,4 +1,4 @@
-import '../../../../core/data/models/user_model.dart';
+import '../../../../core/data/models/my_model.dart';
 import '../../data/models/setup_friends_success_state.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
@@ -9,7 +9,7 @@ import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart
 
 class SetupFriendsState extends MainAppSupState {
   final int friendsNumber;
-  final List<UserModel> friendsList;
+  final List<MyModel> friendsList;
   final MessageResult messageResult;
 
   const SetupFriendsState({
@@ -38,7 +38,7 @@ class SetupFriendsState extends MainAppSupState {
 
   SetupFriendsState copyWith({
     int? friendsNumber,
-    List<UserModel>? friendsList,
+    List<MyModel>? friendsList,
     MessageResult? messageResult,
     MainAppSubState? subState,
   }) {

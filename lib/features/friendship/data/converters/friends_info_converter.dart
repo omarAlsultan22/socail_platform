@@ -1,12 +1,12 @@
 import '../../../../core/di/service _locator.dart';
-import '../../../../core/data/models/user_model.dart';
+import '../../../../core/data/models/my_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/services/user_account_service.dart';
 
 
 class FriendsInfoConverter {
-  final List<UserModel> data;
+  final List<MyModel> data;
 
   FriendsInfoConverter({required this.data});
 
@@ -18,7 +18,7 @@ class FriendsInfoConverter {
       QuerySnapshot friends,
       QuerySnapshot suggests
       ) async {
-    final List<UserModel> data = [];
+    final List<MyModel> data = [];
     final Set<String> requestIds = requests.docs.map((doc) => doc.id).toSet();
     final Set<String> friendsIds = friends.docs.map((doc) => doc.id).toSet();
 

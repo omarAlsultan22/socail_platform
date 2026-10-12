@@ -1,4 +1,4 @@
-import '../../../../core/data/models/account_model.dart';
+import '../../../../core/data/models/user_account.dart';
 import '../../domain/repositories/sign_up_repository.dart';
 import 'package:social_app/core/data/data_sources/remote/firestore/firestore_base_service.dart';
 

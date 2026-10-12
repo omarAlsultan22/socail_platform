@@ -1,25 +1,100 @@
 import 'dart:async';
 import '../states/post_detail_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/post_detail_use_case.dart';
+import '../../../../core/data/models/post_model.dart';
+import '../../domain/use_cases/post_detail_use_case.dart';
+import '../../../../core/services/user_account_service.dart';
+import '../../../../core/domain/use_cases/like_use_case.dart';
+import '../../../../core/domain/use_cases/post_use_case.dart';
+import '../../../../core/domain/use_cases/share_use_case.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
+import '../../../user_details/domain/use_cases/user_details_use_case.dart';
 import 'package:social_app/core/errors/exceptions/validation_exception.dart';
+import 'package:social_app/core/presentation/mixins/post_operations_mixin.dart';
 
 
-class PostDetailCubit extends Cubit<PostDetailState> with ErrorHandlerMixin<PostDetailState> {
+class PostDetailCubit extends Cubit<PostDetailState> with PostOperationsMixin, ErrorHandlerMixin<PostDetailState> {
+  final PostUseCase _postUseCase;
+  final LikeUseCase _likeUseCase;
+  final ShareUseCase _shareUseCase;
   final PostDetailUseCase _useCases;
+  final UserDetailsUseCase _userDetailsUseCase;
+  final UserAccountService _userAccountService;
 
   StreamSubscription? _notificationsSubscription;
 
   PostDetailCubit({
-    required PostDetailUseCase useCase
+    required PostUseCase postUseCase,
+    required LikeUseCase likeUseCase,
+    required ShareUseCase shareUseCase,
+    required PostDetailUseCase useCase,
+    required UserDetailsUseCase userDetailsUseCase,
+    required UserAccountService userAccountService
   })
       : _useCases = useCase,
+        _postUseCase = postUseCase,
+        _likeUseCase = likeUseCase,
+        _shareUseCase = shareUseCase,
+        _userDetailsUseCase = userDetailsUseCase,
+        _userAccountService = userAccountService,
         super(PostDetailState.initial());
 
   static PostDetailCubit get(context) => BlocProvider.of(context);
+
+  @override
+  PostUseCase get postUseCase => _postUseCase;
+
+  @override
+  LikeUseCase get likeUseCase => _likeUseCase;
+
+  @override
+  ShareUseCase get shareUseCase => _shareUseCase;
+
+  @override
+  UserDetailsUseCase get userDetailsUseCase => _userDetailsUseCase;
+
+  @override
+  UserAccountService get userAccountService => _userAccountService;
+
+  @override
+  Future<void> upsertPostToRepository({required PostModel postModel}) async {
+    emit(state.copyWith(messageResult: MessageResult.loading()));
+    try {
+      await super.upsertPostToRepository(postModel: postModel)
+          .whenComplete(() =>
+          emit(state.copyWith(messageResult: MessageResult.success())
+          )
+      );
+    }
+    catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  messageResult: MessageResult.error(failure: failure))
+      );
+    }
+  }
+
+  @override
+  Future<void> removePostFromRepository({required PostModel postModel}) async {
+    emit(state.copyWith(messageResult: MessageResult.loading()));
+    try {
+      await super.removePostFromRepository(postModel: postModel)
+          .whenComplete(() =>
+          emit(state.copyWith(messageResult: MessageResult.success())
+          )
+      );
+    }
+    catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  messageResult: MessageResult.error(failure: failure))
+      );
+    }
+  }
 
   Future<void> insertNotifications({
     required final String userUid,
@@ -38,12 +113,11 @@ class PostDetailCubit extends Cubit<PostDetailState> with ErrorHandlerMixin<Post
       );
 
       emit(state.copyWith(messageResult: MessageResult.success()));
-
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
               state.copyWith(
-                  messageResult: MessageResult.error(error: failure)
+                  messageResult: MessageResult.error(failure: failure)
               )
       );
     }

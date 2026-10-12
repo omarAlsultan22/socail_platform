@@ -2,9 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import '../states/friendship_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/friendship_useCase.dart';
-import 'package:social_app/core/data/models/user_model.dart';
-import 'package:social_app/core/data/models/message_result.dart';
+import '../../domain/use_cases/friendship_use_case.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import 'package:social_app/core/services/user_account_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
@@ -36,8 +34,26 @@ class FriendshipCubit extends Cubit<FriendshipState> with ErrorHandlerMixin<Frie
     return uId;
   }
 
+  Future<void> getFriendship() async {
+    try {
+      emit(state.copyWith(subState: LoadingState()));
+      await Future.wait<void>([
+      _getFriendsRequests(),
+      _getFriendsSuggests()
+      ]).whenComplete(() => _setState());
+    }
+    catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(failure: failure)
+              )
+      );
+    }
+  }
+
   Future<void> addFriendSuggest({required int index}) async {
-    emit(state.copyWith(messageResult: MessageResult.loading()));
+    emit(state.setLoadingMessage());
 
     try {
       final userModel = state.getFriendSuggestByIndex(index);
@@ -49,9 +65,7 @@ class FriendshipCubit extends Cubit<FriendshipState> with ErrorHandlerMixin<Frie
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(
-                  messageResult: MessageResult.error(error: failure)
-              )
+              state.setErrorMessage(failure)
       );
     }
   }
@@ -60,7 +74,7 @@ class FriendshipCubit extends Cubit<FriendshipState> with ErrorHandlerMixin<Frie
     required int index,
     required BuildContext context
   }) async {
-    emit(state.copyWith(messageResult: MessageResult.loading()));
+    emit(state.setLoadingMessage());
 
     try {
 
@@ -72,11 +86,41 @@ class FriendshipCubit extends Cubit<FriendshipState> with ErrorHandlerMixin<Frie
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(
-                  messageResult: MessageResult.error(error: failure)
-              )
+              state.setErrorMessage(failure)
       );
     }
+  }
+
+  Future<void> declineFriendRequest({
+    required int index,
+    required BuildContext context
+  }) async {
+    emit(state.setLoadingMessage());
+
+    try {
+      final userModel = state.getFriendRequestByIndex(index);
+      final uId = state.getUid(userModel);
+      await _useCase.executeDeclineFriendRequest(uId: uId);
+      _mainCubit.deleteRequest();
+      emit(state.declineFriendRequest(index));
+
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.setErrorMessage(failure)
+      );
+    }
+  }
+
+  void _setState() {
+    if (state.allListsIsEmpty) {
+      emit(state.copyWith(subState: InitialState()));
+      return;
+    }
+    emit(
+        state.copyWith(subState: SuccessState()
+        )
+    );
   }
 
   Future<void> _executeDeclineAfterConfirm(BuildContext context, String userId) async {
@@ -90,78 +134,28 @@ class FriendshipCubit extends Cubit<FriendshipState> with ErrorHandlerMixin<Frie
     }
   }
 
-  void getFriendsRequests() {
-    emit(state.copyWith(subState: LoadingState()));
-
+  Future<void> _getFriendsRequests() async {
     try {
       _conversationsSubscription?.cancel();
       _conversationsSubscription =
           _useCase.executeGetConversationsStream(
             getUserModelData: (id) =>
                 _userAccountService.getUserModelData(id: id),
-          ).listen((groupedConversations) async {
-            if (groupedConversations.isEmpty &&
-                state.friendsRequestsListIsEmpty) {
-              emit(state.copyWith(subState: InitialState()));
-              return;
-            }
+          ).listen((groupedConversations) {
             emit(state.updateFriendsRequestsList(groupedConversations));
           });
-    } catch (e, stackTrace) {
-      handleError(e, stackTrace,
-          onError: (failure) =>
-              state.copyWith(
-                  subState: ErrorState(failure: failure)
-              )
-      );
+    } catch (e) {
+      rethrow;
     }
   }
 
-  Stream<List<UserModel>> getConversationsStream({
-    required String userId
-  }) {
-    return _useCase.executeGetConversationsStream(
-      getUserModelData: (id) => _userAccountService.getUserModelData(id: id),
-    );
-  }
-
-  Future<void> declineFriendRequest({
-    required int index,
-    required BuildContext context
-  }) async {
-    emit(state.copyWith(messageResult: MessageResult.loading()));
-
-    try {
-      final userModel = state.getFriendRequestByIndex(index);
-      final uId = state.getUid(userModel);
-      await _useCase.executeDeclineFriendRequest(uId: uId);
-      _mainCubit.deleteRequest();
-      emit(state.declineFriendRequest(index));
-
-    } catch (e, stackTrace) {
-      handleError(e, stackTrace,
-          onError: (failure) =>
-              state.copyWith(
-                  messageResult: MessageResult.error(error: failure)
-              )
-      );
-    }
-  }
-
-  Future<void> getFriendsSuggests() async {
-    emit(state.copyWith(subState: LoadingState()));
-
+  Future<void> _getFriendsSuggests() async {
     try {
       final suggestsList = await _useCase.executeGetFriendsSuggests();
       emit(state.updateFriendsSuggestsList(suggestsList));
-
-    } catch (e, stackTrace) {
-      handleError(e, stackTrace,
-          onError: (failure) =>
-              state.copyWith(
-                  subState: ErrorState(failure: failure)
-              )
-      );
+    }
+    catch (e){
+      rethrow;
     }
   }
 

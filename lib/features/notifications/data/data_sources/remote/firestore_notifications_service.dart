@@ -26,7 +26,7 @@ class FirestoreNotificationsService extends FirestoreBaseService {
 
     final results = await Future.wait([
       postRef.get().timeout(duration),
-      getSupDoc(docId: userId, collectionPath: 'accounts'),
+      getDoc(docId: userId, collectionPath: 'accounts'),
       postRef.collection('commentsList').get().timeout(duration),
     ]);
 

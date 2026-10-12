@@ -1,7 +1,7 @@
 import '../service _locator.dart';
 import 'package:social_app/core/services/session_service.dart';
 import '../../../features/main/presentation/cubits/main_cubit.dart';
-import 'package:social_app/features/notifications/domain/useCases/notifications_useCase.dart';
+import '../../../features/notifications/domain/use_cases/notifications_use_case.dart';
 import 'package:social_app/features/notifications/presentation/cubits/notifications_cubit.dart';
 import '../../../features/notifications/data/data_sources/remote/firestore_notifications_service.dart';
 import 'package:social_app/features/notifications/data/repositories_impl/firestore_notifications_repository.dart';

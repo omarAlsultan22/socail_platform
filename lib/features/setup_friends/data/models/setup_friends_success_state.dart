@@ -1,11 +1,11 @@
-import '../../../../core/data/models/user_model.dart';
+import '../../../../core/data/models/my_model.dart';
 import '../../../../core/data/models/message_result.dart';
 import '../../../../core/presentation/states/base/main_loaded_state.dart';
 
 
 class  SetupFriendsSuccessState extends LoadedState {
   final int friendsNumber;
-  final List<UserModel> friendsList;
+  final List<MyModel> friendsList;
   final MessageResult messageResult;
 
   const SetupFriendsSuccessState({

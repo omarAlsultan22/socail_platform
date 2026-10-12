@@ -1,52 +1,50 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 
 
-class CommentModel extends UserModel{
-  late final String? userAction;
-  late int? likesNumber;
-  final List<UserModel>? likesList;
+class CommentModel extends MyModel{
   final String docId;
   final String postId;
-  final bool isActive;
+  final bool hasMeLiked;
+  late int? likesNumber;
+  late final String? userAction;
+  final List<MyModel>? likesList;
 
   CommentModel({
-    super.userName,
-    super.userImage,
-    super.dateTime,
+    super.myName,
     this.likesList,
+    super.myDateTime,
+    super.myImageUrl,
     this.likesNumber,
-    required this.postId,
+    required super.myId,
     required this.docId,
-    this.isActive = false,
-    required super.userId,
+    required this.postId,
+    this.hasMeLiked = false,
     required this.userAction,
   });
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {
     return CommentModel(
       docId: json['docUid']?.toString() ?? '',
-      userId: json['userId']?.toString() ?? '',
-      userName: json['fullName']?.toString() ?? '',
-      userImage: json['userImage']?.toString() ?? '',
+      myId: json['userId']?.toString() ?? '',
+      myName: json['fullName']?.toString() ?? '',
+      myImageUrl: json['userImage']?.toString() ?? '',
       userAction: json['userAction']?.toString() ?? '',
       postId: json['postId']?.toString() ?? '',
       likesNumber: json['likesNumber'] ?? 0,
-      isActive: json['isActive'] ?? false,
-      dateTime: _convertToDateTime(json['dateTime'] ?? '')
+      hasMeLiked: json['hasMeLiked'] ?? false,
+      myDateTime: _convertToDateTime(json['dateTime'] ?? '')
     );
   }
-
 
   @override
   Map<String, dynamic> toJson() {
     return {
+      'userId': myId,
       'docUid': docId,
-      'userId': userId,
-      'userAction': userAction,
-      'dateTime': dateTime,
       'postId': postId,
-      'isActive': isActive
+      'dateTime': myDateTime,
+      'userAction': userAction,
     };
   }
 

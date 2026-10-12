@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:social_app/core/data/models/user_model.dart';
-import '../../../../profile/presentation/screens/friend_profile_screen.dart';
+import 'package:social_app/core/data/models/my_model.dart';
+import '../../../../profile/presentation/screens/user_profile_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 
 class SearchLayout extends StatelessWidget {
-  final List<UserModel> searchData;
+  final List<MyModel> searchData;
 
   const SearchLayout({
     super.key,
@@ -14,13 +14,13 @@ class SearchLayout extends StatelessWidget {
   });
 
   Widget _searchItemsBuilder({
-    required UserModel userModel,
+    required MyModel userModel,
     required BuildContext context
   }) {
     return InkWell(
       onTap: () {
         BuildNavigator.build(
-            context: context, link: FriendProfileScreen(userId: userModel.userId!));
+            context: context, link: UserProfileScreen(friendId: userModel.myId!));
       },
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -31,7 +31,7 @@ class SearchLayout extends StatelessWidget {
               height: 40.0,
               child: ClipOval(
                 child: Image.network(
-                  userModel.userImage!,
+                  userModel.myImageUrl!,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -39,7 +39,7 @@ class SearchLayout extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(
                   left: 10.0),
-              child: Text(userModel.userName!,
+              child: Text(userModel.myName!,
                 style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold

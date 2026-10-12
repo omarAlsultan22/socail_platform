@@ -1,4 +1,4 @@
-import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
@@ -31,7 +31,7 @@ abstract class NotificationsRepository {
   });
 
   Future<void> insertNotification({
-    required UserModel notificationData,
+    required MyModel notificationData,
   });
 
   Future<void> updateNotificationReadStatus({

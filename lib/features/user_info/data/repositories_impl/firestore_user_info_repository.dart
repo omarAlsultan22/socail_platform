@@ -1,7 +1,7 @@
 import '../../domain/repositories/user_info_repository.dart';
-import 'package:social_app/core/data/models/profile_info_model.dart';
+import 'package:social_app/core/data/models/profile_info.dart';
 import '../../../../core/data/data_sources/remote/firestore/firestore_base_service.dart';
-import 'package:social_app/core/presentation/data/repositories_impl/firestore_base_repository.dart';
+import 'package:social_app/core/data/repositories_impl/firestore_base_repository.dart';
 
 
 class FirestoreUserInfoRepository extends FirestoreBaseRepository implements UserInfoRepository {
@@ -15,7 +15,7 @@ class FirestoreUserInfoRepository extends FirestoreBaseRepository implements Use
   @override
   Future<void> updateProfileInfo({
     required String docId,
-    required ProfileInfoModel infoModel
+    required ProfileInfo infoModel
   }) async {
     try {
       await _repository.setSupDoc(

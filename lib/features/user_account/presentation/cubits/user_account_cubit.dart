@@ -1,6 +1,6 @@
 import '../states/user_account_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/user_account_use_case.dart';
+import '../../domain/use_cases/user_account_use_case.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
@@ -58,7 +58,7 @@ class UserAccountCubit extends Cubit<UserAccountState> with ErrorHandlerMixin<Us
       handleError(e, stackTrace,
           onError: (failure) =>
               state.copyWith(
-                  messageResult: MessageResult.error(error: failure)
+                  messageResult: MessageResult.error(failure: failure)
               )
       );
     }

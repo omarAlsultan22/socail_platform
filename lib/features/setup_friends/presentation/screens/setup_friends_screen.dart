@@ -31,10 +31,10 @@ class AddNewFriendsScreen extends StatelessWidget {
                           onAdd: (friend) =>
                           cubit
                             ..addFriend(data.friendsNumber + 1)
-                            ..confirmNewFriend(uId: friend.userId!),
+                            ..confirmNewFriend(uId: friend.myId),
                           onSave: () async =>
                           await cacheHelper.setBool(
-                              key: 'friends', value: true),
+                              key: 'friendsCount', value: true),
                           friendsList: data.friendsList,
                           friendsNumber: data.friendsNumber,
                           messageResult: data.messageResult

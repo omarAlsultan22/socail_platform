@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:social_app/core/utils/validate_input.dart';
 import '../../../../auth/presentation/mixins/auth_mixin.dart';
-import 'package:social_app/core/data/models/account_model.dart';
+import 'package:social_app/core/data/models/user_account.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/presentation/widgets/app_spaces.dart';
+import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:social_app/features/auth/presentation/screens/change_email_and_password_screen.dart';
@@ -27,7 +28,7 @@ class UserAccountLayout extends StatefulWidget{
   State<UserAccountLayout> createState() => _UserAccountLayoutState();
 }
 
-class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<UserAccountLayout> {
+class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<UserAccountLayout>, MessageResultMixin<UserAccountLayout> {
   bool _isLocked = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -63,7 +64,7 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
   Future<void> _submitForm() async {
     if (!validateForm(_formKey)) return;
     _updateLockButton(true);
-    hideKeyboard(context);
+    hideKeyboard();
     widget.onUpdate(
       firstName: _firstNameController.text.trim(),
       lastName: _lastNameController.text.trim(),

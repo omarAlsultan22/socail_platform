@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../../core/data/posts/constants/posts_collection.dart';
+import 'package:social_app/core/data/posts/queries/posts_query_builder.dart';
 import '../../../../../core/data/data_sources/remote/firestore/firestore_base_service.dart';
 
 
@@ -36,30 +38,29 @@ class FirestorePublicService extends FirestoreBaseService {
   Future<QuerySnapshot> getDocumentsWithWhereIn({
     required DocumentSnapshot? lastPostDoc,
     required List<String> friendsUIds,
-    required String postType,
     required int limit,
   }) async {
     var query = firestore
         .collection('posts')
         .where('userId', whereIn: friendsUIds)
-        .where('postType', isEqualTo: postType)
-        .orderBy('dateTime', descending: true);
+        .where('postType', whereIn: PostsCollection.postTypesList);
 
-    if (lastPostDoc != null) {
-      query = query.startAfterDocument(lastPostDoc);
-    }
-    return await query.limit(limit).get();
+    return PostsQueryBuilder.build(
+        limit: limit,
+        baseQuery: query,
+        lastPostDoc: lastPostDoc
+    ).get();
   }
 
   Future<({int? commentsCount, int? likesCount})> getPostCounts(
       String postId) async {
-    final postRef = docRef(
+    final postRef = getDocRef(
         docId: postId,
         collectionPath: 'posts'
     );
     final results = await Future.wait([
-      postRef.collection('likesList').count().get(),
-      postRef.collection('commentsList').count().get(),
+      getCount(docRef: postRef, collectionPath: 'likesList'),
+      getCount(docRef: postRef, collectionPath: 'commentsList'),
     ]);
     return (
     likesCount: results[0].count,

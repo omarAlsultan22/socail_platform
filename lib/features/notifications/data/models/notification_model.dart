@@ -1,8 +1,8 @@
-import 'package:social_app/core/data/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 
 
-class NotificationsModel extends UserModel {
+class NotificationsModel extends MyModel {
   final String userAction;
   final String iconName;
   final String postId;
@@ -10,10 +10,10 @@ class NotificationsModel extends UserModel {
   final String friendId;
 
   NotificationsModel({
-    super.userName,
-    super.userImage,
-    super.dateTime,
-    required super.userId,
+    super.myName,
+    super.myImageUrl,
+    super.myDateTime,
+    required super.myId,
     required this.userAction,
     required this.iconName,
     required this.friendId,
@@ -31,11 +31,11 @@ class NotificationsModel extends UserModel {
 
   factory NotificationsModel.fromJson(Map<String, dynamic> json) {
     return NotificationsModel(
-      userId: json['userId']  ?? '',
+      myId: json['userId']  ?? '',
       iconName: json['iconName']  ?? '',
-      userImage: json['userImage']  ?? '',
+      myImageUrl: json['userImage']  ?? '',
       userAction: json['userAction']  ?? '',
-      userName: json['userName']  ?? '',
+      myName: json['userName']  ?? '',
       friendId: json['friendId']  ?? '',
       postId: json['postId'] ?? '',
       docId: json['docId'] ?? ''
@@ -46,12 +46,12 @@ class NotificationsModel extends UserModel {
   Map<String, dynamic> toJson() {
     return {
       'docId': docId,
-      'userId': userId,
+      'userId': myId,
       'postId': postId,
       'friendId': friendId,
       'iconName': iconName,
       'userAction': userAction,
-      'dateTime': dateTime
+      'dateTime': myDateTime
     };
   }
 

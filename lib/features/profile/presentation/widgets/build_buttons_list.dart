@@ -1,5 +1,5 @@
-import '../../cubit.dart';
 import 'package:flutter/material.dart';
+import '../../data/models/button_model.dart';
 
 
 class BuildButtonsList extends StatefulWidget {

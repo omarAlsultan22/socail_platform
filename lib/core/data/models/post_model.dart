@@ -1,189 +1,177 @@
 import 'package:social_app/core/data/models/user_model.dart';
-import 'package:social_app/core/data/models/user_data.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:video_player/video_player.dart';
 import 'comment_model.dart';
 import 'dart:io';
 
 
-class PostModel extends UserData{
-  late String? userText;
-  late String? userState;
-  late String? docId;
-  late String? userPost;
-  late String? postType;
-  late String? pathType;
-  late File? file;
-  bool isActive;
+class PostModel extends UserModel{
+  File? file;
+  bool hasMeLiked;
+  String myDocId;
+  String? userPost;
+  String postType;
+  String? pathType;
   int? likesNumber;
   int? commentsNumber;
+  bool isProfilePost;
   late int? sharesNumber;
-  final UserData? friendModel;
-  final List<UserModel>? likesList;
+  final bool postIsShared;
+  final UserModel? userModel;
+  final List<MyModel>? likesList;
   final List<CommentModel>? commentsList;
   VideoPlayerController? videoController;
 
-
   PostModel({
+    super.myId,
+    super.myState,
+    super.originalDateTime,
+    super.userState,
+    super.userText,
     super.userId,
     super.userName,
     super.userImage,
-    super.originalDateTime,
-    super.friendState,
-    super.friendText,
-    super.friendId,
-    super.friendName,
-    super.friendImage,
-    super.isOnline,
-    this.postType,
+    super.userDocId,
+    super.meIsOnline,
+    this.postType = '',
     this.pathType,
     this.file,
-    this.isActive = false,
+    this.hasMeLiked = false,
     this.sharesNumber,
     this.likesNumber,
     this.commentsNumber,
-    this.userState,
-    this.docId,
-    super.dateTime,
+    this.myDocId = '',
+    super.myDateTime,
     this.userPost,
-    this.userText,
-    this.friendModel,
+    this.userModel,
     this.likesList,
     this.commentsList,
-    this.videoController
+    this.videoController,
+    this.postIsShared = false,
+    this.isProfilePost = false,
   });
 
   factory PostModel.fromFirestoreToPost(Map<String, dynamic> json) {
     final isShared = json['postType'] == 'shared';
     return PostModel(
-        userId: json['userId'] ?? '',
-        userName: json['fullName'] ?? '',
-        userImage: json['userImage'] ?? '',
-        docId: json['docId'] ?? '',
+        myId: json['userId'] ?? '',
+        myDocId: json['docId'] ?? '',
         userText: json['userText'] ?? '',
         userPost: json['userPost'] ?? '',
-        userState: json['userState'] ?? 'public',
+        myState: json['userState'] ?? 'public',
         pathType: json['pathType'] ?? '',
-        isActive: json['isActive'] ?? '',
-        dateTime: _convertToDateTime(json['dateTime'] ?? ''),
+        hasMeLiked: json['hasMeLiked'] ?? false,
+        myDateTime: _convertToDateTime(json['dateTime'] ?? ''),
         sharesNumber: json['sharesNumber'] ?? 0,
         likesNumber: json['likesNumber'] ?? 0,
         commentsNumber: json['commentsNumber'] ?? 0,
-        isOnline: json['isOnline'] ?? false,
+        meIsOnline: json['isOnline'] ?? false,
         likesList: json['likesList'] ?? [],
         commentsList: json['commentsList'] ?? [],
-        friendModel: isShared ?
-        UserData(
-            friendId: json['friendId'] ?? '',
-            friendName: json['friendName'] ?? '',
-            friendImage: json['friendImage'] ?? '',
+        userModel: isShared ?
+        UserModel(
+            userId: json['friendId'] ?? '',
+            userName: json['friendName'] ?? '',
+            userImage: json['friendImage'] ?? '',
+            userDocId: json['friendDocId'] ?? '',
             originalDateTime: _convertToDateTime(json['originalDateTime'] ?? ''),
-            friendText: json['friendText'] ?? '',
-            friendState: json['friendState'] ?? ''
-        ) : UserData()
+            userText: json['friendText'] ?? '',
+            userState: json['friendState'] ?? ''
+        ) : UserModel()
     );
   }
 
 
   factory PostModel.fromFirestoreToStatus(Map<String, dynamic> json) {
     return PostModel(
-      userId: json['userId'] ?? '',
-      userName: json['fullName'] ?? '',
-      userImage: json['userImage'] ?? '',
-      docId: json['docId'] ?? '',
+      myId: json['userId'] ?? '',
+      myDocId: json['docId'] ?? '',
       pathType: json['pathType'] ?? '',
       userPost: json['userPost'] ?? '',
       userText: json['userText'] ?? '',
-      isOnline: json['isOnline'] ?? false,
-      userState: json['userState'] ?? 'public',
-      dateTime: _convertToDateTime(json['dateTime'] ?? ''),
+      meIsOnline: json['isOnline'] ?? false,
+      myState: json['userState'] ?? 'public',
+      myDateTime: _convertToDateTime(json['dateTime'] ?? ''),
     );
   }
 
   PostModel copyWith({
     File? file,
-    String? docId,
-    bool? isOnline,
+    String? myDocId,
+    bool? meIsOnline,
     bool? isActive,
-    String? userId,
-    String? userName,
+    String? myId,
     String? postType,
     String? userPost,
     String? pathType,
-    int? likesNumber,
     String? userText,
-    String? userImage,
-    String? userState,
-    int? sharesNumber,
+    String? myState,
     DateTime? dateTime,
-    int? commentsNumber,
-    String? friendId,
-    String? friendName,
-    String? friendImage,
-    String? friendText,
-    String? friendState,
-    bool? friendIsOnline,
-    UserData? friendModel,
+    UserModel? userModel,
     DateTime? originalDateTime,
-    List<UserModel>? likesList,
+    List<MyModel>? likesList,
     List<CommentModel>? commentsList,
     VideoPlayerController? videoController
 }) {
     return PostModel(
         file: file ?? this.file,
-        docId: docId ?? this.docId,
-        userId: userId ?? this.userId,
-        userName: userName ?? this.userName,
-        isActive: isActive ?? this.isActive,
+        myId: myId ?? this.myId,
+        myState: myState ?? this.myState,
+        myDocId: myDocId ?? this.myDocId,
         userPost: userPost ?? this.userPost,
         postType: postType ?? this.postType,
         pathType: pathType ?? this.pathType,
         userText: userText ?? this.userText,
-        userImage: userImage ?? this.userImage,
-        userState: userState ?? this.userState,
+        userModel: userModel ?? this.userModel,
         likesList: likesList ?? this.likesList,
-        friendModel: friendModel ?? this.friendModel,
-        likesNumber: likesNumber ?? this.likesNumber,
-        sharesNumber: sharesNumber ?? this.sharesNumber,
+        meIsOnline: meIsOnline ?? this.meIsOnline,
         commentsList: commentsList ?? this.commentsList,
-        commentsNumber: commentsNumber ?? this.commentsNumber,
         videoController: videoController ?? this.videoController
     );
   }
 
+  bool get myIdIsEmpty  => myId.isEmpty;
+  bool get myDocIdIsEmpty  => myDocId.isEmpty;
   bool get userPostIsEmpty => userPost!.isEmpty;
+  bool get userTextIsEmpty => userText!.isEmpty;
   double get aspectRatio => videoController!.value.aspectRatio;
+  bool get videoIsInitialized => videoController!.value.isInitialized;
+
+  Future<void>? get playVideo async => await videoController?.play();
+  Future<void>? get pauseVideo async => await videoController?.pause();
+  Future<void>? get seekToVideo async => await videoController?.seekTo(Duration.zero);
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
-      'docId': docId,
+      'userId': myId,
+      'docId': myDocId,
       'userText': userText,
       'userPost': userPost,
       'pathType': pathType,
-      'dateTime': dateTime,
-      'userState': userState
+      'dateTime': myDateTime,
+      'userState': myState
     };
   }
 
   Map<String, dynamic> postToMap() {
-    bool isShared = postType == 'shared';
     return {
-      'docId': docId,
-      'userId': userId,
+      'userId': myId,
+      'docId': myDocId,
       'userText': userText,
       'userPost': userPost,
-      'dateTime': dateTime,
       'postType': postType,
       'pathType': pathType,
-      'isActive': isActive,
-      'userState': userState,
-      'sharesNumber': sharesNumber,
-      if(isShared)...{
-        'friendId': friendId,
-        'friendText': friendText,
-        'friendState': friendState,
+      'userState': myState,
+      'dateTime': myDateTime,
+      'hasMeLiked': hasMeLiked,
+      'postIsShared': postIsShared,
+      if(postIsShared)...{
+        'friendId': userModel!.userId,
+        'friendText': userModel!.userText,
+        'friendState': userModel!.userState,
+        'friendDocId': userModel!.userDocId,
         'originalDateTime': originalDateTime
       }
     };

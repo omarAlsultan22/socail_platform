@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/data/models/user_model.dart';
+import '../../../../core/data/models/my_model.dart';
 
 
 abstract class FriendshipRepository {
 
   Future<void> addFriendRequestToFirestore({
     required String userId,
-    required UserModel friendInfo,
+    required MyModel friendInfo,
   });
 
   Future<void> confirmFriendInFirestore({
@@ -14,9 +14,9 @@ abstract class FriendshipRepository {
     required String friendId,
   });
 
-  Stream<List<UserModel>> getConversationsStream({
+  Stream<List<MyModel>> getConversationsStream({
     required String userId,
-    required Future<UserModel> Function(String id) getUserModelData,
+    required Future<MyModel> Function(String id) getUserModelData,
   });
 
   Future<void> declineFriendRequestInFirestore({

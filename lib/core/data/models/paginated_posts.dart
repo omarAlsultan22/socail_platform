@@ -3,25 +3,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class PaginatedPosts {
-  final bool hasMorePosts;
-  final List<PostModel> postsList;
+  final bool hasMoreData;
+  final List<PostModel> dataList;
   final DocumentSnapshot? lastPostDoc;
 
   const PaginatedPosts({
     this.lastPostDoc,
-    this.hasMorePosts = true,
-    this.postsList = const []
+    this.hasMoreData = true,
+    this.dataList = const []
   });
 
+  bool get dataListIsEmpty => dataList.isEmpty;
+
   PaginatedPosts copyWith({
-    bool? hasMorePosts,
-    List<PostModel>? postsList,
+    bool? hasMoreData,
+    List<PostModel>? dataList,
     DocumentSnapshot? lastPostDoc
   }) {
     return PaginatedPosts(
-      hasMorePosts: hasMorePosts ?? this.hasMorePosts,
+      hasMoreData: hasMoreData ?? this.hasMoreData,
       lastPostDoc: lastPostDoc ?? this.lastPostDoc,
-      postsList: postsList ?? this.postsList,
+      dataList: dataList ?? this.dataList,
     );
   }
 }

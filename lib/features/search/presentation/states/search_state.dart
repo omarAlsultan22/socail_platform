@@ -1,4 +1,4 @@
-import '../../../../core/data/models/user_model.dart';
+import '../../../../core/data/models/my_model.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
@@ -8,7 +8,7 @@ import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart
 
 class SearchState extends MainAppSupState {
   final String query;
-  final List<UserModel> searchDataList;
+  final List<MyModel> searchDataList;
 
   const SearchState({
     required this.query,
@@ -27,7 +27,7 @@ class SearchState extends MainAppSupState {
   SearchState copyWith({
     String? query,
     MainAppSubState? subState,
-    List<UserModel>? searchDataList
+    List<MyModel>? searchDataList
   }) {
     return SearchState(
       query:  query ?? this.query,

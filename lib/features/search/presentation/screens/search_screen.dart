@@ -18,6 +18,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  late SearchCubit _cubit;
   late final SearchDebounce _searchDebounce;
 
   @override
@@ -32,12 +33,12 @@ class _SearchScreenState extends State<SearchScreen> {
   void _performSearch() {
     final query = _searchDebounce.controller.text;
     if (query.isNotEmpty) {
-      SearchCubit.get(context).getDataSearch(query: query);
+      _cubit.getDataSearch(query: query);
     }
   }
 
   void _clearSearch() {
-    SearchCubit.get(context).clearSearch();
+    _cubit.clearSearch();
   }
 
   @override
@@ -52,6 +53,7 @@ class _SearchScreenState extends State<SearchScreen> {
         create: (context) => sl<SearchCubit>(),
         child: BlocBuilder<SearchCubit, SearchState>(
           builder: (context, state) {
+            _cubit = SearchCubit.get(context);
             return Scaffold(
               appBar: AppBar(
                 title: SearchTextField(
@@ -68,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildBody(SearchState state) {
     return state.when(
-      onInitial: () => const InitialStateWidget(),
+      onInitial: () => const InitialStateWidget(text: 'Type to start searching'),
       onLoading: () => const LoadingStateWidget(),
       onLoaded: (data) {
         if (!data.queryIsEmpty && data.dataIsEmpty) {

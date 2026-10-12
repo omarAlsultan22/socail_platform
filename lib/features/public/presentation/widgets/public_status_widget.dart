@@ -1,18 +1,28 @@
-import 'layouts/public_layout.dart';
+import 'layouts/status_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../../core/di/service _locator.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 
 
 class PublicStateWidget extends StatefulWidget {
+  final UserDetails userDetails;
+  final MessageResult messageResult;
   final List<PostModel> statusesList;
+  final void Function(PostModel) onUpsert;
+  final void Function(PostModel) onRemove;
 
   const PublicStateWidget({
     super.key,
+    required this.onUpsert,
+    required this.onRemove,
+    required this.userDetails,
     required this.statusesList,
+    required this.messageResult
   });
 
   @override
@@ -34,16 +44,20 @@ class _PublicStateWidgetState extends State<PublicStateWidget> {
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 3.0),
       child: Column(
         children: [
-          Container(
+          SizedBox(
             height: 180.0,
             width: 90.0,
             child: InkWell(
               onTap: () {
                 BuildNavigator.build(
                   context: context,
-                  link: PublicLayout(
+                  link: StatusLayout(
+                    onUpsert: widget.onUpsert,
+                    onRemove: widget.onRemove,
+                    userDetails: widget.userDetails,
                     statusesList: widget.statusesList,
-                    sessionService: sl<SessionService>(),
+                    messageResult: widget.messageResult,
+                    sessionService: sl<SessionService>()
                   ),
                 );
               },
@@ -80,7 +94,7 @@ class _PublicStateWidgetState extends State<PublicStateWidget> {
                           border: Border.all(color: Colors.grey, width: 1.0),
                           image: DecorationImage(
                             image: NetworkImage(
-                                statusModel.userImage ?? ''),
+                                widget.userDetails.myImageUrl),
                             fit: BoxFit.cover,
                           ),
                           boxShadow: [
@@ -95,10 +109,10 @@ class _PublicStateWidgetState extends State<PublicStateWidget> {
                   Positioned(
                     bottom: 8.0,
                     left: 6.0,
-                    child: Container(
+                    child: SizedBox(
                       width: 80.0,
                       child: Text(
-                        statusModel.userName ?? '',
+                        widget.userDetails.myName,
                         style: TextStyle(
                             overflow: TextOverflow.ellipsis,
                             fontSize: 12.0,

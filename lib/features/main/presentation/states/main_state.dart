@@ -1,4 +1,4 @@
-import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 
 
 class MainState {
@@ -9,7 +9,7 @@ class MainState {
   final Set<String> friendRequestsDocIds;
   final Set<String> notificationsDocIds;
   final Set<String> messagesIds;
-  final List<UserModel> suggestsList;
+  final List<MyModel> suggestsList;
   final bool isMessageActive;
 
   const MainState({
@@ -45,7 +45,7 @@ class MainState {
     int? notificationsCount,
     int? friendshipCount,
     Set<String>? messagesIds,
-    List<UserModel>? suggestsList,
+    List<MyModel>? suggestsList,
     Set<String>? notificationsDocIds,
     Set<String>? friendRequestsDocIds,
   }) {
@@ -104,7 +104,7 @@ class MainState {
     );
   }
 
-  MainState updateSuggestsList(List<UserModel> newList) {
+  MainState updateSuggestsList(List<MyModel> newList) {
     return copyWith(
       suggestsList: newList,
     );

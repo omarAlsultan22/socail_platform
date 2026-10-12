@@ -22,11 +22,13 @@ class NotificationService {
     required SessionService sessionService,
     required FirestoreBaseService repository
   }) {
-    _instance ??= NotificationService._internal(cubit, sessionService, repository);
+    _instance ??=
+        NotificationService._internal(cubit, sessionService, repository);
     return _instance!;
   }
 
-  NotificationService._internal(this._cubit, this._sessionService, this._repository);
+  NotificationService._internal(this._cubit, this._sessionService,
+      this._repository);
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
@@ -171,15 +173,15 @@ class NotificationService {
     await handleBackgroundNotification(message);
   }
 
-  Future<void> handleBackgroundNotification(
-      RemoteMessage message) async {
+  Future<void> handleBackgroundNotification(RemoteMessage message) async {
     await setupBackgroundIsolate();
     handleNotification(message.data);
   }
 
-  void handleNotification(Map<String, dynamic> data) {
+  void handleNotification(Map<String, dynamic> dataMap) {
     try {
-      final type = data['type'];
+      final type = dataMap['type'];
+      final data = dataMap['data'];
       debugPrint('Handling notification of type: $type');
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -207,13 +209,13 @@ class NotificationService {
                   builder: (context) {
                     _cubit.changeIndexScreen(1);
                     return PostDetailScreen(
-                        notificationsModel: NotificationsModel(/handle this
-                            userId: data['data']['userId'] ?? '',
-                            userAction: data['data']['userAction'] ?? '',
-                            iconName: data['data']['iconName'] ?? '',
-                            friendId: data['data']['friendId'] ?? '',
-                            postId: data['data']['postId'] ?? '',
-                            docId: data['data']['docId'] ?? ''));
+                        notificationsModel: NotificationsModel(
+                            myId: data['userId'] ?? '',
+                            userAction: data['userAction'] ?? '',
+                            iconName: data['iconName'] ?? '',
+                            friendId: data['friendId'] ?? '',
+                            postId: data['postId'] ?? '',
+                            docId: data['docId'] ?? ''));
                   }
               ),
             );

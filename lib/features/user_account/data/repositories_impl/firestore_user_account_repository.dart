@@ -1,5 +1,5 @@
 import '../../domain/repositories/user_account_repository.dart';
-import 'package:social_app/core/data/models/account_model.dart';
+import 'package:social_app/core/data/models/user_account.dart';
 import 'package:social_app/core/errors/exceptions/validation_exception.dart';
 import '../../../../core/data/data_sources/remote/firestore/firestore_base_service.dart';
 
@@ -15,7 +15,7 @@ class FirestoreUserAccountRepository implements UserAccountRepository {
   @override
   Future<UserAccount> getAccount(String uId) async {
     try {
-      final docRef = _repository.docRef(docId: uId, collectionPath: 'accounts');
+      final docRef = _repository.getDocRef(docId: uId, collectionPath: 'accounts');
       final docSnapshot = await docRef.get();
 
       if (!docSnapshot.exists) {

@@ -1,4 +1,4 @@
-import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
@@ -6,7 +6,7 @@ abstract class MainRepository {
 
   Future<QuerySnapshot> getAllUsersExceptCurrent({required String uId});
 
-  List<UserModel> convertUsersToModels(QuerySnapshot snapshot);
+  List<MyModel> convertUsersToModels(QuerySnapshot snapshot);
 
   Future<QuerySnapshot> getFriendsList({required String uId});
 

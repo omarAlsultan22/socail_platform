@@ -5,21 +5,26 @@ import 'package:social_app/core/utils/validate_input.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/services/session_service.dart';
 import '../../../../main/presentation/screens/main_screen.dart';
+import 'package:social_app/core/data/data_sources/local/cache_helper.dart';
+import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import '../../../../setup_friends/presentation/screens/setup_friends_screen.dart';
 import 'package:social_app/features/auth/presentation/screens/forget_password_screen.dart';
 
 
 class SignInLayout extends StatefulWidget {
   final void Function({
   required String userEmail,
-  required String userPassword
+  required String userPassword,
   }) onSignIn;
+  final CacheHelper cacheHelper;
   final MessageResult messageResult;
   final SessionService sessionService;
   const SignInLayout({
     super.key,
     required this.onSignIn,
+    required this.cacheHelper,
     required this.messageResult,
     required this.sessionService,
   });
@@ -28,7 +33,7 @@ class SignInLayout extends StatefulWidget {
   State<SignInLayout> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout> {
+class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout>, MessageResultMixin<SignInLayout> {
   bool _isLocked = false;
   bool _isObscure = false;
 
@@ -38,9 +43,16 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
 
   Future<void> checkLogIn() async {
     if (widget.sessionService.isLoggedIn) {
+      final friendsNumber = await widget.cacheHelper.getBool(
+          key: 'friendsCount');
+
+      if (!mounted) return;
+
+      final link = friendsNumber ? const MainScreen() : AddNewFriendsScreen(
+          cacheHelper: widget.cacheHelper);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
+        MaterialPageRoute(builder: (context) => link),
       );
     }
   }
@@ -69,7 +81,7 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
   Future<void> _submitForm() async {
     if (validateForm(_formKey)) {
       _updateLockButton(true);
-      hideKeyboard(context);
+      hideKeyboard();
       widget.onSignIn(
         userEmail: _emailController.text.trim(),
         userPassword: _passwordController.text,

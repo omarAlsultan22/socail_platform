@@ -1,3 +1,4 @@
+import 'package:social_app/core/data/data_sources/local/cache_helper.dart';
 import '../../../../core/services/session_service.dart';
 import '../../../../core/di/service _locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +19,7 @@ class SignInScreen extends StatelessWidget {
             builder: (context, state) {
               final cubit = SignInCubit.get(context);
               return SignInLayout(
+                  cacheHelper: sl<CacheHelper>(),
                   sessionService: sl<SessionService>(),
                   messageResult: state.messageResult!,
                   onSignIn: ({

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:social_app/core/presentation/widgets/new/video_content_widget.dart';
 
 
 class VideoTimeIndicator extends StatelessWidget {
@@ -15,7 +14,6 @@ class VideoTimeIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    /reusablity
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final minutes = twoDigits(position.inMinutes.remainder(60));
     final seconds = twoDigits(position.inSeconds.remainder(60));

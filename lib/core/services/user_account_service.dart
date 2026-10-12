@@ -1,17 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/data_sources/remote/firestore/firestore_base_service.dart';
 
 
 class UserAccountService {
-  final SessionService sessionService;
-  final FirestoreBaseService repository;
+  final SessionService _sessionService;
+  final FirestoreBaseService _repository;
 
   UserAccountService({
-    required this.repository,
-    required this.sessionService
-  });
+    required SessionService sessionService,
+    required FirestoreBaseService repository
+  })
+      : _repository = repository,
+        _sessionService = sessionService;
 
   Future<Map<String, dynamic>> getUserAccount({
     required Map<String, dynamic> userAccount,
@@ -36,7 +38,6 @@ class UserAccountService {
     }
   }
 
-
   Future<Map<String, dynamic>> getAccountMap({
     required DocumentSnapshot userDoc,
   }) async {
@@ -49,17 +50,17 @@ class UserAccountService {
     }
   }
 
-  Future<UserModel> getUserModelData({
+  Future<MyModel> getUserModelData({
     required String id,
   }) async {
-    UserModel userModel;
+    MyModel userModel;
     try {
-      final userDoc = await repository.getSupDoc(
+      final userDoc = await _repository.getDoc(
           docId: id,
           collectionPath: 'accounts'
       );
       final data = await getAccountMap(userDoc: userDoc);
-      UserModel accountData = UserModel.fromJson(data);
+      MyModel accountData = MyModel.fromJson(data);
       userModel = accountData;
     } catch (e) {
       rethrow;
@@ -67,13 +68,13 @@ class UserAccountService {
     return userModel;
   }
 
-  Future<UserModel> getUserAccountData() async {
-    final docData = await repository.getSupDoc(
+  Future<MyModel> getUserAccountData() async {
+    final docData = await _repository.getDoc(
         collectionPath: 'accounts',
-        docId: sessionService.currentUid
+        docId: _sessionService.currentUid
     );
     final userAccount = await getAccountMap(userDoc: docData);
-    UserModel userModel = UserModel.fromJson(userAccount);
+    MyModel userModel = MyModel.fromJson(userAccount);
     return userModel;
   }
 }
