@@ -11,7 +11,8 @@ import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
 import '../features/notifications/presentation/cubits/notifications_cubit.dart';
 import 'package:social_app/features/public/presentation/cubits/public_cubit.dart';
 import 'package:social_app/features/profile/presentation/cubits/my_profile_cubit.dart';
-import 'package:social_app/features/user_details/presentation/cubits/user_details_cubit.dart';
+import 'package:social_app/features/user_details/presentation/cubits/my_details_cubit.dart';
+import 'package:social_app/features/user_details/presentation/cubits/friends_details_cubit.dart';
 
 
 class MyApp extends StatelessWidget {
@@ -92,10 +93,15 @@ class MyApp extends StatelessWidget {
           sl<MainCubit>()
             ..checkOnAnyFriends()
             ..startListeningToCounters()),
-          BlocProvider<UserDetailsCubit>(
+          BlocProvider<MyDetailsCubit>(
               create: (context) =>
-              sl<UserDetailsCubit>()
-                ..getUserDetails()
+              sl<MyDetailsCubit>()
+                ..updateMyDetails()
+          ),
+          BlocProvider<FriendsDetailsCubit>(
+              create: (context) =>
+              sl<FriendsDetailsCubit>()
+                ..updateFriendsDetails()
           ),
           BlocProvider<PublicCubit>(
               create: (context) =>

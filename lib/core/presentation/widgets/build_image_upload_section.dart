@@ -1,36 +1,37 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../data/models/post_model.dart';
+import '../../data/models/post_model.dart';
 import 'package:social_app/core/services/media_picker_service.dart';
-import 'package:social_app/core/presentation/widgets/new/publishing_confirmation_screen.dart';
+import 'package:social_app/core/presentation/screens/publishing_confirmation_screen.dart';
 
 
 class BuildImageUploadSection<T> extends StatefulWidget {
   final String uId;
-  PostModel? postModel;
+  final PostModel postModel;
   final void Function(PostModel) onTap;
-  BuildImageUploadSection({
+  const BuildImageUploadSection({
     super.key,
-    this.postModel,
     required this.uId,
-    required this.onTap
-    });
+    required this.onTap,
+    required this.postModel
+  });
 
   @override
   State<BuildImageUploadSection<T>> createState() => _BuildImageUploadSection<T>();
 }
 
 class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
+  late PostModel _postModel;
 
   void _setMedia(File file, String pathType) {
     setState(() {
-      widget.postModel = widget.postModel!.copyWith(
-        file: file,
-        userPost: file.path,
-        pathType: pathType
+      _postModel = widget.postModel.copyWith(
+          file: file,
+          pathType: pathType,
+        userPost: file.path
       );
     });
-    widget.onTap(widget.postModel!);
+    widget.onTap(_postModel);
   }
 
   Future<void> _showMediaPicker(BuildContext context) async {
@@ -69,7 +70,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: (widget.postModel == null || widget.postModel!.userPost == null) ?
+      child: _postModel.userPostIsEmpty ?
       InkWell(
         onTap: () async =>
             _showMediaPicker(context),
@@ -101,12 +102,12 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
         ),
         child: Column(
           children: [
-            if(widget.postModel!.userText != null &&
-                widget.postModel!.myId != widget.uId)...[
+            if(_postModel.userText != null &&
+                _postModel.myId != widget.uId)...[
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Text(
-                  widget.postModel!.userText ?? '',
+                  _postModel.userText ?? '',
                   style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.normal,
@@ -114,23 +115,23 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
                 ),
               ),
             ],
-            if(widget.postModel!.userPost != null)...[
-              widget.postModel!.pathType == 'image' ?
+            if(!_postModel.userPostIsEmpty)...[
+              _postModel.pathType == 'image' ?
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: widget.postModel!.file != null ? FileImage(widget
-                          .postModel!.file!) :
-                      NetworkImage(widget.postModel!.userPost!),
+                      image: _postModel.file != null ? FileImage(_postModel.file!) :
+                      NetworkImage(_postModel.userPost),
                       fit: BoxFit.cover,
                     ),
                   ),
                   height: 350.0,
                   width: double.infinity,
                 ),
-              ) : Expanded(child: PublishingConfirmationScreen(
-                  file: widget.postModel!.file!)),
+              ) : Expanded(child:
+              PublishingConfirmationScreen(
+                  file: _postModel.file!)),
             ]
           ],
         ),

@@ -2,17 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 
-class ListBuilder<T> extends StatelessWidget {//check this
-  Widget Function(T) object;
+class ListBuilder<T> extends StatelessWidget {
+  //check this
   final List<T> list;
   final Widget fallback;
+  final Widget Function(T) object;
 
-  ListBuilder({
+  const ListBuilder({
+    super.key,
     required this.list,
     required this.object,
     required this.fallback,
-    super.key});
-
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,7 @@ import '../../../../core/di/service _locator.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import '../../../../core/presentation/widgets/new/post_card.dart';
+import '../../../../core/presentation/widgets/post_card.dart';
 import '../../../../core/presentation/widgets/current_user_selector.dart';
 import '../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';

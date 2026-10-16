@@ -1,24 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import '../../data/models/post_model.dart';
-import '../widgets/new/build_submit_button.dart';
-import '../widgets/new/build_user_info_section.dart';
-import '../widgets/new/build_post_input_section.dart';
-import '../widgets/new/build_image_upload_section.dart';
+import '../widgets/build_submit_button.dart';
+import '../widgets/build_user_info_section.dart';
+import '../widgets/build_post_input_section.dart';
+import '../widgets/build_image_upload_section.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
-import 'package:social_app/core/presentation/widgets/new/split_screen.dart';
+import 'package:social_app/core/presentation/screens/split_screen.dart';
 
 
 class CreatePostScreen extends StatefulWidget {
-  PostModel? postModel;
   final String currentId;
   final String titleName;
   final String buttonName;
+  final PostModel? postModel;
   final UserDetails userDetails;
-  Function(PostModel) onPressed;
   final MessageResult messageResult;
+  final Function(PostModel) onPressed;
 
-  CreatePostScreen({
+  const CreatePostScreen({
     super.key,
     this.postModel,
     required this.currentId,
@@ -34,15 +34,16 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostState extends State<CreatePostScreen> {
+  late PostModel _postModel;
   final textController = TextEditingController();
   String? selectedValue;
 
   @override
   void initState() {
     super.initState();
-    widget.postModel ??= PostModel();
-    if (widget.postModel!.myId == widget.currentId) {
-      textController.text = widget.postModel!.userText ?? '';
+    _postModel = widget.postModel ?? PostModel();
+    if (_postModel.myId == widget.currentId) {
+      textController.text = _postModel.userText ?? '';
     }
   }
 
@@ -61,15 +62,15 @@ class _CreatePostState extends State<CreatePostScreen> {
           textController: textController),
       buildImageUploadSection: BuildImageUploadSection(
         uId: widget.currentId,
-        postModel: widget.postModel,
-        onTap: (postModel) => setState(() => widget.postModel = postModel),
+        postModel: _postModel,
+        onTap: (postModel) => setState(() => _postModel = postModel),
       ),
       buildSubmitButton: BuildSubmitButton(
         folderName: 'posts',
         state: selectedValue,
+        postModel: _postModel,
         currentId: widget.currentId,
         onPressed: widget.onPressed,
-        postModel: widget.postModel,
         buttonName: widget.buttonName,
         textController: textController,
         messageResult: widget.messageResult,

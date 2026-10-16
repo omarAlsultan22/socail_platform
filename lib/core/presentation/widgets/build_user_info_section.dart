@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../features/public/constants/public_constants.dart';
+import '../../../features/public/constants/public_constants.dart';
 
 
 class BuildUserInfoSection extends StatefulWidget {

@@ -10,7 +10,7 @@ class PostModel extends UserModel{
   File? file;
   bool hasMeLiked;
   String myDocId;
-  String? userPost;
+  String userPost;
   String postType;
   String? pathType;
   int? likesNumber;
@@ -43,10 +43,10 @@ class PostModel extends UserModel{
     this.commentsNumber,
     this.myDocId = '',
     super.myDateTime,
-    this.userPost,
     this.userModel,
     this.likesList,
     this.commentsList,
+    this.userPost = '',
     this.videoController,
     this.postIsShared = false,
     this.isProfilePost = false,
@@ -133,7 +133,7 @@ class PostModel extends UserModel{
 
   bool get myIdIsEmpty  => myId.isEmpty;
   bool get myDocIdIsEmpty  => myDocId.isEmpty;
-  bool get userPostIsEmpty => userPost!.isEmpty;
+  bool get userPostIsEmpty => userPost.isEmpty;
   bool get userTextIsEmpty => userText!.isEmpty;
   double get aspectRatio => videoController!.value.aspectRatio;
   bool get videoIsInitialized => videoController!.value.isInitialized;

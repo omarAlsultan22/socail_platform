@@ -10,12 +10,12 @@ import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/data/models/user_info_model.dart';
 import 'package:social_app/core/services/media_picker_service.dart';
-import '../../../../../core/presentation/widgets/current_user_selector.dart';
-import '../../../../../core/presentation/widgets/new/friend_button.dart';
+import '../../../../../core/presentation/widgets/friend_button.dart';
 import 'package:social_app/features/profile/constants/profile_lists.dart';
+import '../../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
-import 'package:social_app/core/presentation/widgets/new/view_post_screen.dart';
+import 'package:social_app/core/presentation/screens/view_post_screen.dart';
 
 
 class ProfileLayout extends StatefulWidget {
@@ -174,10 +174,11 @@ class _ProfileLayoutState extends State<ProfileLayout> {
           child: SizedBox(
             width: double.infinity,
             height: 200.0,
-            child: Image.network(
+            child: !widget.userInfoModel.coverImageIsEmpty ?
+            Image.network(
               widget.userInfoModel.coverImageUrl,
               fit: BoxFit.cover,
-            ),
+            ): const SizedBox(),
           ),
         ),
         _uId == _currentUid ?
@@ -246,9 +247,9 @@ class _ProfileLayoutState extends State<ProfileLayout> {
             SizedBox(
               width: 150.0,
               height: 150.0,
-              child: !userDetails.myImageUrlIsEmpty ?
+              child: !widget.userInfoModel.profileImageIsEmpty ?
               Image.network(
-                userDetails.myImageUrl,
+                widget.userInfoModel.profileImageUrl,
                 fit: BoxFit.cover,
               ) : Icon(Icons.person, size: 50.0),
             ),

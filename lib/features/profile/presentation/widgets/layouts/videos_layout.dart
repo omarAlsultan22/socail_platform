@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/current_user_selector.dart';
-import 'package:social_app/core/presentation/widgets/new/video_content_widget.dart';
+import 'package:social_app/features/profile/presentation/widgets/video_content_widget.dart';
 
 
 class VideosLayout extends StatefulWidget {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import 'package:social_app/core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/presentation/widgets/current_user_selector.dart';
 
 
 class PostCreationWidget extends StatelessWidget {

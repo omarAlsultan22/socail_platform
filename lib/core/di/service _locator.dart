@@ -3,7 +3,9 @@ import 'domains/di_auth.dart';
 import 'domains/di_search.dart';
 import 'domains/di_public.dart';
 import 'package:get_it/get_it.dart';
+import 'domains/di_user_details.dart';
 import 'domains/di_setup_friends.dart';
+import 'domains/di_post_operations.dart';
 import 'package:social_app/core/di/domains/di_main.dart';
 import 'package:social_app/core/di/domains/di_profile.dart';
 import 'package:social_app/core/di/domains/di_user_info.dart';
@@ -19,12 +21,14 @@ void setupServiceLocator() {
   CoreDependencies.register();
 
   // ============ Domains ============
+  PostDependencies.register();
   AuthDependencies.register();
   MainDependencies.register();
   PublicDependencies.register();
   SearchDependencies.register();
   ProfileDependencies.register();
   UserInfoDependencies.register();
+  UserDetailsDependencies.register();
   UserAccountDependencies.register();
   SetupFriendsDependencies.register();
   NotificationsDependencies.register();

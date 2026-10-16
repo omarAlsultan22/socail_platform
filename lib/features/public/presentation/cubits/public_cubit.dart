@@ -3,7 +3,7 @@ import 'package:social_app/features/public/data/models/user_details.dart';
 
 import '../states/public_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/use_cases/public_use_cases.dart';
+import '../../domain/use_cases/public_use_case.dart';
 import '../../../../core/data/models/post_model.dart';
 import '../../data/services/online_status_service.dart';
 import '../../../../core/data/models/message_result.dart';

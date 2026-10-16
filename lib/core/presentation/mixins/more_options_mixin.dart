@@ -3,9 +3,9 @@ import '../../data/models/post_model.dart';
 import '../screens/create_post_screen.dart';
 import '../../services/session_service.dart';
 import '../widgets/navigation/navigator.dart';
-import '../widgets/new/small_menu_widget.dart';
+import '../widgets/small_menu_widget.dart';
 import '../../data/models/message_result.dart';
-import '../widgets/new/exit_dialog_helper.dart';
+import '../widgets/exit_dialog_helper.dart';
 import '../../../features/public/data/models/user_details.dart';
 
 

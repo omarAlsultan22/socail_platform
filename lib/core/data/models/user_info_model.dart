@@ -14,11 +14,17 @@ class UserInfoModel extends MyModel {
     this.profileImage,
   });
 
-  String get coverImageUrl => coverImage!.myImageUrl;
-
   String get coverImageDocId => profileImage!.myDocId;
 
   String get profileImageDocId => coverImage!.myDocId;
+
+  String get coverImageUrl => coverImage!.userPost;
+
+  bool get coverImageIsEmpty => coverImageUrl.isEmpty;
+
+  String get profileImageUrl => profileImage!.userPost;
+
+  bool get profileImageIsEmpty => profileImageUrl.isEmpty;
 
   factory UserInfoModel.fromJson(Map<String, dynamic> json) {
     return UserInfoModel(

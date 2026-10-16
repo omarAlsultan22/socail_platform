@@ -9,7 +9,7 @@ import '../../../../../core/presentation/widgets/list_builder.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../comments_likes/presentation/screens/comments_likes_screens.dart';
-import 'package:social_app/core/presentation/widgets/new/exit_dialog_helper.dart';
+import 'package:social_app/core/presentation/widgets/exit_dialog_helper.dart';
 
 
 class CommentsLayout extends StatelessWidget {

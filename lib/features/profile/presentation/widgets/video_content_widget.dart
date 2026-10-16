@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../di/service _locator.dart';
-import '../../../data/models/post_model.dart';
 import 'package:video_player/video_player.dart';
+import '../../../../core/di/service _locator.dart';
+import '../../../../core/data/models/post_model.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
-import 'package:social_app/core/presentation/widgets/new/view_post_screen.dart';
+import 'package:social_app/core/presentation/screens/view_post_screen.dart';
 
 
 class VideoContentWidget extends StatefulWidget {
@@ -38,8 +38,7 @@ class VideoContentWidget extends StatefulWidget {
 class _buildVideoContentState extends State<VideoContentWidget> {
   @override
   Widget build(BuildContext context) {
-    if (widget.postModel.userPost == null ||
-        widget.postModel.userPost!.isEmpty) {
+    if (widget.postModel.userPostIsEmpty) {
       return Container(
         height: widget.height ?? 400.0,
         width: widget.width ?? double.infinity,
@@ -49,7 +48,7 @@ class _buildVideoContentState extends State<VideoContentWidget> {
     }
 
     widget.postModel.videoController ??=
-    VideoPlayerController.network(widget.postModel.userPost!)
+    VideoPlayerController.network(widget.postModel.userPost)
       ..initialize().then((_) {
         if (mounted) setState(() {});
       });

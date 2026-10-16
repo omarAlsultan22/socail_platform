@@ -5,7 +5,7 @@ import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/profile_info.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
-import 'package:social_app/core/presentation/widgets/new/post_card.dart';
+import 'package:social_app/core/presentation/widgets/post_card.dart';
 import '../../../../../core/presentation/widgets/current_user_selector.dart';
 import '../../../../../core/presentation/widgets/layouts/user_row_layout.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';

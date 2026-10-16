@@ -2,7 +2,6 @@ import 'dart:async';
 import '../../data/models/post_model.dart';
 import '../../domain/use_cases/like_use_case.dart';
 import '../../domain/use_cases/share_use_case.dart';
-import '../../../features/user_details/domain/use_cases/user_details_use_case.dart';
 import 'package:social_app/core/services/user_account_service.dart';
 import 'package:social_app/core/domain/use_cases/post_use_case.dart';
 
@@ -16,8 +15,6 @@ mixin PostOperationsMixin{
   ShareUseCase get shareUseCase;
 
   UserAccountService get userAccountService;
-
-  UserDetailsUseCase get userDetailsUseCase;
 
   //Interactions
   Future<void> toggleLike({

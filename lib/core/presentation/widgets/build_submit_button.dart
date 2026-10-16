@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../data/models/post_model.dart';
+import '../../data/models/post_model.dart';
 import 'package:social_app/core/data/models/user_model.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/services/media_picker_service.dart';

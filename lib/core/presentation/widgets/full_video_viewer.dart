@@ -1,6 +1,6 @@
 import 'video_time_indicator.dart';
 import 'package:flutter/material.dart';
-import '../../../data/models/post_model.dart';
+import '../../data/models/post_model.dart';
 import 'package:video_player/video_player.dart';
 
 

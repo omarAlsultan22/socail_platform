@@ -1,16 +1,16 @@
-import '../current_user_selector.dart';
+import 'current_user_selector.dart';
 import 'package:flutter/material.dart';
-import '../../mixins/more_options_mixin.dart';
-import '../../../data/models/post_model.dart';
-import '../../mixins/post_components_mixin.dart';
+import '../mixins/more_options_mixin.dart';
+import '../../data/models/post_model.dart';
+import '../mixins/post_components_mixin.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/features/public/constants/public_constants.dart';
+import 'package:social_app/core/presentation/screens/view_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
-import 'package:social_app/core/presentation/widgets/new/view_post_screen.dart';
 
 
 class PostCard extends StatefulWidget {

@@ -5,7 +5,7 @@ import '../../../../../core/data/models/comment_model.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/comment_form.dart';
-import '../../../../../core/presentation/widgets/new/post_card.dart';
+import '../../../../../core/presentation/widgets/post_card.dart';
 import '../../../../interactions/comments/presentation/cubits/comments_cubit.dart';
 import '../../../../interactions/comments/presentation/layouts/comments_layout.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';

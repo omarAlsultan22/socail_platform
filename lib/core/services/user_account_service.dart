@@ -53,19 +53,16 @@ class UserAccountService {
   Future<MyModel> getUserModelData({
     required String id,
   }) async {
-    MyModel userModel;
     try {
       final userDoc = await _repository.getDoc(
           docId: id,
           collectionPath: 'accounts'
       );
       final data = await getAccountMap(userDoc: userDoc);
-      MyModel accountData = MyModel.fromJson(data);
-      userModel = accountData;
+      return MyModel.fromJson(data);
     } catch (e) {
       rethrow;
     }
-    return userModel;
   }
 
   Future<MyModel> getUserAccountData() async {
@@ -74,7 +71,6 @@ class UserAccountService {
         docId: _sessionService.currentUid
     );
     final userAccount = await getAccountMap(userDoc: docData);
-    MyModel userModel = MyModel.fromJson(userAccount);
-    return userModel;
+    return MyModel.fromJson(userAccount);
   }
 }

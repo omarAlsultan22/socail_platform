@@ -5,12 +5,12 @@ import 'package:video_player/video_player.dart';
 
 class PublishingConfirmationScreen extends StatefulWidget {
   final File file;
-  late VideoPlayerController? videoController;
+  final VideoPlayerController? videoController;
 
-  PublishingConfirmationScreen({
-    required this.file,
-    this.videoController,
+  const PublishingConfirmationScreen({
     super.key,
+    required this.file,
+    this.videoController
   });
 
   @override
