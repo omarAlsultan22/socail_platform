@@ -1,3 +1,5 @@
+import 'package:social_app/features/user_details/data/data_sources/remote/user_details_remote_data_source.dart';
+
 import '../service _locator.dart';
 import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/services/user_account_service.dart';
@@ -9,6 +11,18 @@ import '../../../features/user_details/data/repositories_impl/user_details_repos
 
 class UserDetailsDependencies {
   static void register() {
+    //DataSource
+    sl.registerLazySingleton(() =>
+        UserDetailsRemoteDataSource()
+    );
+
+    //Repository
+    sl.registerLazySingleton(() =>
+        UserDetailsRepositoryImpl(
+            dataSourceImpl: sl<UserDetailsRemoteDataSource>()
+        )
+    );
+
     // UseCase
     sl.registerLazySingleton(() =>
         UserDetailsUseCase(

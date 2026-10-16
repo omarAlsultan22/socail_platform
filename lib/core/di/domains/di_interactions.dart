@@ -1,4 +1,6 @@
 import '../service _locator.dart';
+import '../../services/session_service.dart';
+import '../../services/user_account_service.dart';
 import '../../../features/interactions/comments/domain/use_cases/add_comment_use_case.dart';
 import 'package:social_app/features/interactions/likes/presentation/cubits/likes_cubit.dart';
 import '../../../features/interactions/likes/domain/use_cases/get_likes_stream_use_case.dart';
@@ -23,6 +25,35 @@ import 'package:social_app/features/interactions/comments_likes/data/repository_
 
 class InteractionsDependencies {
   static void register() {
+    //DataSource
+    sl.registerLazySingleton(() =>
+        LikesRemoteDataSourceImpl(
+            sessionService: sl<SessionService>(),
+            userAccountService: sl<UserAccountService>()
+        )
+    );
+
+    sl.registerLazySingleton(() =>
+        CommentsRemoteDataSourceImpl(
+            sessionService: sl<SessionService>(),
+            userAccountService: sl<UserAccountService>()
+        )
+    );
+
+    sl.registerLazySingleton(() =>
+        CommentsLikesRemoteDataSourceImpl(
+            sessionService: sl<SessionService>(),
+            userAccountService: sl<UserAccountService>()
+        )
+    );
+
+    sl.registerLazySingleton(() =>
+        SharesRemoteDataSourceImpl(
+            sessionService: sl<SessionService>(),
+            userAccountService: sl<UserAccountService>()
+        )
+    );
+
     // Repositories
     sl.registerLazySingleton(() =>
         LikesRepositoryImpl(
@@ -43,7 +74,7 @@ class InteractionsDependencies {
     );
 
     sl.registerLazySingleton(() =>
-        SharesRepositoryImpl(remoteDataSource: sl<SharesRemoteDataSource>()
+        SharesRepositoryImpl(remoteDataSource: sl<SharesRemoteDataSourceImpl>()
         )
     );
 

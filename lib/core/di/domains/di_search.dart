@@ -8,6 +8,11 @@ import 'package:social_app/features/search/data/repositories_impl/firestore_sear
 
 class SearchDependencies {
   static void register() {
+    //DataSource
+    sl.registerLazySingleton(() =>
+        FirestoreSearchService()
+    );
+
     // Repository
     sl.registerLazySingleton(() =>
         FirestoreSearchRepository(repository: sl<FirestoreSearchService>()

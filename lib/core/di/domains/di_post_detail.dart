@@ -13,6 +13,9 @@ import '../service _locator.dart';
 
 class PostDetailDependencies {
   static void register() {
+    //DataSource
+    sl.registerLazySingleton(() => FirestorePostDetailService());
+
     // Repository
     sl.registerLazySingleton(() =>
         FirestorePostDetailRepository(

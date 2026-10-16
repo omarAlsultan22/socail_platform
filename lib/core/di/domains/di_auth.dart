@@ -17,6 +17,9 @@ import '../service _locator.dart';
 
 class AuthDependencies {
   static void register() {
+    //DataSource
+    sl.registerLazySingleton(() => FirebaseAuthService());
+
     // Repositories
     sl.registerLazySingleton(() =>
         FirebaseAuthRepository(auth: sl<FirebaseAuthService>()));

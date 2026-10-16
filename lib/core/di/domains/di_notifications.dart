@@ -9,6 +9,9 @@ import 'package:social_app/features/notifications/data/repositories_impl/firesto
 
 class NotificationsDependencies {
   static void register() {
+    //DataSource
+    sl.registerLazySingleton(() => FirestoreNotificationsService());
+
     // Repository
     sl.registerLazySingleton(() =>
         FirestoreNotificationsRepository(

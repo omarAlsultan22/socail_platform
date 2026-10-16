@@ -11,6 +11,9 @@ import 'package:social_app/features/main/data/repositories_impl/firestore_main_r
 
 class MainDependencies {
   static void register() {
+    //DataSource
+    sl.registerLazySingleton(() => FirestoreMainService());
+
     // Repository
     sl.registerLazySingleton(() =>
         FirestoreMainRepository(
