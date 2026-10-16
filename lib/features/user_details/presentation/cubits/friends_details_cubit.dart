@@ -37,7 +37,6 @@ class FriendsDetailsCubit extends Cubit<FriendsDetailsState> {
     });
   }
 
-
   Future<void> _cancelFriendsSubscriptions() async {
     for (final sub in _friendsSubscriptions.values) {
       await sub.cancel();

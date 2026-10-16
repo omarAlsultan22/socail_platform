@@ -15,24 +15,18 @@ class MyDetailsCubit extends Cubit<MyDetailsState> {
 
   Future<void> updateMyDetails() async {
     await _subscription?.cancel();
-
-    try {
-      final stream = _userDetailsUseCase.executeGetUserDetails();
-      if (stream == null) return;
-      _subscription =
-          stream.listen(
-                  (myModel) {
-                final myDetails = UserDetails(
-                    myName: myModel.myName,
-                    myImageUrl: myModel.myImageUrl
-                );
-                emit(state.copyWith(userDetails: myDetails));
-              }
-          );
-    }
-    catch (e) {
-
-    }
+    final stream = _userDetailsUseCase.executeGetUserDetails();
+    if (stream == null) return;
+    _subscription =
+        stream.listen(
+                (myModel) {
+              final myDetails = UserDetails(
+                  myName: myModel.myName,
+                  myImageUrl: myModel.myImageUrl
+              );
+              emit(state.copyWith(userDetails: myDetails));
+            },onError: (e) => print('Error for $e'),
+        );
   }
 
   @override
