@@ -1,21 +1,19 @@
 import 'dart:async';
-import 'package:social_app/features/public/data/models/user_details.dart';
-
 import '../states/public_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/use_cases/public_use_case.dart';
 import '../../../../core/data/models/post_model.dart';
-import '../../data/services/online_status_service.dart';
 import '../../../../core/data/models/message_result.dart';
-import '../../../../core/services/user_account_service.dart';
 import '../../../../core/domain/use_cases/post_use_case.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/domain/use_cases/like_use_case.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
 import 'package:social_app/core/domain/use_cases/share_use_case.dart';
+import '../../../../core/services/domain/i_online_status_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import '../../../../core/presentation/coordinators/post_syncable.dart';
 import '../../../../core/presentation/mixins/post_operations_mixin.dart';
-import 'package:social_app/features/user_details/domain/use_cases/user_details_use_case.dart';
+import 'package:social_app/features/public/data/models/user_details.dart';
 
 
 class PublicCubit extends Cubit<PublicState> with PostOperationsMixin, ErrorHandlerMixin<PublicState> implements PostSyncable {
@@ -25,8 +23,7 @@ class PublicCubit extends Cubit<PublicState> with PostOperationsMixin, ErrorHand
   final ShareUseCase _shareUseCase;
   final SessionService _sessionService;
   StreamSubscription? _onlineSubscription;
-  final UserAccountService _userAccountService;
-  final UserDetailsUseCase _userDetailsUseCase;
+  final IUserAccountService _userAccountService;
 
   PublicCubit({
     required PublicUseCase useCase,
@@ -34,15 +31,13 @@ class PublicCubit extends Cubit<PublicState> with PostOperationsMixin, ErrorHand
     required LikeUseCase likeUseCase,
     required ShareUseCase shareUseCase,
     required SessionService sessionService,
-    required UserDetailsUseCase userDetailsUseCase,
-    required UserAccountService userAccountService
+    required IUserAccountService userAccountService
   })
       : _useCases = useCase,
         _postUseCase = postUseCase,
         _likeUseCase = likeUseCase,
         _shareUseCase = shareUseCase,
         _sessionService = sessionService,
-        _userDetailsUseCase = userDetailsUseCase,
         _userAccountService = userAccountService,
         super(PublicState.initial()) {
     emit(state.copyWith(currentUid: sessionService.currentUid));
@@ -62,10 +57,7 @@ class PublicCubit extends Cubit<PublicState> with PostOperationsMixin, ErrorHand
   ShareUseCase get shareUseCase => _shareUseCase;
 
   @override
-  UserDetailsUseCase get userDetailsUseCase => _userDetailsUseCase;
-
-  @override
-  UserAccountService get userAccountService => _userAccountService;
+  IUserAccountService get userAccountService => _userAccountService;
 
   @override
   Future<void> upsertPostToRepository({required PostModel postModel}) async {
@@ -115,7 +107,7 @@ class PublicCubit extends Cubit<PublicState> with PostOperationsMixin, ErrorHand
     emit(state.removePost(postModel.myDocId));
   }
 
-  void getUserOnlineStatus(OnlineStatusService onlineStatusService,
+  void getUserOnlineStatus(IOnlineStatusService onlineStatusService,
       String userId) {
     _onlineSubscription = _useCases.executeGetUserOnlineStatus(
       onlineStatusService,

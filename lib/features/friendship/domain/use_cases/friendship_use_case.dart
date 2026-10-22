@@ -1,7 +1,7 @@
 import '../repositories/friendship_repository.dart';
 import '../../data/converters/friends_info_converter.dart';
 import 'package:social_app/core/data/models/my_model.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/errors/exceptions/validation_exception.dart';
 
 
@@ -17,7 +17,8 @@ class FriendshipUseCase {
         _sessionService = sessionService;
 
   static final _validationException = ValidationException(
-      error: 'User ID is empty');
+      error: 'User ID is empty'
+  );
 
   Future<String> executeAddFriendRequest({String? uId}) async {
     if (uId != null || uId!.isEmpty) {
@@ -33,7 +34,6 @@ class FriendshipUseCase {
       userId: uId,
       friendInfo: friendInfo,
     );
-
     return uId;
   }
 
@@ -46,7 +46,6 @@ class FriendshipUseCase {
       currentUserId: _sessionService.currentUid,
       friendId: uId,
     );
-
     return uId;
   }
 
@@ -68,7 +67,6 @@ class FriendshipUseCase {
       currentUserId: _sessionService.currentUid,
       friendId: uId,
     );
-
     return uId;
   }
 
@@ -83,7 +81,6 @@ class FriendshipUseCase {
         data.requests,
         data.allUsers
     );
-
     return friendsInfo.data;
   }
 }

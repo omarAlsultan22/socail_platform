@@ -2,17 +2,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/data/models/message_result.dart';
 import '../../../../core/data/models/paginated_posts.dart';
-import '../../../../core/services/user_account_service.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import '../../../../core/domain/use_cases/post_use_case.dart';
 import '../../../../core/domain/use_cases/like_use_case.dart';
 import '../../../../core/domain/use_cases/share_use_case.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
 import '../../../../core/presentation/coordinators/post_syncable.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import '../../../../core/presentation/mixins/post_operations_mixin.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
 import 'package:social_app/features/profile/constants/photo_section.dart';
-import '../../../user_details/domain/use_cases/user_details_use_case.dart';
 import 'package:social_app/features/profile/domain/use_cases/photos_use_case.dart';
 import 'package:social_app/features/profile/presentation/states/photos_state.dart';
 
@@ -22,22 +21,19 @@ class PhotosCubit extends Cubit<PhotosState>  with PostOperationsMixin, ErrorHan
   final PostUseCase _postUseCase;
   final LikeUseCase _likeUseCase;
   final ShareUseCase _shareUseCase;
-  final UserDetailsUseCase _userDetailsUseCase;
-  final UserAccountService _userAccountService;
+  final IUserAccountService _userAccountService;
 
   PhotosCubit({
     required PhotosUseCase useCase,
     required PostUseCase postUseCase,
     required LikeUseCase likeUseCase,
     required ShareUseCase shareUseCase,
-    required UserDetailsUseCase userDetailsUseCase,
-    required UserAccountService userAccountService
+    required IUserAccountService userAccountService
   })
       : _useCases = useCase,
         _postUseCase = postUseCase,
         _likeUseCase = likeUseCase,
         _shareUseCase = shareUseCase,
-        _userDetailsUseCase = userDetailsUseCase,
         _userAccountService = userAccountService,
         super(PhotosState.initial()) {
     emit(state.copyWith(
@@ -73,10 +69,7 @@ class PhotosCubit extends Cubit<PhotosState>  with PostOperationsMixin, ErrorHan
   ShareUseCase get shareUseCase => _shareUseCase;
 
   @override
-  UserDetailsUseCase get userDetailsUseCase => _userDetailsUseCase;
-
-  @override
-  UserAccountService get userAccountService => _userAccountService;
+  IUserAccountService get userAccountService => _userAccountService;
 
   @override
   Future<void> upsertPostToRepository({required PostModel postModel}) async {

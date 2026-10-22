@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
-import '../screens/create_post_screen.dart';
-import '../../services/session_service.dart';
-import '../widgets/navigation/navigator.dart';
 import '../widgets/small_menu_widget.dart';
-import '../../data/models/message_result.dart';
+import '../screens/create_post_screen.dart';
 import '../widgets/exit_dialog_helper.dart';
-import '../../../features/public/data/models/user_details.dart';
+import '../widgets/navigation/navigator.dart';
+import 'package:social_app/core/presentation/mixins/post_context.dart';
 
 
-mixin MoreOptionsMixin <T extends StatefulWidget> on State<T>, TickerProvider{
+mixin MoreOptionsMixin <T extends StatefulWidget> on State<T>, TickerProvider implements PostContext{
   bool isOpen = false;
   double value = 35.0;
 
@@ -20,16 +18,6 @@ mixin MoreOptionsMixin <T extends StatefulWidget> on State<T>, TickerProvider{
   String get postType;
 
   String get titleName;
-
-  PostModel get postModel;
-
-  UserDetails get userDetails;
-
-  MessageResult get messageResult;
-
-  SessionService get sessionService;
-
-  void Function(PostModel) get onUpsert;
 
   void Function(PostModel)? get onRemove;
 
@@ -50,9 +38,7 @@ mixin MoreOptionsMixin <T extends StatefulWidget> on State<T>, TickerProvider{
 
   void addAnimationValue() {
     if (postModel.myId == sessionService.currentUid) {
-      setState(() {
         value = 70.0;
-      });
     }
   }
 

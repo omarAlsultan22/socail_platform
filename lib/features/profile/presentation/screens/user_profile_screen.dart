@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/layouts/profile_layout.dart';
 import '../../../../core/di/service _locator.dart';
-import '../../../../core/services/session_service.dart';
+import '../../../../core/services/data/session_service.dart';
+import '../../../../core/services/domain/i_media_upload_service.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
 import 'package:social_app/features/profile/presentation/cubits/user_profile_cubit.dart';
@@ -54,6 +55,7 @@ class UserProfileScreen extends StatelessWidget {
                             cubit.insertFriendsRequests(userId: userId),
                         currentButtonScreen: data.currentButtonScreen,
                         friendshipButtonKey: data.friendshipButtonKey,
+                        mediaUploadService: sl<IMediaUploadService>(),
                         onAdd: (postModel) async =>
                         await cubit.addShare(
                             userId: postModel.myId,

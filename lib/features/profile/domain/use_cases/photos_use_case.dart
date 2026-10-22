@@ -17,7 +17,7 @@ class PhotosUseCase {
     final snapshot = await _repository.getPosts(
       limit: 10,
       userId: userId,
-      lastDoc: lastDoc,
+      lastDoc: lastDoc
     );
 
     if (snapshot.docs.isEmpty) {

@@ -1,25 +1,20 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import '../states/notifications_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/use_cases/notifications_use_case.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
-import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
 
 
 class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixin<NotificationsState> {
-  final MainCubit _mainCubit;
   final NotificationsUseCase _useCases;
 
   StreamSubscription? _notificationsSubscription;
 
   NotificationsCubit({
-    required MainCubit mainCubit,
     required NotificationsUseCase useCase
   })
       : _useCases = useCase,
-        _mainCubit = mainCubit,
         super(NotificationsState.initial());
 
   static NotificationsCubit get(context) => BlocProvider.of(context);
@@ -58,15 +53,6 @@ class NotificationsCubit extends Cubit<NotificationsState> with ErrorHandlerMixi
               )
       );
     }
-  }
-
-  Future<void> updateNotificationsCounter({
-    required String docId,
-    required BuildContext context,
-  }) async {
-    await _useCases.executeUpdateNotificationsCounter(docId: docId);
-    _mainCubit.deleteNotification();
-    emit(state.copyWith(subState: SuccessState()));
   }
 
   @override

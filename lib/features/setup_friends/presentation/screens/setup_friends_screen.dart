@@ -3,7 +3,7 @@ import '../cubits/setup_friends_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service _locator.dart';
 import '../widgets/layouts/setup_friends_layout.dart';
-import 'package:social_app/core/data/data_sources/local/cache_helper.dart';
+import '../../../../core/domain/data_sources/local/cache_helper.dart';
 import 'package:social_app/core/presentation/widgets/states/initial_state.dart';
 import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
 import 'package:social_app/features/setup_friends/presentation/states/setup_friends_state.dart';

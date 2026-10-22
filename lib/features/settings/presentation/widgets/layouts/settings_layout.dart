@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/themes/theme_notifier.dart';
 import '../../../../auth/presentation/screens/sign_in_screen.dart';
-import '../../../../../core/data/data_sources/local/cache_helper.dart';
+import '../../../../../core/domain/data_sources/local/cache_helper.dart';
 import '../../../../user_account/presentation/screens/user_account_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:social_app/features/user_info/presentation/screens/user_info_screen.dart';

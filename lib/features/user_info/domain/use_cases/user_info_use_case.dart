@@ -1,6 +1,6 @@
 import '../repositories/user_info_repository.dart';
 import '../../../../core/data/models/profile_info.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 
 
 class UserInfoUseCase {
@@ -15,13 +15,8 @@ class UserInfoUseCase {
         _sessionService = sessionService;
 
   Future<ProfileInfo> executeGetInfo() async {
-    try {
-      final userInfo = await _repository.getInfo(uid: _sessionService.currentUid);
-      return ProfileInfo.fromJson(userInfo);
-    }
-    catch (e) {
-      rethrow;
-    }
+    final userInfo = await _repository.getInfo(uId: _sessionService.currentUid);
+    return ProfileInfo.fromJson(userInfo);
   }
 
   Future<void> executeUpdateInfo({
@@ -31,20 +26,16 @@ class UserInfoUseCase {
     required final String userFrom,
     required final String userRelational,
   }) async {
-    try {
-      ProfileInfo infoModel = ProfileInfo(
-        userState: userState,
-        userWork: userWork,
-        userLive: userLive,
-        userFrom: userFrom,
-        userRelational: userRelational,
-      );
-      _repository.updateProfileInfo(
-          infoModel: infoModel,
-          docId: _sessionService.currentUid
-      );
-    } catch (e) {
-      rethrow;
-    }
+    ProfileInfo infoModel = ProfileInfo(
+      userState: userState,
+      userWork: userWork,
+      userLive: userLive,
+      userFrom: userFrom,
+      userRelational: userRelational,
+    );
+    _repository.updateProfileInfo(
+        infoModel: infoModel,
+        docId: _sessionService.currentUid
+    );
   }
 }

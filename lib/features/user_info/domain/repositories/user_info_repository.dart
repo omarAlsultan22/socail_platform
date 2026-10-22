@@ -1,8 +1,11 @@
 import '../../../../core/data/models/profile_info.dart';
-import '../../../../core/domain/repositories/base_repository.dart';
 
 
-abstract class UserInfoRepository implements BaseRepository {
+abstract class UserInfoRepository {
+  Future<Map<String, dynamic>> getInfo({
+    required String uId
+  });
+
   Future<void> updateProfileInfo({
     required String docId,
     required ProfileInfo infoModel

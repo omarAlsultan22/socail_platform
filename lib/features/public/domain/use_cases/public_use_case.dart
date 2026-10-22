@@ -1,23 +1,23 @@
 import 'dart:async';
 import '../repositories/public_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../data/services/online_status_service.dart';
 import 'package:social_app/core/data/models/post_model.dart';
-import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/paginated_posts.dart';
-import 'package:social_app/core/services/user_account_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
+import '../../../../core/services/domain/i_online_status_service.dart';
 import 'package:social_app/features/public/data/models/public_statuses.dart';
 
 
 class PublicUseCase {
   final PublicRepository _repository;
   final SessionService _sessionService;
-  final UserAccountService _userAccountService;
+  final IUserAccountService _userAccountService;
 
   PublicUseCase({
     required PublicRepository repository,
     required SessionService sessionService,
-    required UserAccountService userAccountService,
+    required IUserAccountService userAccountService,
   })
       : _repository = repository,
         _sessionService = sessionService,
@@ -66,7 +66,6 @@ class PublicUseCase {
     final List<PostModel> posts = [];
 
     await Future.wait(querySnapshot.docs.map((doc) async {
-      try {
         if (deletedPosts.contains(doc.id)) return;
 
         final data = doc.data() as Map<String, dynamic>;
@@ -103,7 +102,6 @@ class PublicUseCase {
             'commentsNumber': counts.commentsCount,
           }),
         );
-      } catch (_) {}
     }).toList());
 
     posts.sort((a, b) => b.myDateTime!.compareTo(a.myDateTime!));
@@ -245,7 +243,7 @@ class PublicUseCase {
   }
 
   Stream<bool> executeGetUserOnlineStatus(
-      OnlineStatusService onlineStatusService,
+      IOnlineStatusService onlineStatusService,
       String userId,) {
     return onlineStatusService.getUserOnlineStatus(userId);
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/themes/app_theme.dart';
 
 
 class PostTemplate extends StatelessWidget {
@@ -8,6 +9,12 @@ class PostTemplate extends StatelessWidget {
     super.key,
     required this.animationToggle
   });
+
+  Color _toggleTheme(BuildContext context) =>
+      AppTheme.getAdaptiveColor(context,
+          firstColor: animationToggle ? Colors.transparent : Colors.black12,
+          secondColor: animationToggle ? Colors.transparent : Colors.black87
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +35,7 @@ class PostTemplate extends StatelessWidget {
                   duration: Duration(seconds: 1),
                   curve: Curves.easeInOut,
                   decoration: BoxDecoration(
-                      color: Theme
-                          .of(context)
-                          .brightness == Brightness.light ?
-                      animationToggle ? Colors.transparent : Colors.black12 :
-                      animationToggle ? Colors.transparent : Colors.black87,
+                      color: _toggleTheme(context),
                       borderRadius: BorderRadius.circular(50.0),
                       border: Border.all(
                           color: Colors.grey.shade400,
@@ -57,11 +60,7 @@ class PostTemplate extends StatelessWidget {
           height: 400.0,
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
-              color: Theme
-                  .of(context)
-                  .brightness == Brightness.light ?
-              animationToggle ? Colors.transparent : Colors.black12 :
-              animationToggle ? Colors.transparent : Colors.black87,
+              color: _toggleTheme(context),
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(
                   color: Colors.grey.shade400,

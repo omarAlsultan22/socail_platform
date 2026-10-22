@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
+import '../../services/domain/i_media_upload_service.dart';
 import 'package:social_app/core/data/models/user_model.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import 'package:social_app/core/services/media_picker_service.dart';
 import 'package:social_app/core/presentation/widgets/build_snack_bar.dart';
 
 
@@ -15,6 +15,7 @@ class BuildSubmitButton extends StatefulWidget {
   final MessageResult messageResult;
   final void Function(PostModel) onPressed;
   final TextEditingController textController;
+  final IMediaUploadService mediaUploadService;
   const BuildSubmitButton({
     super.key,
     required this.currentId,
@@ -24,7 +25,8 @@ class BuildSubmitButton extends StatefulWidget {
     required this.folderName,
     required this.buttonName,
     required this.messageResult,
-    required this.textController
+    required this.textController,
+    required this.mediaUploadService
   });
 
   @override
@@ -51,8 +53,7 @@ class _BuildSubmitButtonState extends State<BuildSubmitButton> {
     setButtonLock(false);
     if ((_textValue.isEmpty ||
         widget.textController.text.trim() == '') &&
-        (widget.postModel!.userPost == null ||
-            widget.postModel!.userPostIsEmpty)) {
+        (widget.postModel!.userPostIsEmpty)) {
       BuildSnackBar.show(
           context: context,
           backgroundColor: Colors.red.shade700,
@@ -99,14 +100,15 @@ class _BuildSubmitButtonState extends State<BuildSubmitButton> {
       widget.onPressed(newPostModel);
     }
     else {
-      final map = await MediaPickerService.checkFile(widget.postModel!.file!);
+      final map = await widget.mediaUploadService.checkAndUploadFile(
+          widget.postModel!.file!);
       final newPostModel = widget.postModel!.copyWith(
-          userText: widget.textController.text,
-          userPost: map!['url'] ?? '',
-          myState: widget.state ?? 'public',
-          pathType: widget.postModel!.pathType ?? map['type'],
-          dateTime: DateTime.now(),
-          meIsOnline: true
+        meIsOnline: true,
+        dateTime: DateTime.now(),
+        userPost: map!['url'] ?? '',
+        pathType: map['type'] ?? '',
+        myState: widget.state ?? 'public',
+        userText: widget.textController.text,
       );
       widget.onPressed(newPostModel);
     }

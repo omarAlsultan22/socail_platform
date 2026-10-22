@@ -1,8 +1,9 @@
 import 'base/app_exception.dart';
 import 'network_app_exception.dart';
 import 'base/exception_handler.dart';
+import '../../di/service _locator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../features/auth/data/network/connectivity_service.dart';
+import '../../network/domain/i_connectivity_service.dart';
 
 
 class FirebaseAppException extends AppException implements ExceptionHandler {
@@ -12,7 +13,7 @@ class FirebaseAppException extends AppException implements ExceptionHandler {
     super.message
   });
 
-  static final connectivityService = ConnectivityService();
+  static final connectivityService = sl<IConnectivityService>();
   static const String _msgNoInternet = 'No Internet Connection';
 
   static final Map<String, AppException> _errorFactories = {

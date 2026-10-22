@@ -1,115 +1,120 @@
 import '../service _locator.dart';
-import '../../services/session_service.dart';
-import '../../services/user_account_service.dart';
+import '../../services/data/session_service.dart';
+import '../../services/domain/i_user_account_service.dart';
+import '../../../features/interactions/likes/domain/repository/likes_repository.dart';
+import '../../../features/interactions/shares/domain/repository/shares_repository.dart';
+import '../../../features/interactions/likes/domain/data_sources/likes_data_source.dart';
+import '../../../features/interactions/shares/domain/data_sources/shares_data_source.dart';
+import '../../../features/interactions/comments/domain/repository/comments_repository.dart';
 import '../../../features/interactions/comments/domain/use_cases/add_comment_use_case.dart';
+import '../../../features/interactions/likes/data/data_sources/likes_data_source_impl.dart';
 import 'package:social_app/features/interactions/likes/presentation/cubits/likes_cubit.dart';
+import '../../../features/interactions/shares/data/data_sources/shares_data_source_impl.dart';
 import '../../../features/interactions/likes/domain/use_cases/get_likes_stream_use_case.dart';
+import '../../../features/interactions/comments/domain/data_sources/comments_data_source.dart';
 import 'package:social_app/features/interactions/shares/presentation/cubits/shares_cubit.dart';
 import '../../../features/interactions/comments/domain/use_cases/remove_comment_use_case.dart';
 import '../../../features/interactions/shares/domain/use_cases/get_shares_stream_use_case.dart';
 import '../../../features/interactions/comments/domain/use_cases/add_comment_like_use_case.dart';
-import '../../../features/interactions/comments/data/datasources/comments_remote_datasource.dart';
+import '../../../features/interactions/comments/data/data_sources/comments_data_source_impl.dart';
 import 'package:social_app/features/interactions/comments/presentation/cubits/comments_cubit.dart';
 import '../../../features/interactions/comments/data/repository_impl/comments_repository_impl.dart';
 import '../../../features/interactions/comments/domain/use_cases/delete_comment_like_use_case.dart';
 import '../../../features/interactions/comments/domain/use_cases/get_comments_stream_use_case.dart';
-import 'package:social_app/features/interactions/likes/data/datasources/likes_remote_datasource.dart';
-import 'package:social_app/features/interactions/shares/data/datasources/shares_remote_datasource.dart';
-import 'package:social_app/features/interactions/likes/data/repository_impl/firestor_likes_repository.dart';
-import 'package:social_app/features/interactions/shares/data/repository_impl/firestor_shares_repository.dart';
+import '../../../features/interactions/comments_likes/domain/repository/comments_likes_repository.dart';
+import 'package:social_app/features/interactions/likes/data/repository_impl/likes_repository_impl.dart';
+import 'package:social_app/features/interactions/shares/data/repository_impl/shares_repository_impl.dart';
+import '../../../features/interactions/comments_likes/domain/data_sources/comments_likes_data_source.dart';
+import '../../../features/interactions/comments_likes/data/data_sources/comments_likes_data_source_impl.dart';
 import 'package:social_app/features/interactions/comments_likes/presentation/cubits/comments_likes_cubit.dart';
 import '../../../features/interactions/comments_likes/domain/use_cases/get_comment_likes_stream_use_case.dart';
-import 'package:social_app/features/interactions/comments_likes/data/datasources/comments_likes_remote_datasource.dart';
 import 'package:social_app/features/interactions/comments_likes/data/repository_impl/comments_likes_repository_impl.dart';
 
 
 class InteractionsDependencies {
   static void register() {
     //DataSource
-    sl.registerLazySingleton(() =>
-        LikesRemoteDataSourceImpl(
+    sl.registerLazySingleton<LikesDataSource>(() =>
+        LikesDataSourceImpl(
             sessionService: sl<SessionService>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
-    sl.registerLazySingleton(() =>
-        CommentsRemoteDataSourceImpl(
+    sl.registerLazySingleton<CommentsDataSource>(() =>
+        CommentsDataSourceImpl(
             sessionService: sl<SessionService>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
-    sl.registerLazySingleton(() =>
-        CommentsLikesRemoteDataSourceImpl(
+    sl.registerLazySingleton<CommentsLikesDataSource>(() =>
+        CommentsLikesDataSourceImpl(
             sessionService: sl<SessionService>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
-    sl.registerLazySingleton(() =>
-        SharesRemoteDataSourceImpl(
+    sl.registerLazySingleton<SharesDataSource>(() =>
+        SharesDataSourceImpl(
             sessionService: sl<SessionService>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
     // Repositories
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<LikesRepository>(() =>
         LikesRepositoryImpl(
-            remoteDataSource: sl<LikesRemoteDataSourceImpl>()
+            dataSource: sl<LikesDataSource>()
         )
     );
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<CommentsRepository>(() =>
         CommentsRepositoryImpl(
-            remoteDataSource: sl<CommentsRemoteDataSourceImpl>()
+            dataSource: sl<CommentsDataSource>()
         )
     );
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<CommentsLikesRepository>(() =>
         CommentsLikesRepositoryImpl(
-            remoteDataSource: sl<CommentsLikesRemoteDataSourceImpl>()
+            dataSource: sl<CommentsLikesDataSource>()
         )
     );
 
-    sl.registerLazySingleton(() =>
-        SharesRepositoryImpl(remoteDataSource: sl<SharesRemoteDataSourceImpl>()
+    sl.registerLazySingleton<SharesRepository>(() =>
+        SharesRepositoryImpl(dataSource: sl<SharesDataSource>()
         )
     );
 
     // UseCases
-    sl.registerLazySingleton(() =>
-        GetLikesStreamUseCase(repository: sl<LikesRepositoryImpl>())
+    sl.registerLazySingleton<GetLikesStreamUseCase>(() =>
+        GetLikesStreamUseCase(repository: sl<LikesRepository>())
     );
-    sl.registerLazySingleton(() =>
-        AddCommentUseCase(repository: sl<CommentsRepositoryImpl>())
+    sl.registerLazySingleton<AddCommentUseCase>(() =>
+        AddCommentUseCase(repository: sl<CommentsRepository>())
     );
-    sl.registerLazySingleton(() =>
-        RemoveCommentUseCase(repository: sl<CommentsRepositoryImpl>())
+    sl.registerLazySingleton<RemoveCommentUseCase>(() =>
+        RemoveCommentUseCase(repository: sl<CommentsRepository>())
     );
-    sl.registerLazySingleton(() =>
-        AddCommentLikeUseCase(repository: sl<CommentsRepositoryImpl>())
+    sl.registerLazySingleton<AddCommentLikeUseCase>(() =>
+        AddCommentLikeUseCase(repository: sl<CommentsRepository>())
     );
-    sl.registerLazySingleton(() =>
-        DeleteCommentLikeUseCase(repository: sl<CommentsRepositoryImpl>())
+    sl.registerLazySingleton<DeleteCommentLikeUseCase>(() =>
+        DeleteCommentLikeUseCase(repository: sl<CommentsRepository>())
     );
-    sl.registerLazySingleton(() =>
-        GetCommentsStreamUseCase(repository: sl<CommentsRepositoryImpl>())
+    sl.registerLazySingleton<GetCommentsStreamUseCase>(() =>
+        GetCommentsStreamUseCase(repository: sl<CommentsRepository>())
     );
-    sl.registerLazySingleton(() =>
-        GetCommentLikesStreamUseCase(repository: CommentsLikesRepositoryImpl(
-            remoteDataSource: sl<CommentsLikesRemoteDataSourceImpl>()
-        )));
-    sl.registerLazySingleton(() =>
-        GetSharesStreamUseCase(repository: SharesRepositoryImpl(
-            remoteDataSource: sl<SharesRemoteDataSourceImpl>()
-        )
+    sl.registerLazySingleton<GetCommentLikesStreamUseCase>(() =>
+        GetCommentLikesStreamUseCase(
+            repository: sl<CommentsLikesRepository>()));
+    sl.registerLazySingleton<GetSharesStreamUseCase>(() =>
+        GetSharesStreamUseCase(repository: sl<SharesRepository>()
         )
     );
 
     // Cubits
-    sl.registerFactory(() =>
+    sl.registerFactory<CommentsCubit>(() =>
         CommentsCubit(
             addCommentUseCase: sl<AddCommentUseCase>(),
             removeCommentUseCase: sl<RemoveCommentUseCase>(),
@@ -119,15 +124,15 @@ class InteractionsDependencies {
         )
     );
 
-    sl.registerFactory(() =>
+    sl.registerFactory<LikesCubit>(() =>
         LikesCubit(getLikesStreamUseCase: sl<GetLikesStreamUseCase>())
     );
 
-    sl.registerFactory(() =>
+    sl.registerFactory<SharesCubit>(() =>
         SharesCubit(getSharesStreamUseCase: sl<GetSharesStreamUseCase>())
     );
 
-    sl.registerFactory(() =>
+    sl.registerFactory<CommentsLikesCubit>(() =>
         CommentsLikesCubit(
             getCommentLikesStreamUseCase: sl<GetCommentLikesStreamUseCase>())
     );

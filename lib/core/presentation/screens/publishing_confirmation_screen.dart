@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:social_app/core/themes/app_theme.dart';
 
 
 class PublishingConfirmationScreen extends StatefulWidget {
@@ -158,11 +159,7 @@ class _PublishingConfirmationScreenState extends State<PublishingConfirmationScr
           Container(
             decoration: BoxDecoration(
                 border: Border.all(
-                    color: Theme
-                        .of(context)
-                        .brightness == Brightness.light
-                        ? Colors.black
-                        : Colors.white
+                    color: AppTheme.getAdaptiveColor(context)
                 ),
                 borderRadius: BorderRadius.circular(50.0)
             ),

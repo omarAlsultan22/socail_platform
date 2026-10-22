@@ -3,14 +3,13 @@ import '../states/post_detail_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/data/models/post_model.dart';
 import '../../domain/use_cases/post_detail_use_case.dart';
-import '../../../../core/services/user_account_service.dart';
 import '../../../../core/domain/use_cases/like_use_case.dart';
 import '../../../../core/domain/use_cases/post_use_case.dart';
 import '../../../../core/domain/use_cases/share_use_case.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
-import '../../../user_details/domain/use_cases/user_details_use_case.dart';
 import 'package:social_app/core/errors/exceptions/validation_exception.dart';
 import 'package:social_app/core/presentation/mixins/post_operations_mixin.dart';
 
@@ -20,8 +19,7 @@ class PostDetailCubit extends Cubit<PostDetailState> with PostOperationsMixin, E
   final LikeUseCase _likeUseCase;
   final ShareUseCase _shareUseCase;
   final PostDetailUseCase _useCases;
-  final UserDetailsUseCase _userDetailsUseCase;
-  final UserAccountService _userAccountService;
+  final IUserAccountService _userAccountService;
 
   StreamSubscription? _notificationsSubscription;
 
@@ -30,14 +28,12 @@ class PostDetailCubit extends Cubit<PostDetailState> with PostOperationsMixin, E
     required LikeUseCase likeUseCase,
     required ShareUseCase shareUseCase,
     required PostDetailUseCase useCase,
-    required UserDetailsUseCase userDetailsUseCase,
-    required UserAccountService userAccountService
+    required IUserAccountService userAccountService
   })
       : _useCases = useCase,
         _postUseCase = postUseCase,
         _likeUseCase = likeUseCase,
         _shareUseCase = shareUseCase,
-        _userDetailsUseCase = userDetailsUseCase,
         _userAccountService = userAccountService,
         super(PostDetailState.initial());
 
@@ -53,10 +49,7 @@ class PostDetailCubit extends Cubit<PostDetailState> with PostOperationsMixin, E
   ShareUseCase get shareUseCase => _shareUseCase;
 
   @override
-  UserDetailsUseCase get userDetailsUseCase => _userDetailsUseCase;
-
-  @override
-  UserAccountService get userAccountService => _userAccountService;
+  IUserAccountService get userAccountService => _userAccountService;
 
   @override
   Future<void> upsertPostToRepository({required PostModel postModel}) async {

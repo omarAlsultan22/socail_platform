@@ -1,14 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/data/models/post_model.dart';
 import '../../../../core/data/models/message_result.dart';
-import '../../../../core/services/user_account_service.dart';
 import '../../../../core/domain/use_cases/like_use_case.dart';
 import '../../../../core/domain/use_cases/post_use_case.dart';
 import '../../../../core/domain/use_cases/share_use_case.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
 import '../../../../core/presentation/coordinators/post_syncable.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:social_app/core/presentation/states/app_sub_states.dart';
-import '../../../user_details/domain/use_cases/user_details_use_case.dart';
 import 'package:social_app/core/presentation/mixins/post_operations_mixin.dart';
 import 'package:social_app/features/profile/domain/use_cases/videos_use_case.dart';
 import 'package:social_app/features/profile/presentation/states/videos_state.dart';
@@ -19,22 +18,19 @@ class VideosCubit extends Cubit<VideosState> with PostOperationsMixin, ErrorHand
   final PostUseCase _postUseCase;
   final LikeUseCase _likeUseCase;
   final ShareUseCase _shareUseCase;
-  final UserDetailsUseCase _userDetailsUseCase;
-  final UserAccountService _userAccountService;
+  final IUserAccountService _userAccountService;
 
   VideosCubit({
     required VideosUseCase useCase,
     required PostUseCase postUseCase,
     required LikeUseCase likeUseCase,
     required ShareUseCase shareUseCase,
-    required UserDetailsUseCase userDetailsUseCase,
-    required UserAccountService userAccountService
+    required IUserAccountService userAccountService
   })
       : _useCases = useCase,
         _postUseCase = postUseCase,
         _likeUseCase = likeUseCase,
         _shareUseCase = shareUseCase,
-        _userDetailsUseCase = userDetailsUseCase,
         _userAccountService = userAccountService,
         super(VideosState.initial());
 
@@ -50,10 +46,7 @@ class VideosCubit extends Cubit<VideosState> with PostOperationsMixin, ErrorHand
   ShareUseCase get shareUseCase => _shareUseCase;
 
   @override
-  UserDetailsUseCase get userDetailsUseCase => _userDetailsUseCase;
-
-  @override
-  UserAccountService get userAccountService => _userAccountService;
+  IUserAccountService get userAccountService => _userAccountService;
 
   @override
   Future<void> upsertPostToRepository({required PostModel postModel}) async {

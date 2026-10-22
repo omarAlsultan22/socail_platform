@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/themes/app_theme.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
 
@@ -23,11 +24,7 @@ class ExitDialogHelper {
             child: Text(
               'Yes',
               style: TextStyle(
-                color: Theme
-                    .of(context)
-                    .brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
+                  color: AppTheme.getAdaptiveColor(context)
               ),
             ),
           ),
@@ -37,11 +34,7 @@ class ExitDialogHelper {
             child: Text(
               'No',
               style: TextStyle(
-                color: Theme
-                    .of(context)
-                    .brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
+                  color: AppTheme.getAdaptiveColor(context)
               ),
             ),
           ),

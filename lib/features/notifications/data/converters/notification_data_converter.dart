@@ -1,19 +1,19 @@
 import '../models/notification_model.dart';
 import '../../../../core/di/service _locator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/services/user_account_service.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
 
 
 class NotificationsDataConverter {
-  final UserAccountService userAccountService;
   final NotificationsModel notificationsModel;
+  final IUserAccountService userAccountService;
 
   const NotificationsDataConverter({
-    required this.notificationsModel,
-    required this.userAccountService
+    required this.userAccountService,
+    required this.notificationsModel
   });
 
-  static final _userAccountService = sl<UserAccountService>();
+  static final _userAccountService = sl<IUserAccountService>();
 
   static final _notificationModel = NotificationsDataConverter(
       userAccountService: _userAccountService,

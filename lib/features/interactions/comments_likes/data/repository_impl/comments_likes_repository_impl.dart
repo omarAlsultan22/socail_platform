@@ -1,19 +1,21 @@
 import 'package:social_app/core/data/models/my_model.dart';
-import '../datasources/comments_likes_remote_datasource.dart';
 import '../../domain/repository/comments_likes_repository.dart';
+import '../../domain/data_sources/comments_likes_data_source.dart';
 
 
 class CommentsLikesRepositoryImpl implements CommentsLikesRepository {
-  final CommentsLikesRemoteDataSource remoteDataSource;
+  final CommentsLikesDataSource _dataSource;
 
-  CommentsLikesRepositoryImpl({required this.remoteDataSource});
+  CommentsLikesRepositoryImpl({
+    required CommentsLikesDataSource dataSource}) :
+        _dataSource = dataSource;
 
   @override
   Stream<List<MyModel>> getCommentLikesStream({
     required String postId,
     required String commentId,
   }) {
-    return remoteDataSource
+    return _dataSource
         .getCommentLikesStream(postId: postId, commentId: commentId)
         .map(
           (users) =>

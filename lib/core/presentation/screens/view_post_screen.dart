@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
-import 'package:social_app/core/services/session_service.dart';
-import 'package:social_app/core/data/models/message_result.dart';
 import '../../../features/public/data/models/user_details.dart';
+import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/features/public/constants/public_constants.dart';
 import 'package:social_app/core/presentation/mixins/more_options_mixin.dart';
 import 'package:social_app/core/presentation/mixins/post_components_mixin.dart';
@@ -151,9 +151,9 @@ class _ViewPostScreenState extends State<ViewPostScreen> with SingleTickerProvid
       child: SizedBox(
         height: 200.0,
         width: double.infinity,
-        child: postModel.userPost != null
+        child: !postModel.userPostIsEmpty
             ? Image(
-          image: NetworkImage(userPost ?? ''),
+          image: NetworkImage(userPost),
           fit: BoxFit.cover,
         )
             : Icon(Icons.person, size: 100.0),

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
 import '../screens/create_post_screen.dart';
-import '../widgets/navigation/navigator.dart';
 import '../widgets/icon_button_widget.dart';
-import 'package:social_app/core/presentation/mixins/more_options_mixin.dart';
+import '../widgets/navigation/navigator.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/presentation/mixins/post_context.dart';
 import 'package:social_app/core/presentation/widgets/full_video_viewer.dart';
 import '../../../features/interactions/likes/presentation/screens/likes_screen.dart';
 import '../../../features/interactions/shares/presentation/screens/shares_screen.dart';
 import '../../../features/interactions/comments/presentation/screens/comments_screen.dart';
 
 
-mixin PostComponentsMixin<T extends StatefulWidget> on State<T>, MoreOptionsMixin<T>{
+mixin PostComponentsMixin<T extends StatefulWidget> on State<T> implements PostContext{
   //Getters
   String? get userId;
 
@@ -75,7 +76,7 @@ mixin PostComponentsMixin<T extends StatefulWidget> on State<T>, MoreOptionsMixi
                             ),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.red,
+                            color: AppColors.red,
                             borderRadius: BorderRadius.circular(50.0),
                           ),
                           child: Padding(
@@ -83,7 +84,7 @@ mixin PostComponentsMixin<T extends StatefulWidget> on State<T>, MoreOptionsMixi
                             child: Icon(
                               Icons.favorite,
                               size: 15,
-                              color: Colors.white,
+                              color: AppColors.white,
                             ),
                           ),
                         ),

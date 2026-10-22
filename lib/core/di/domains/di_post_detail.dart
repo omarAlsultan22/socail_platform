@@ -1,46 +1,48 @@
-import '../../../features/post_detail/data/repositories_impl/firestore_post_detail_repository.dart';
-import '../../../features/post_detail/data/data_sources/remote/firestore_post_detail_service.dart';
+import '../../../features/post_detail/data/repositories_impl/post_detail_repository_impl.dart';
+import '../../../features/post_detail/data/data_sources/post_detail_data_source_impl.dart';
+import '../../../features/post_detail/domain/data_sources/post_detail_data_source.dart';
+import '../../../features/post_detail/domain/repositories/post_detail_repository.dart';
+import '../../../features/user_details/domain/use_cases/user_details_use_case.dart';
 import '../../../features/post_detail/domain/use_cases/post_detail_use_case.dart';
 import '../../../features/post_detail/presentation/cubits/post_detail_cubit.dart';
-import 'package:social_app/core/services/user_account_service.dart';
-import '../../../features/user_details/domain/use_cases/user_details_use_case.dart';
+import '../../services/domain/i_user_account_service.dart';
 import '../../domain/use_cases/share_use_case.dart';
 import '../../domain/use_cases/like_use_case.dart';
 import '../../domain/use_cases/post_use_case.dart';
-import '../../services/session_service.dart';
+import '../../services/data/session_service.dart';
 import '../service _locator.dart';
 
 
 class PostDetailDependencies {
   static void register() {
     //DataSource
-    sl.registerLazySingleton(() => FirestorePostDetailService());
+    sl.registerLazySingleton<PostDetailDataSource>(() =>
+        PostDetailDataSourceImpl());
 
     // Repository
-    sl.registerLazySingleton(() =>
-        FirestorePostDetailRepository(
-            sessionService: sl<SessionService>(),
-            repository: sl<FirestorePostDetailService>(),
+    sl.registerLazySingleton<PostDetailRepository>(() =>
+        PostDetailRepositoryImpl(
+          sessionService: sl<SessionService>(),
+          dataSource: sl<PostDetailDataSource>(),
         )
     );
 
     // UseCase
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<PostDetailUseCase>(() =>
         PostDetailUseCase(
             sessionService: sl<SessionService>(),
-            repository: sl<FirestorePostDetailRepository>()
+            repository: sl<PostDetailRepository>()
         )
     );
 
     // Cubit
-    sl.registerFactory(() =>
+    sl.registerFactory<PostDetailCubit>(() =>
         PostDetailCubit(
             postUseCase: sl<PostUseCase>(),
             likeUseCase: sl<LikeUseCase>(),
             shareUseCase: sl<ShareUseCase>(),
             useCase: sl<PostDetailUseCase>(),
-            userDetailsUseCase: sl<UserDetailsUseCase>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
   }

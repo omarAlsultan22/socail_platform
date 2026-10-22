@@ -1,6 +1,6 @@
 import '../repositories/auth_repository.dart';
-import 'package:social_app/core/services/session_service.dart';
-import '../../../../core/data/data_sources/local/cache_helper.dart';
+import 'package:social_app/core/services/data/session_service.dart';
+import '../../../../core/domain/data_sources/local/cache_helper.dart';
 
 
 class SignInUseCase {
@@ -22,16 +22,12 @@ class SignInUseCase {
     required String userEmail,
     required String userPassword,
   }) async {
-    try {
-      final userCredential = await _authRepository.signIn(
-          userEmail: userEmail,
-          userPassword: userPassword
-      );
-      await _sessionService.login(userCredential.user!.uid);
-      await _cacheHelper.setBool(key: 'friendsCount', value: false);
-    } catch (e) {
-      rethrow;
-    }
+    final userCredential = await _authRepository.signIn(
+        userEmail: userEmail,
+        userPassword: userPassword
+    );
+    await _sessionService.login(userCredential.user!.uid);
+    await _cacheHelper.setBool(key: 'friendsCount', value: false);
   }
 }
 

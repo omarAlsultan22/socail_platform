@@ -1,7 +1,7 @@
 import 'dart:async';
 import '../repositories/post_repository.dart';
 import 'package:social_app/core/data/models/post_model.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 
 
 class PostUseCase {
@@ -30,7 +30,7 @@ class PostUseCase {
           _sessionService.currentUid
       );
     } else {
-      await _repository.deletePostFromFirestore(postModel.myDocId!);
+      await _repository.deletePostFromFirestore(postModel.myDocId);
     }
   }
 }

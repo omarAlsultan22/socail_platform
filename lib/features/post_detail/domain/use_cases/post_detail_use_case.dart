@@ -3,7 +3,7 @@ import '../repositories/post_detail_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/data/models/post_model.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 
 
 class PostDetailUseCase {

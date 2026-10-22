@@ -5,7 +5,7 @@ import '../../../../../core/constants/app_colors.dart';
 import 'package:social_app/core/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../../../core/data/models/message_result.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/presentation/widgets/app_spaces.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';

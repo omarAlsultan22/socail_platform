@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import '../mixins/more_options_mixin.dart';
 import '../../data/models/post_model.dart';
 import '../mixins/post_components_mixin.dart';
+import 'package:social_app/core/themes/app_theme.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
@@ -91,11 +92,8 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme
-        .of(context)
-        .brightness == Brightness.dark;
-    final borderColor = isDarkMode ? Colors.white : Colors.black;
     final isPost = !postModel.myDocIdIsEmpty;
+    final borderColor = AppTheme.getAdaptiveColor(context);
 
     return CurrentUserSelector(
         builder: (userDetails) {
@@ -290,7 +288,7 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
       Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(postModel.userPost ?? ''),
+            image: NetworkImage(postModel.userPost),
             fit: BoxFit.cover,
           ),
           borderRadius: BorderRadius.circular(8.0),

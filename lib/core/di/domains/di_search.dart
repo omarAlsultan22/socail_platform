@@ -1,34 +1,36 @@
 import '../service _locator.dart';
-import 'package:social_app/core/services/user_account_service.dart';
+import '../../services/domain/i_user_account_service.dart';
+import '../../../features/search/domain/repositories/search_repository.dart';
+import '../../../features/search/domain/data_sources/search_data_source.dart';
+import '../../../features/search/data/data_sources/search_data_source_impl.dart';
 import 'package:social_app/features/search/domain/use_cases/search_use_case.dart';
 import 'package:social_app/features/search/presentation/cubits/search_cubit.dart';
-import '../../../features/search/data/data_sources/remote/firestore/firestore_search_service.dart';
-import 'package:social_app/features/search/data/repositories_impl/firestore_search_repository.dart';
+import 'package:social_app/features/search/data/repositories_impl/search_repository_impl.dart';
 
 
 class SearchDependencies {
   static void register() {
     //DataSource
-    sl.registerLazySingleton(() =>
-        FirestoreSearchService()
+    sl.registerLazySingleton<SearchDataSource>(() =>
+        SearchDataSourceImpl()
     );
 
     // Repository
-    sl.registerLazySingleton(() =>
-        FirestoreSearchRepository(repository: sl<FirestoreSearchService>()
+    sl.registerLazySingleton<SearchRepository>(() =>
+        SearchRepositoryImpl(dataSource: sl<SearchDataSource>()
         )
     );
 
     // UseCase
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<SearchUseCase>(() =>
         SearchUseCase(
-            repository: sl<FirestoreSearchRepository>(),
-            userAccountService: sl<UserAccountService>()
+            repository: sl<SearchRepository>(),
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
     // Cubit
-    sl.registerFactory(() =>
+    sl.registerFactory<SearchCubit>(() =>
         SearchCubit(useCase: sl<SearchUseCase>())
     );
   }

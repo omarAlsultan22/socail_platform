@@ -1,45 +1,47 @@
 import '../service _locator.dart';
-import 'package:social_app/core/services/session_service.dart';
+import '../../domain/repositories/post_repository.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/domain/use_cases/post_use_case.dart';
 import 'package:social_app/core/domain/use_cases/like_use_case.dart';
 import 'package:social_app/core/domain/use_cases/share_use_case.dart';
-import 'package:social_app/core/data/repositories_impl/firestore_post_repository.dart';
-import '../../data/data_sources/remote/firestore/post_operations_remote_datasource.dart';
+import '../../domain/data_sources/remote/firestore/post_operations.dart';
+import '../../data/data_sources/remote/firestore/post_operations_impl.dart';
+import 'package:social_app/core/data/repositories_impl/post_repository_impl.dart';
 
 
 class PostDependencies {
   static void register() {
     //DataSource
-    sl.registerLazySingleton(() =>
-        PostOperationsRemoteDataSourceImpl(
+    sl.registerLazySingleton<PostOperations>(() =>
+        PostOperationsImpl(
             sessionService: sl<SessionService>()
         )
     );
 
     // Repository
-    sl.registerLazySingleton(() =>
-        FirestorePostRepository(
-            repository: sl<PostOperationsRemoteDataSourceImpl>()
+    sl.registerLazySingleton<PostRepository>(() =>
+        PostRepositoryImpl(
+            repository: sl<PostOperations>()
         )
     );
 
     // UseCases
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<PostUseCase>(() =>
         PostUseCase(
-            sessionService: sl<SessionService>(),
-            repository: sl<FirestorePostRepository>()
+            repository: sl<PostRepository>(),
+            sessionService: sl<SessionService>()
         )
     );
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<LikeUseCase>(() =>
         LikeUseCase(
-            repository: sl<FirestorePostRepository>()
+            repository: sl<PostRepository>()
         )
     );
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<ShareUseCase>(() =>
         ShareUseCase(
-            repository: sl<FirestorePostRepository>()
+            repository: sl<PostRepository>()
         )
     );
   }

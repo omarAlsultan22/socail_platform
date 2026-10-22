@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/di/service _locator.dart';
+import 'package:social_app/core/themes/app_theme.dart';
 import '../../../../../core/data/models/post_model.dart';
 import '../../../../../core/data/models/comment_model.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import '../../../../../core/presentation/widgets/comment_form.dart';
 import '../../../../../core/presentation/widgets/post_card.dart';
+import '../../../../../core/presentation/widgets/comment_form.dart';
 import '../../../../interactions/comments/presentation/cubits/comments_cubit.dart';
 import '../../../../interactions/comments/presentation/layouts/comments_layout.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
@@ -140,10 +141,9 @@ class _PostDetailLayoutState extends State<PostDetailLayout> {
             ),
           ),
           Container(
-            color: Theme
-                .of(context)
-                .brightness == Brightness.light ?
-            Colors.grey.shade100 : Colors.grey.shade900,
+            color: AppTheme.getAdaptiveColor(
+                context, firstColor: Colors.grey.shade100,
+                secondColor: Colors.grey.shade900),
             child: CommentForm(
               onPressed: (comment) =>
                   _commentsCubit.addComment(

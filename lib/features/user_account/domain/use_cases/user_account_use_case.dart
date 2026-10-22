@@ -1,5 +1,5 @@
 import '../repositories/user_account_repository.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/data/models/user_account.dart';
 
 
@@ -15,12 +15,7 @@ class UserAccountUseCase {
         _sessionService = sessionService;
 
   Future<UserAccount> executeGetAccount() async {
-    try {
-      return await _repository.getAccount(_sessionService.currentUid);
-    }
-    catch (e) {
-      rethrow;
-    }
+    return await _repository.getAccount(_sessionService.currentUid);
   }
 
   Future<void> executeUpdateAccount({
@@ -33,13 +28,8 @@ class UserAccountUseCase {
         fullName: '$firstName $lastName',
         userId: _sessionService.currentUid
     );
-    try {
-      await _repository.updateAccount(
-        userAccount: userAccount,
-      );
-    }
-    catch (e) {
-      rethrow;
-    }
+    await _repository.updateAccount(
+      userAccount: userAccount,
+    );
   }
 }

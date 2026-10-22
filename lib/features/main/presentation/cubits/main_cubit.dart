@@ -2,27 +2,27 @@ import 'dart:async';
 import '../states/main_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/use_cases/main_use_case.dart';
-import '../../../../core/services/notification_service.dart';
-import 'package:social_app/core/services/session_service.dart';
-import 'package:social_app/core/services/user_account_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
+import '../../../../core/services/domain/i_notification_service.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 
 
 class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
   final MainUseCases _useCases;
   final SessionService _sessionService;
-  final UserAccountService _userAccountService;
-  final NotificationService _notificationService;
+  final IUserAccountService _userAccountService;
+  final INotificationService _notificationService;
 
   StreamSubscription? _notificationsSub;
   StreamSubscription? _friendRequestsSub;
-  List<StreamSubscription> _messagesSubs = [];
+  final List<StreamSubscription> _messagesSubs = [];
 
   MainCubit({
     required MainUseCases useCase,
     required SessionService sessionService,
-    required UserAccountService userAccountService,
-    required NotificationService notificationService
+    required IUserAccountService userAccountService,
+    required INotificationService notificationService
   })
       : _useCases = useCase,
         _sessionService = sessionService,
@@ -79,7 +79,6 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
       await Future.wait([
         _setupNotificationsListener(),
         _setupFriendRequestsListener(),
-        _setupMessagesListener(),
       ]);
 
       emit(state.setMessageListenerActive(true));
@@ -159,38 +158,6 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
         emit(state.successState());
       },
     );
-  }
-
-  Future<void> _setupMessagesListener() async {
-    final initialData = await _useCases.executeGetInitialMessagesCount();
-    _messagesSubs = initialData.subscriptions;
-
-    emit(state.updateMessages(
-      counter: initialData.count,
-      docIds: initialData.docIds,
-    ));
-
-    final messagesQuery = await _useCases.getMessages();
-
-    for (final doc in messagesQuery.docs) {
-      final subscription = _useCases.executeGetMessagesStreamForDoc(
-        doc.id,
-        state.messagesCount,
-        state.messagesIds,
-      ).listen((data) {
-        if (state.isMessageActive) {
-          _notificationService.sendMessageNotification();
-        }
-
-        emit(state.updateMessages(
-          counter: data.count,
-          docIds: data.docIds,
-        ));
-        emit(state.successState());
-      });
-
-      _messagesSubs.add(subscription);
-    }
   }
 
   void changeIsMessage() {

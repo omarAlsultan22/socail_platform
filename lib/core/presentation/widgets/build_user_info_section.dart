@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/themes/app_theme.dart';
 import '../../../features/public/constants/public_constants.dart';
 
 
@@ -31,10 +32,8 @@ class _BuildUserInfoSectionState extends State<BuildUserInfoSection> {
             width: 50.0,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50.0),
-              border: widget.myImageUrl.isEmpty ? Border.all(color: Theme
-                  .of(context)
-                  .brightness == Brightness.light ?
-              Colors.black : Colors.white
+              border: widget.myImageUrl.isEmpty ? Border.all(
+                  color: AppTheme.getAdaptiveColor(context)
               ) : null,
               image: DecorationImage(
                 image: NetworkImage(widget.myImageUrl),

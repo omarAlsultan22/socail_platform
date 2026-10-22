@@ -1,12 +1,13 @@
 import 'app/my_app.dart';
 import 'core/di/service _locator.dart';
-import 'core/config/bloc_observer.dart';
 import 'package:flutter/material.dart';
+import 'core/config/bloc_observer.dart';
 import 'core/constants/app_colors.dart';
 import 'core/errors/mappers/error_handler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/config/initialization_controller.dart';
 import 'core/presentation/widgets/build_snack_bar.dart';
+import 'core/services/domain/i_notification_service.dart';
 
 
 //⭐\\
@@ -19,6 +20,9 @@ void main() async {
   try {
     await initializationController.init();
     runApp(const MyApp());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await sl<INotificationService>().handleInitialMessage();
+    });
   }
   catch (e, stackTrace) {
     final errorHandler = ErrorHandler(
@@ -38,6 +42,7 @@ void main() async {
                           await initializationController.retryInit();
                           runApp(const MyApp());
                         } catch (e) {
+                          if (!context.mounted) return;
                           BuildSnackBar.show(
                               context: context,
                               message: 'Initialization failed',

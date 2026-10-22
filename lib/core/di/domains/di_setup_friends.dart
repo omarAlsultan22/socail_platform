@@ -1,30 +1,31 @@
 import '../service _locator.dart';
-import 'package:social_app/core/services/session_service.dart';
-import '../../data/data_sources/remote/firestore/firestore_base_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
+import '../../domain/data_sources/remote/firestore/firestore_service.dart';
+import '../../../features/setup_friends/domain/repositories/setup_friends_repository.dart';
 import 'package:social_app/features/setup_friends/domain/use_cases/setup_friends_use_case.dart';
 import 'package:social_app/features/setup_friends/presentation/cubits/setup_friends_cubit.dart';
-import 'package:social_app/features/setup_friends/data/repositories_impl/firestore_setup_friends_repository.dart';
+import 'package:social_app/features/setup_friends/data/repositories_impl/setup_friends_repository_impl.dart';
 
 
 class SetupFriendsDependencies {
   static void register() {
     // Repository
-    sl.registerLazySingleton(() =>
-        FirestoreSetupFriendsRepository(
-            sessionService: sl<SessionService>(),
-            repository: sl<FirestoreBaseService>()
+    sl.registerLazySingleton<SetupFriendsRepository>(() =>
+        SetupFriendsRepositoryImpl(
+            dataSource: sl<FirestoreService>(),
+            sessionService: sl<SessionService>()
         )
     );
 
     // UseCase
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<SetupFriendsUseCase>(() =>
         SetupFriendsUseCase(
-            repository: sl<FirestoreSetupFriendsRepository>()
+            repository: sl<SetupFriendsRepository>()
         )
     );
 
     // Cubit
-    sl.registerFactory(() =>
+    sl.registerFactory<SetupFriendsCubit>(() =>
         SetupFriendsCubit(useCase: sl<SetupFriendsUseCase>()
         )
     );

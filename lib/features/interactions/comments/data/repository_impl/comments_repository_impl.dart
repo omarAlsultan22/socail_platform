@@ -1,26 +1,29 @@
-import '../datasources/comments_remote_datasource.dart';
 import '../../domain/repository/comments_repository.dart';
+import '../../domain/data_sources/comments_data_source.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
 
 
 class CommentsRepositoryImpl implements CommentsRepository {
-  final CommentsRemoteDataSource remoteDataSource;
+  final CommentsDataSource _dataSource;
 
-  CommentsRepositoryImpl({required this.remoteDataSource});
+  CommentsRepositoryImpl({required CommentsDataSource dataSource}) :
+        _dataSource = dataSource;
 
   @override
   Stream<List<CommentModel>> getCommentsStream(String postId) {
-    return remoteDataSource.getCommentsStream(postId).map(
-          (comments) => comments
-          .map((c) => CommentModel(
-        docId: c.docId,
-        postId: c.postId,
-        myId: c.myId,
-        userAction: c.userAction,
-        myDateTime: c.myDateTime,
-        likesNumber: c.likesNumber ?? 0,
-        hasMeLiked: c.hasMeLiked,
-      )).toList(),
+    return _dataSource.getCommentsStream(postId).map(
+          (comments) =>
+          comments
+              .map((c) =>
+              CommentModel(
+                docId: c.docId,
+                postId: c.postId,
+                myId: c.myId,
+                userAction: c.userAction,
+                myDateTime: c.myDateTime,
+                likesNumber: c.likesNumber ?? 0,
+                hasMeLiked: c.hasMeLiked,
+              )).toList(),
     );
   }
 
@@ -29,7 +32,7 @@ class CommentsRepositoryImpl implements CommentsRepository {
     required String postId,
     required String comment,
   }) {
-    return remoteDataSource.addComment(postId: postId, comment: comment);
+    return _dataSource.addComment(postId: postId, comment: comment);
   }
 
   @override
@@ -37,7 +40,7 @@ class CommentsRepositoryImpl implements CommentsRepository {
     required String postId,
     required String commentId,
   }) {
-    return remoteDataSource.removeComment(postId: postId, commentId: commentId);
+    return _dataSource.removeComment(postId: postId, commentId: commentId);
   }
 
   @override
@@ -46,7 +49,7 @@ class CommentsRepositoryImpl implements CommentsRepository {
     required String commentId,
     required String commentOwnerId,
   }) {
-    return remoteDataSource.addCommentLike(
+    return _dataSource.addCommentLike(
       postId: postId,
       commentId: commentId,
       commentOwnerId: commentOwnerId,
@@ -59,7 +62,7 @@ class CommentsRepositoryImpl implements CommentsRepository {
     required String commentId,
     required String commentOwnerId,
   }) {
-    return remoteDataSource.deleteCommentLike(
+    return _dataSource.deleteCommentLike(
       postId: postId,
       commentId: commentId,
       commentOwnerId: commentOwnerId,

@@ -1,45 +1,46 @@
-import 'package:social_app/features/user_details/data/data_sources/remote/user_details_remote_data_source.dart';
-
 import '../service _locator.dart';
-import 'package:social_app/core/services/session_service.dart';
-import 'package:social_app/core/services/user_account_service.dart';
+import '../../services/domain/i_user_account_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
+import '../../../features/user_details/domain/repositories/user_details_repository.dart';
+import '../../../features/user_details/domain/data_sources/user_details_data_source.dart';
 import 'package:social_app/features/user_details/presentation/cubits/my_details_cubit.dart';
 import 'package:social_app/features/user_details/domain/use_cases/user_details_use_case.dart';
 import 'package:social_app/features/user_details/presentation/cubits/friends_details_cubit.dart';
 import '../../../features/user_details/data/repositories_impl/user_details_repository_impl.dart';
+import 'package:social_app/features/user_details/data/data_sources/user_details_data_source_impl.dart';
 
 
 class UserDetailsDependencies {
   static void register() {
     //DataSource
-    sl.registerLazySingleton(() =>
-        UserDetailsRemoteDataSource()
+    sl.registerLazySingleton<UserDetailsDataSource>(() =>
+        UserDetailsDataSourceImpl()
     );
 
     //Repository
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<UserDetailsRepository>(() =>
         UserDetailsRepositoryImpl(
-            dataSourceImpl: sl<UserDetailsRemoteDataSource>()
+            dataSource: sl<UserDetailsDataSource>()
         )
     );
 
     // UseCase
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<UserDetailsUseCase>(() =>
         UserDetailsUseCase(
             sessionService: sl<SessionService>(),
-          repository: sl<UserDetailsRepositoryImpl>(),
-          userAccountService: sl<UserAccountService>()
+            repository: sl<UserDetailsRepository>(),
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
     // Cubits
-    sl.registerFactory(() =>
+    sl.registerFactory<MyDetailsCubit>(() =>
         MyDetailsCubit(
             userDetailsUseCase: sl<UserDetailsUseCase>()
         )
     );
 
-    sl.registerFactory(() =>
+    sl.registerFactory<FriendsDetailsCubit>(() =>
         FriendsDetailsCubit(
             userDetailsUseCase: sl<UserDetailsUseCase>()
         )

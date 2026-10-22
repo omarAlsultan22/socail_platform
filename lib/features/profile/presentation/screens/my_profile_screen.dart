@@ -4,7 +4,8 @@ import '../widgets/layouts/profile_layout.dart';
 import '../../../../core/di/service _locator.dart';
 import '../../../../shared/coordination/post_coordinator.dart';
 import '../../../../shared/coordination/post_sync_groups.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
+import '../../../../core/services/domain/i_media_upload_service.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
 import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
 import 'package:social_app/features/profile/presentation/states/profile_state.dart';
@@ -24,14 +25,17 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   late String _uId;
   late MyProfileCubit _cubit;
   late SessionService _sessionService;
+  late IMediaUploadService _mediaUploadService;
+
 
   @override
   void initState() {
     super.initState();
-    _cubit = MyProfileCubit.get(context);
-    _sessionService = sl<SessionService>();
     _uId = _sessionService.currentUid;
+    _cubit = MyProfileCubit.get(context);
     _cubit.getProfileInfo(uId: _uId);
+    _sessionService = sl<SessionService>();
+    _mediaUploadService = sl<IMediaUploadService>();
   }
 
   @override
@@ -47,6 +51,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       _cubit.uploadImage(postModel: postModel),
                   sessionService: _sessionService,
                   messageResult: data.messageResult,
+                  mediaUploadService: _mediaUploadService,
                   deleteRequests: (userId) =>
                       _cubit.cancelRequests(userId: userId),
                   deleteFriendship: (userId) =>

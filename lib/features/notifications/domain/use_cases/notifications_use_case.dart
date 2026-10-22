@@ -1,5 +1,5 @@
 import '../repositories/notifications_repository.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
 
 

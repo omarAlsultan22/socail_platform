@@ -1,7 +1,7 @@
 import '../states/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/network/connectivity_service.dart';
 import '../../../../core/data/models/message_result.dart';
+import '../../../../core/network/domain/i_connectivity_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import '../../domain/use_cases/change_email_and_password_use_case.dart';
 import 'package:social_app/core/errors/exceptions/network_app_exception.dart';
@@ -9,11 +9,11 @@ import 'package:social_app/core/errors/exceptions/network_app_exception.dart';
 
 class ChangeEmailAndPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState> {
   final ChangeEmailAndPasswordUseCase _useCase;
-  final ConnectivityService _connectivityService;
+  final IConnectivityService _connectivityService;
 
   ChangeEmailAndPasswordCubit({
     required ChangeEmailAndPasswordUseCase useCase,
-    required ConnectivityService connectivityService
+    required IConnectivityService connectivityService
   })
       : _useCase = useCase,
         _connectivityService = connectivityService,

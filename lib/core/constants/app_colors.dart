@@ -14,6 +14,7 @@ class AppColors {
   static const black = Colors.black;
   static const white = Colors.white;
   static const grey = Colors.grey;
+  static const red = Colors.red;
 
   // ألوان الحالات
   static const successGreen = Color(0xFF2E7D32);

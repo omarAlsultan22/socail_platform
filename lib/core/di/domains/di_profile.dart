@@ -1,129 +1,125 @@
 import '../service _locator.dart';
-import '../../services/session_service.dart';
-import '../../services/user_account_service.dart';
+import '../../services/data/session_service.dart';
 import '../../domain/use_cases/like_use_case.dart';
 import '../../domain/use_cases/share_use_case.dart';
+import '../../services/domain/i_user_account_service.dart';
 import 'package:social_app/core/domain/use_cases/post_use_case.dart';
 import '../../../features/profile/domain/use_cases/profile_use_case.dart';
+import '../../domain/data_sources/remote/firestore/firestore_service.dart';
 import '../../../features/profile/data/converters/Info_data_converter.dart';
-import '../../data/data_sources/remote/firestore/firestore_base_service.dart';
+import '../../../features/profile/domain/repositories/profile_repository.dart';
+import '../../../features/profile/domain/data_sources/profile_data_source.dart';
 import 'package:social_app/features/profile/presentation/cubits/posts_cubit.dart';
 import 'package:social_app/features/profile/domain/use_cases/posts_use_case.dart';
 import 'package:social_app/features/profile/domain/use_cases/photos_use_case.dart';
 import 'package:social_app/features/profile/domain/use_cases/videos_use_case.dart';
 import 'package:social_app/features/profile/presentation/cubits/photos_cubit.dart';
 import 'package:social_app/features/profile/presentation/cubits/videos_cubit.dart';
-import '../../../features/user_details/domain/use_cases/user_details_use_case.dart';
+import '../../../features/profile/data/data_sources/profile_data_source_impl.dart';
 import 'package:social_app/features/profile/presentation/cubits/my_profile_cubit.dart';
 import 'package:social_app/features/profile/presentation/cubits/user_profile_cubit.dart';
-import '../../../features/profile/data/data_sources/remote/firestore_profile_service.dart';
-import 'package:social_app/features/profile/data/repositories_impl/firestore_profile_repository.dart';
+import 'package:social_app/features/profile/data/repositories_impl/profile_repository_impl.dart';
 
 
 class ProfileDependencies {
   static void register() {
     //DataSource
-    sl.registerLazySingleton(() => FirestoreProfileService());
+    sl.registerLazySingleton<ProfileDataSource>(() => ProfileDataSourceImpl());
 
     //Converter
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<AccountDataConverter>(() =>
         AccountDataConverter(
-            sessionService: sl<SessionService>(),
-            repository: sl<FirestoreBaseService>()
+            repository: sl<FirestoreService>(),
+            sessionService: sl<SessionService>()
         )
     );
 
     // Repository
-    sl.registerLazySingleton(() =>
-        FirestoreProfileRepository(
+    sl.registerLazySingleton<ProfileRepository>(() =>
+        ProfileRepositoryImpl(
+            dataSource: sl<ProfileDataSource>(),
             sessionService: sl<SessionService>(),
-            repository: sl<FirestoreProfileService>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
     // UseCases
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<ProfileUseCase>(() =>
         ProfileUseCase(
-            repository: sl<FirestoreProfileRepository>(),
-            userAccountService: sl<UserAccountService>(),
+            repository: sl<ProfileRepository>(),
+            userAccountService: sl<IUserAccountService>(),
             accountDataConverter: sl<AccountDataConverter>()
         )
     );
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<PostsUseCase>(() =>
         PostsUseCase(
-          repository: sl<FirestoreProfileRepository>(),
+          repository: sl<ProfileRepository>(),
         )
     );
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<PhotosUseCase>(() =>
         PhotosUseCase(
-            repository: sl<FirestoreProfileRepository>()
+            repository: sl<ProfileRepository>()
         )
     );
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<VideosUseCase>(() =>
         VideosUseCase(
-            repository: sl<FirestoreProfileRepository>()
+            repository: sl<ProfileRepository>()
         )
     );
 
     // Cubits
-    sl.registerFactory(() =>
+    sl.registerFactory<MyProfileCubit>(() =>
         MyProfileCubit(
             useCase: sl<ProfileUseCase>(),
             postUseCase: sl<PostUseCase>(),
             likeUseCase: sl<LikeUseCase>(),
             shareUseCase: sl<ShareUseCase>(),
             sessionService: sl<SessionService>(),
-            userDetailsUseCase: sl<UserDetailsUseCase>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
-    sl.registerFactory(() =>
+    sl.registerFactory<UserProfileCubit>(() =>
         UserProfileCubit(
             useCase: sl<ProfileUseCase>(),
             postUseCase: sl<PostUseCase>(),
             likeUseCase: sl<LikeUseCase>(),
             shareUseCase: sl<ShareUseCase>(),
             sessionService: sl<SessionService>(),
-            userDetailsUseCase: sl<UserDetailsUseCase>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
-    sl.registerFactory(() =>
+    sl.registerFactory<PostsCubit>(() =>
         PostsCubit(
             useCase: sl<PostsUseCase>(),
             postUseCase: sl<PostUseCase>(),
             likeUseCase: sl<LikeUseCase>(),
             shareUseCase: sl<ShareUseCase>(),
-            userDetailsUseCase: sl<UserDetailsUseCase>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
-    sl.registerFactory(() =>
+    sl.registerFactory<PhotosCubit>(() =>
         PhotosCubit(
             useCase: sl<PhotosUseCase>(),
             postUseCase: sl<PostUseCase>(),
             likeUseCase: sl<LikeUseCase>(),
             shareUseCase: sl<ShareUseCase>(),
-            userDetailsUseCase: sl<UserDetailsUseCase>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
 
-    sl.registerFactory(() =>
+    sl.registerFactory<VideosCubit>(() =>
         VideosCubit(
             useCase: sl<VideosUseCase>(),
             postUseCase: sl<PostUseCase>(),
             likeUseCase: sl<LikeUseCase>(),
             shareUseCase: sl<ShareUseCase>(),
-            userDetailsUseCase: sl<UserDetailsUseCase>(),
-            userAccountService: sl<UserAccountService>()
+            userAccountService: sl<IUserAccountService>()
         )
     );
   }

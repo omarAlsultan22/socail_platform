@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import '../../di/service _locator.dart';
 import '../exceptions/base/app_exception.dart';
 import '../exceptions/validation_exception.dart';
 import '../exceptions/client_app_exception.dart';
@@ -9,7 +10,7 @@ import '../exceptions/network_app_exception.dart';
 import '../exceptions/firebase_app_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../exceptions/shared_prefs_app_exceptions.dart';
-import '../../../features/auth/data/network/connectivity_service.dart';
+import '../../network/domain/i_connectivity_service.dart';
 
 
 class ExceptionMapper {
@@ -17,7 +18,7 @@ class ExceptionMapper {
 
   ExceptionMapper({required this.error});
 
-  static final _connectivityService = ConnectivityService();
+  static final _connectivityService = sl<IConnectivityService>();
   static const String _msgServerError = 'Cannot reach the server';
 
   static final Map<String, AppException> _networkPatterns = {
@@ -30,7 +31,7 @@ class ExceptionMapper {
     'unable to resolve': NetworkAppException(message: _msgServerError),
   };
 
-  static final Map<Type, AppException Function(dynamic)> _typePatterns = {
+  static final Map<Object, AppException Function(dynamic)> _typePatterns = {
     ValidationException: (error) => error,
 
     ComponentsException: (error) => error,

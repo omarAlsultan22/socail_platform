@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/di/service _locator.dart';
+import 'package:social_app/core/themes/app_theme.dart';
 import '../../../../../core/data/models/comment_model.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/comment_form.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
+import 'package:social_app/core/presentation/widgets/exit_dialog_helper.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../comments_likes/presentation/screens/comments_likes_screens.dart';
-import 'package:social_app/core/presentation/widgets/exit_dialog_helper.dart';
 
 
 class CommentsLayout extends StatelessWidget {
@@ -142,7 +143,7 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
                   radius: 25.0,
-                  backgroundImage: NetworkImage(widget.comment.myImageUrl!)
+                  backgroundImage: NetworkImage(widget.comment.myImageUrl)
               ),
             ),
             Expanded(
@@ -153,10 +154,9 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Theme
-                            .of(context)
-                            .brightness == Brightness.light ? Colors.grey
-                            .shade200 : Colors.grey.shade700,
+                        color: AppTheme.getAdaptiveColor(
+                            context, firstColor: Colors.grey
+                            .shade200, secondColor: Colors.grey.shade700),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: Padding(
@@ -165,7 +165,7 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.comment.myName ?? 'Unknown User',
+                              widget.comment.myName,
                               style: const TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
@@ -189,10 +189,9 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
                           child: Text(
                             'Like',
                             style: TextStyle(
-                              color: isActive ? Colors.blue.shade700 : Theme
-                                  .of(context)
-                                  .brightness == Brightness.light ?
-                              Colors.black : Colors.white,
+                                color: isActive
+                                    ? Colors.blue.shade700
+                                    : AppTheme.getAdaptiveColor(context)
                             ),
                           ),
                         ),

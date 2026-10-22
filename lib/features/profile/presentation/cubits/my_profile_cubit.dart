@@ -11,7 +11,6 @@ class MyProfileCubit extends MainProfileCubit implements PostSyncable {
     required super.likeUseCase,
     required super.shareUseCase,
     required super.sessionService,
-    required super.userDetailsUseCase,
     required super.userAccountService
   });
 

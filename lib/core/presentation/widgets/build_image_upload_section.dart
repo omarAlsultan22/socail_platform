@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
-import 'package:social_app/core/services/media_picker_service.dart';
+import '../../services/domain/i_media_upload_service.dart';
 import 'package:social_app/core/presentation/screens/publishing_confirmation_screen.dart';
 
 
@@ -9,11 +9,13 @@ class BuildImageUploadSection<T> extends StatefulWidget {
   final String uId;
   final PostModel postModel;
   final void Function(PostModel) onTap;
+  final IMediaUploadService mediaUploadService;
   const BuildImageUploadSection({
     super.key,
     required this.uId,
     required this.onTap,
-    required this.postModel
+    required this.postModel,
+    required this.mediaUploadService
   });
 
   @override
@@ -47,7 +49,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
                   title: const Text('Image from the exhibition'),
                   onTap: () async {
                     Navigator.pop(context);
-                    final file = await MediaPickerService.pickImage();
+                    final file = await widget.mediaUploadService.pickImage();
                     _setMedia(file!, 'image');
                   },
                 ),
@@ -56,7 +58,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
                   title: const Text('Video from the exhibition'),
                   onTap: () async {
                     Navigator.pop(context);
-                    final file = await MediaPickerService.pickVideo();
+                    final file = await widget.mediaUploadService.pickVideo();
                     _setMedia(file!, 'video');
                   },
                 ),

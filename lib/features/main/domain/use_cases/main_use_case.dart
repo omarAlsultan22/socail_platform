@@ -1,13 +1,13 @@
 import 'dart:async';
+import '../repositories/main_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
-import 'package:social_app/features/main/data/repositories_impl/firestore_main_repository.dart';
 
 
 class MainUseCases {
-  final FirestoreMainRepository _repository;
+  final MainRepository _repository;
 
-  MainUseCases({required FirestoreMainRepository repository})
+  MainUseCases({required MainRepository repository})
       : _repository = repository;
 
   Future<QuerySnapshot<Object?>> getMessages() async {

@@ -6,12 +6,11 @@ import '../../../domain/use_cases/profile_use_case.dart';
 import '../../../../../core/data/models/post_model.dart';
 import '../../../../../core/data/models/message_result.dart';
 import '../../../../../core/data/models/user_info_model.dart';
-import 'package:social_app/core/services/session_service.dart';
-import '../../../../../core/services/user_account_service.dart';
 import '../../../../../core/domain/use_cases/like_use_case.dart';
 import '../../../../../core/domain/use_cases/post_use_case.dart';
 import '../../../../../core/domain/use_cases/share_use_case.dart';
-import '../../../../user_details/domain/use_cases/user_details_use_case.dart';
+import 'package:social_app/core/services/data/session_service.dart';
+import '../../../../../core/services/domain/i_user_account_service.dart';
 import '../../../../../core/presentation/mixins/error_handler_mixin.dart';
 import '../../../../../core/presentation/mixins/post_operations_mixin.dart';
 
@@ -22,8 +21,7 @@ abstract class MainProfileCubit extends Cubit<ProfileState> with PostOperationsM
   final LikeUseCase _likeUseCase;
   final ShareUseCase _shareUseCase;
   final SessionService _sessionService;
-  final UserDetailsUseCase _userDetailsUseCase;
-  final UserAccountService _userAccountService;
+  final IUserAccountService _userAccountService;
 
   MainProfileCubit({
     required ProfileUseCase useCase,
@@ -31,15 +29,13 @@ abstract class MainProfileCubit extends Cubit<ProfileState> with PostOperationsM
     required LikeUseCase likeUseCase,
     required ShareUseCase shareUseCase,
     required SessionService sessionService,
-    required UserDetailsUseCase userDetailsUseCase,
-    required UserAccountService userAccountService
+    required IUserAccountService userAccountService
   })
       : _useCases = useCase,
         _postUseCase = postUseCase,
         _likeUseCase = likeUseCase,
         _shareUseCase = shareUseCase,
         _sessionService = sessionService,
-        _userDetailsUseCase = userDetailsUseCase,
         _userAccountService = userAccountService,
         super(ProfileState.initial());
 
@@ -53,10 +49,7 @@ abstract class MainProfileCubit extends Cubit<ProfileState> with PostOperationsM
   ShareUseCase get shareUseCase => _shareUseCase;
 
   @override
-  UserDetailsUseCase get userDetailsUseCase => _userDetailsUseCase;
-
-  @override
-  UserAccountService get userAccountService => _userAccountService;
+  IUserAccountService get userAccountService => _userAccountService;
 
   @override
   Future<void> upsertPostToRepository({required PostModel postModel}) async {

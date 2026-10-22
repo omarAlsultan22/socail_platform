@@ -4,7 +4,7 @@ import '../states/friendship_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/use_cases/friendship_use_case.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
-import 'package:social_app/core/services/user_account_service.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
 
@@ -12,12 +12,12 @@ import 'package:social_app/features/main/presentation/cubits/main_cubit.dart';
 class FriendshipCubit extends Cubit<FriendshipState> with ErrorHandlerMixin<FriendshipState> {
   final MainCubit _mainCubit;
   final FriendshipUseCase _useCase;
-  final UserAccountService _userAccountService;
+  final IUserAccountService _userAccountService;
 
   FriendshipCubit({
     required MainCubit mainCubit,
     required FriendshipUseCase useCase,
-    required UserAccountService userAccountService
+    required IUserAccountService userAccountService
   })
       : _useCase = useCase,
         _mainCubit = mainCubit,

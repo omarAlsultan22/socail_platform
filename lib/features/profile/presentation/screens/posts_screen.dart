@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service _locator.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../shared/coordination/post_coordinator.dart';
 import '../../../../shared/coordination/post_sync_groups.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';

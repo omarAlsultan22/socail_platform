@@ -2,14 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../../core/di/service _locator.dart';
-import '../../../data/services/online_status_service.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
 import 'package:social_app/core/data/models/post_model.dart';
-import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 import '../../../../../core/presentation/mixins/more_options_mixin.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
+import '../../../../../core/services/domain/i_online_status_service.dart';
 import 'package:social_app/features/public/constants/public_constants.dart';
 import 'package:social_app/features/public/presentation/widgets/state_line_widget.dart';
 
@@ -52,15 +52,15 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
   static double framesPerSecond = 60.0;
   double totalFrames = 5.0 * framesPerSecond;
 
+  // Timer
+  Timer? _timer;
+
   // Status
   late PostModel _firstStatus;
   late PostModel _currentStatus;
 
-  // Timer
-  Timer? _timer;
-
   // Service
-  late OnlineStatusService _onlineStatusService;
+  late IOnlineStatusService _onlineStatusService;
 
   @override
   String get postType => 'status';
@@ -91,7 +91,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
     super.initState();
     _firstStatus = widget.statusesList.first;
     _currentStatus = widget.statusesList[currentIndex];
-    _onlineStatusService = sl<OnlineStatusService>();
+    _onlineStatusService = sl<IOnlineStatusService>();
     _initUserState();
     startTimer();
   }
@@ -478,13 +478,13 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
   }
 
   Widget _buildVideoContent(PostModel postModel) {
-    if (postModel.userPost == null || postModel.userPostIsEmpty) {
+    if (postModel.userPostIsEmpty) {
       return const Center(child: Text('There is no available video'));
     }
 
     if (postModel.videoController == null) {
       postModel.videoController =
-      VideoPlayerController.network(postModel.userPost!)
+      VideoPlayerController.network(postModel.userPost)
         ..initialize()
         ..addListener(_updateProgress);
       return const Center(child: CircularProgressIndicator());
@@ -527,7 +527,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
       width: double.infinity,
       height: double.infinity,
       child: Image.network(
-        _currentStatus.userPost ?? '',
+        _currentStatus.userPost,
         fit: BoxFit.cover,
       ),
     );

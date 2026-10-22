@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../core/di/service _locator.dart';
 import '../../../../core/data/models/post_model.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/core/presentation/screens/view_post_screen.dart';

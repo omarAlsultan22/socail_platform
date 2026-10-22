@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../di/service _locator.dart';
 import '../../../../../core/data/models/my_model.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import '../friend_button.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 

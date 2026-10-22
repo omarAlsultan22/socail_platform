@@ -1,5 +1,5 @@
-import 'package:social_app/core/data/data_sources/local/cache_helper.dart';
-import '../../../../core/services/session_service.dart';
+import '../../../../core/domain/data_sources/local/cache_helper.dart';
+import '../../../../core/services/data/session_service.dart';
 import '../../../../core/di/service _locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/layouts/sign_in_layout.dart';

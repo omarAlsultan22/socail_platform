@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/di/service _locator.dart';
 import '../../../../core/data/models/post_model.dart';
 import '../../../public/data/models/user_details.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/screens/view_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';

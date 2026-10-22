@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import '../../di/service _locator.dart';
 import '../../data/models/post_model.dart';
 import '../widgets/build_submit_button.dart';
 import '../widgets/build_user_info_section.dart';
 import '../widgets/build_post_input_section.dart';
 import '../widgets/build_image_upload_section.dart';
+import '../../services/domain/i_media_upload_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/core/presentation/screens/split_screen.dart';
+import 'package:social_app/features/public/data/models/user_details.dart';
 
 
 class CreatePostScreen extends StatefulWidget {
@@ -63,6 +65,7 @@ class _CreatePostState extends State<CreatePostScreen> {
       buildImageUploadSection: BuildImageUploadSection(
         uId: widget.currentId,
         postModel: _postModel,
+        mediaUploadService: sl<IMediaUploadService>(),
         onTap: (postModel) => setState(() => _postModel = postModel),
       ),
       buildSubmitButton: BuildSubmitButton(
@@ -74,6 +77,7 @@ class _CreatePostState extends State<CreatePostScreen> {
         buttonName: widget.buttonName,
         textController: textController,
         messageResult: widget.messageResult,
+        mediaUploadService: sl<IMediaUploadService>(),
       ),
     );
   }

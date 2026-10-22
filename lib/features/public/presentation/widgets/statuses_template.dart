@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/themes/app_theme.dart';
 
 
 class StatusesTemplate extends StatelessWidget {
@@ -8,6 +9,12 @@ class StatusesTemplate extends StatelessWidget {
     super.key,
     required this.animationToggle
   });
+
+  Color _toggleTheme(BuildContext context) =>
+      AppTheme.getAdaptiveColor(context,
+          firstColor: animationToggle ? Colors.transparent : Colors.black12,
+          secondColor: animationToggle ? Colors.transparent : Colors.black87
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +34,7 @@ class StatusesTemplate extends StatelessWidget {
                   width: 90.0,
                   curve: Curves.easeInOut,
                   decoration: BoxDecoration(
-                    color: Theme
-                        .of(context)
-                        .brightness == Brightness.light ?
-                    animationToggle ? Colors.transparent : Colors.black12 :
-                    animationToggle ? Colors.transparent : Colors.black87,
+                    color: _toggleTheme(context),
                     borderRadius: BorderRadius.circular(10.0),
                     border: Border.all(color: Colors.grey, width: 1.0),
                     boxShadow: [
@@ -51,11 +54,7 @@ class StatusesTemplate extends StatelessWidget {
                     width: 25.0,
                     curve: Curves.easeInOut,
                     decoration: BoxDecoration(
-                      color: Theme
-                          .of(context)
-                          .brightness == Brightness.light ?
-                      animationToggle ? Colors.transparent : Colors.black12 :
-                      animationToggle ? Colors.transparent : Colors.black87,
+                      color: _toggleTheme(context),
                       borderRadius: BorderRadius.circular(50.0),
                       border: Border.all(color: Colors.grey, width: 1.0),
                       boxShadow: [

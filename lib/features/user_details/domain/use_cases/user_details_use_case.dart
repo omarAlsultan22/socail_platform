@@ -1,36 +1,31 @@
 import 'dart:async';
 import '../../../../core/data/models/my_model.dart';
-import '../../../../core/services/session_service.dart';
-import '../../../../core/services/user_account_service.dart';
-import '../../data/repositories_impl/user_details_repository_impl.dart';
+import '../repositories/user_details_repository.dart';
+import '../../../../core/services/data/session_service.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
 
 
 class UserDetailsUseCase {
   final SessionService _sessionService;
-  final UserDetailsRepositoryImpl _repository;
-  final UserAccountService _userAccountService;
+  final UserDetailsRepository _repository;
+  final IUserAccountService _userAccountService;
 
   UserDetailsUseCase({
     required SessionService sessionService,
-    required UserDetailsRepositoryImpl repository,
-    required UserAccountService userAccountService
+    required UserDetailsRepository repository,
+    required IUserAccountService userAccountService
   })
       : _repository = repository,
         _sessionService = sessionService,
         _userAccountService = userAccountService;
 
   Stream<MyModel>? executeGetUserDetails({String? uId}) {
-    try {
       return _repository.getMyDetailsStream(
           collectionPath: 'accounts', docId: uId ?? _sessionService.currentUid
       ).asyncMap((userDoc) async {
         final data = await _userAccountService.getAccountMap(userDoc: userDoc);
         return MyModel.fromJson(data);
       });
-    }
-    catch (e) {
-      rethrow;
-    }
   }
 
   Stream<Map<String, Stream<MyModel>>> executeGetNotificationsStream() {
@@ -51,7 +46,6 @@ class UserDetailsUseCase {
           result[uId] = stream;
         }
       }
-
       return result;
     });
   }

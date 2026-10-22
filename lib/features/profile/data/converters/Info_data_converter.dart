@@ -1,17 +1,17 @@
 import '../../../../core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/user_info_model.dart';
-import 'package:social_app/core/presentation/mixins/base_like_mixin.dart';
-import 'package:social_app/core/data/data_sources/remote/firestore/firestore_base_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
+import 'package:social_app/core/presentation/mixins/base_like_mixin_impl.dart';
+import '../../../../core/domain/data_sources/remote/firestore/firestore_service.dart';
 
 
-class AccountDataConverter with BaseLikeMixin{
+class AccountDataConverter with BaseLikeMixinImpl{
   final SessionService _sessionService;
-  final FirestoreBaseService _repository;
+  final FirestoreService _repository;
   const AccountDataConverter({
     required SessionService sessionService,
-    required FirestoreBaseService repository}) :
+    required FirestoreService repository}) :
         _repository = repository,
         _sessionService = sessionService;
 
@@ -19,7 +19,7 @@ class AccountDataConverter with BaseLikeMixin{
   String get likeCollectionPath => 'likesList';
 
   @override
-  FirestoreBaseService get repository => _repository;
+  FirestoreService get dataSource => _repository;
 
   @override
   SessionService get  sessionService => _sessionService;

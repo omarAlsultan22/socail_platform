@@ -9,7 +9,6 @@ class UserProfileCubit extends MainProfileCubit{
     required super.likeUseCase,
     required super.shareUseCase,
     required super.sessionService,
-    required super.userDetailsUseCase,
     required super.userAccountService
   });
 

@@ -1,70 +1,73 @@
-import 'package:social_app/features/auth/data/repositories_impl/firebase_sign_up_repository.dart';
+import 'package:social_app/features/auth/data/repositories_impl/sign_up_repository_impl.dart';
 import '../../../features/auth/presentation/cubits/change_email_and_password_cubit.dart';
 import '../../../features/auth/domain/use_cases/change_email_and_password_use_case.dart';
-import '../../../features/auth/data/repositories_impl/firebase_auth_repository.dart';
+import '../../../features/auth/data/repositories_impl/auth_repository_impl.dart';
 import '../../../features/auth/presentation/cubits/forget_password_cubit.dart';
-import '../../data/data_sources/remote/firestore/firestore_base_service.dart';
-import '../../../features/auth/data/network/connectivity_service.dart';
+import '../../../features/auth/domain/repositories/sign_up_repository.dart';
+import '../../domain/data_sources/remote/firestore/firestore_service.dart';
+import '../../../features/auth/domain/repositories/auth_repository.dart';
 import '../../../features/auth/presentation/cubits/sign_in_cubit.dart';
 import '../../../features/auth/presentation/cubits/sign_up_cubit.dart';
 import '../../../features/auth/domain/use_cases/sign_in_use_case.dart';
 import '../../../features/auth/domain/use_cases/sign_up_use_case.dart';
-import '../../data/data_sources/remote/firebase_auth_service.dart';
-import '../../data/data_sources/local/cache_helper.dart';
-import '../../services/session_service.dart';
+import '../../data/data_sources/remote/auth_service_impl.dart';
+import '../../domain/data_sources/remote/auth_service.dart';
+import '../../domain/data_sources/local/cache_helper.dart';
+import '../../network/domain/i_connectivity_service.dart';
+import '../../services/data/session_service.dart';
 import '../service _locator.dart';
 
 
 class AuthDependencies {
   static void register() {
     //DataSource
-    sl.registerLazySingleton(() => FirebaseAuthService());
+    sl.registerLazySingleton<AuthService>(() => AuthServiceImpl());
 
     // Repositories
-    sl.registerLazySingleton(() =>
-        FirebaseAuthRepository(auth: sl<FirebaseAuthService>()));
+    sl.registerLazySingleton<AuthRepository>(() =>
+        AuthRepositoryImpl(service: sl<AuthService>()));
 
-    sl.registerLazySingleton(() =>
-        FirebaseSignUpRepository(repository: sl<FirestoreBaseService>()));
+    sl.registerLazySingleton<SignUpRepository>(() =>
+        SignUpRepositoryImpl(dataSource: sl<FirestoreService>()));
 
     // UseCases
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<SignInUseCase>(() =>
         SignInUseCase(
             cacheHelper: sl<CacheHelper>(),
             sessionService: sl<SessionService>(),
-            authRepository: sl<FirebaseAuthRepository>()));
+            authRepository: sl<AuthRepository>()));
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<SignUpUseCase>(() =>
         SignUpUseCase(
-            authRepository: sl<FirebaseAuthRepository>(),
-            signUpRepository: sl<FirebaseSignUpRepository>()
+            authRepository: sl<AuthRepository>(),
+            signUpRepository: sl<SignUpRepository>()
         )
     );
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<ChangeEmailAndPasswordUseCase>(() =>
         ChangeEmailAndPasswordUseCase(
-            authRepository: sl<FirebaseAuthRepository>()));
+            authRepository: sl<AuthRepository>()));
 
     // Cubits
-    sl.registerFactory(() =>
+    sl.registerFactory<SignInCubit>(() =>
         SignInCubit(
             useCase: sl<SignInUseCase>(),
-            connectivityService: sl<ConnectivityService>()));
+            connectivityService: sl<IConnectivityService>()));
 
-    sl.registerFactory(() =>
+    sl.registerFactory<SignUpCubit>(() =>
         SignUpCubit(
             useCase: sl<SignUpUseCase>(),
-            connectivityService: sl<ConnectivityService>()));
+            connectivityService: sl<IConnectivityService>()));
 
-    sl.registerFactory(() =>
+    sl.registerFactory<ForgetPasswordCubit>(() =>
         ForgetPasswordCubit(
-          repository: sl<FirebaseAuthRepository>(),
-          connectivityService: sl<ConnectivityService>(),
+          repository: sl<AuthRepository>(),
+          connectivityService: sl<IConnectivityService>(),
         ));
 
-    sl.registerFactory(() =>
+    sl.registerFactory<ChangeEmailAndPasswordCubit>(() =>
         ChangeEmailAndPasswordCubit(
             useCase: sl<ChangeEmailAndPasswordUseCase>(),
-            connectivityService: sl<ConnectivityService>()));
+            connectivityService: sl<IConnectivityService>()));
   }
 }

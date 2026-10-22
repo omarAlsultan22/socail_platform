@@ -1,8 +1,6 @@
-import 'package:social_app/core/data/models/user_account.dart';
-
 import '../repositories/auth_repository.dart';
 import '../repositories/sign_up_repository.dart';
-import '../../../../core/data/models/my_model.dart';
+import 'package:social_app/core/data/models/user_account.dart';
 
 
 class SignUpUseCase {
@@ -23,26 +21,22 @@ class SignUpUseCase {
     required String userEmail,
     required String userPassword,
   }) async {
-    try {
-      final userCredential = await _authRepository.signUp(
-        userEmail: userEmail,
-        userPassword: userPassword,
-      );
+    final userCredential = await _authRepository.signUp(
+      userEmail: userEmail,
+      userPassword: userPassword,
+    );
 
-      final user = userCredential.user;
-      if (user != null && user.email != null && !user.isAnonymous) {
-        UserAccount userAccount = UserAccount(
-            userId: user.uid,
-            firstName: firstName,
-            lastName: lastName,
-            fullName: '$firstName''$lastName'.trim()
-        );
-        await _signUpRepository.createUserInfo(
-            userModel: userAccount
-        );
-      }
-    } catch (e) {
-      rethrow;
+    final user = userCredential.user;
+    if (user != null && user.email != null && !user.isAnonymous) {
+      UserAccount userAccount = UserAccount(
+          userId: user.uid,
+          firstName: firstName,
+          lastName: lastName,
+          fullName: '$firstName''$lastName'.trim()
+      );
+      await _signUpRepository.createUserInfo(
+          userModel: userAccount
+      );
     }
   }
 }

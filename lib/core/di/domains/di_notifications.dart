@@ -1,36 +1,37 @@
 import '../service _locator.dart';
-import 'package:social_app/core/services/session_service.dart';
-import '../../../features/main/presentation/cubits/main_cubit.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import '../../../features/notifications/domain/use_cases/notifications_use_case.dart';
+import '../../../features/notifications/domain/repositories/notifications_repository.dart';
+import '../../../features/notifications/domain/data_sources/notifications_data_source.dart';
+import '../../../features/notifications/data/data_sources/notifications_data_source_impl.dart';
 import 'package:social_app/features/notifications/presentation/cubits/notifications_cubit.dart';
-import '../../../features/notifications/data/data_sources/remote/firestore_notifications_service.dart';
-import 'package:social_app/features/notifications/data/repositories_impl/firestore_notifications_repository.dart';
+import 'package:social_app/features/notifications/data/repositories_impl/notifications_repository_impl.dart';
 
 
 class NotificationsDependencies {
   static void register() {
     //DataSource
-    sl.registerLazySingleton(() => FirestoreNotificationsService());
+    sl.registerLazySingleton<NotificationsDataSource>(() =>
+        NotificationsDataSourceImpl());
 
     // Repository
     sl.registerLazySingleton(() =>
-        FirestoreNotificationsRepository(
-            repository: sl<FirestoreNotificationsService>()
+        NotificationsRepositoryImpl(
+            dataSource: sl<NotificationsDataSource>()
         )
     );
 
     // UseCase
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<NotificationsUseCase>(() =>
         NotificationsUseCase(
             sessionService: sl<SessionService>(),
-            repository: sl<FirestoreNotificationsRepository>()
+            repository: sl<NotificationsRepository>()
         )
     );
 
     // Cubit
-    sl.registerFactory(() =>
+    sl.registerFactory<NotificationsCubit>(() =>
         NotificationsCubit(
-            mainCubit: sl<MainCubit>(),
             useCase: sl<NotificationsUseCase>()
         )
     );

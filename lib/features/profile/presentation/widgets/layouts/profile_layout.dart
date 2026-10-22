@@ -6,16 +6,16 @@ import '../../screens/photos_screen.dart';
 import '../../screens/videos_screen.dart';
 import '../../../../public/data/models/user_details.dart';
 import 'package:social_app/core/data/models/post_model.dart';
-import 'package:social_app/core/services/session_service.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/data/models/user_info_model.dart';
-import 'package:social_app/core/services/media_picker_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/presentation/widgets/friend_button.dart';
+import '../../../../../core/services/domain/i_media_upload_service.dart';
 import 'package:social_app/features/profile/constants/profile_lists.dart';
+import 'package:social_app/core/presentation/screens/view_post_screen.dart';
 import '../../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
-import 'package:social_app/core/presentation/screens/view_post_screen.dart';
 
 
 class ProfileLayout extends StatefulWidget {
@@ -30,6 +30,7 @@ class ProfileLayout extends StatefulWidget {
   final void Function(PostModel) uploadImage;
   final void Function(String) deleteRequests;
   final void Function(int) changeIndexButtons;
+  final IMediaUploadService mediaUploadService;
   final void Function(String) deleteFriendship;
   final void Function(bool, PostModel) onToggle;
   final void Function(String) insertFriendsRequests;
@@ -47,6 +48,7 @@ class ProfileLayout extends StatefulWidget {
     required this.deleteRequests,
     required this.deleteFriendship,
     required this.changeIndexButtons,
+    required this.mediaUploadService,
     required this.friendshipButtonKey,
     required this.currentButtonScreen,
     required this.insertFriendsRequests,
@@ -126,7 +128,7 @@ class _ProfileLayoutState extends State<ProfileLayout> {
     required String folderName,
     required UserDetails userDetails
   }) async {
-    final file = await MediaPickerService.pickImage();
+    final file = await widget.mediaUploadService.pickImage();
 
     if (!mounted) return;
 

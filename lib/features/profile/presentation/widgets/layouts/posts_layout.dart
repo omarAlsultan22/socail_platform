@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/data/models/post_model.dart';
 import 'package:social_app/core/data/models/my_model.dart';
-import 'package:social_app/core/services/session_service.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/data/models/profile_info.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';

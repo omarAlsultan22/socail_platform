@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/themes/app_theme.dart';
 import '../../../../public/presentation/screens/public_screen.dart';
 import '../../../../search/presentation/screens/search_screen.dart';
 import '../../../../profile/presentation/screens/my_profile_screen.dart';
@@ -73,12 +74,8 @@ class MainLayout extends StatelessWidget {
             const SizedBox(width: 10.0),
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.0),
-                color: Theme
-                    .of(context)
-                    .brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
+                  borderRadius: BorderRadius.circular(5.0),
+                  color: AppTheme.getAdaptiveColor(context)
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -88,13 +85,9 @@ class MainLayout extends StatelessWidget {
                 child: Text(
                   'Platform',
                   style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: Theme
-                        .of(context)
-                        .brightness == Brightness.light
-                        ? Colors.white
-                        : Colors.black,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.getAdaptiveColor(context)
                   ),
                 ),
               ),
@@ -145,7 +138,7 @@ class MainLayout extends StatelessWidget {
             _buildTabIcon(
               index: 3,
               activeIcon: Icons.home,
-              inactiveIcon:  Icons.home_outlined,
+              inactiveIcon: Icons.home_outlined,
             ),
           ],
           indicatorSize: TabBarIndicatorSize.tab,

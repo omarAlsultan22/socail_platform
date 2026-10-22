@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import '../repositories/auth_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class ChangeEmailAndPasswordUseCase {
@@ -30,14 +30,10 @@ class ChangeEmailAndPasswordUseCase {
       password: currentPassword,
     );
 
-    try {
-      await user.reauthenticateWithCredential(credential);
-      await user.verifyBeforeUpdateEmail(newEmail).then((_) {
-        user.updatePassword(newPassword).then((_) {});
-      });
-    } catch (e) {
-      rethrow;
-    }
+    await user.reauthenticateWithCredential(credential);
+    await user.verifyBeforeUpdateEmail(newEmail).then((_) {
+      user.updatePassword(newPassword).then((_) {});
+    });
   }
 }
 
