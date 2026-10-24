@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
 import '../../services/domain/i_media_upload_service.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/user_model.dart';
+import 'package:social_app/core/constants/app_constants.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/presentation/widgets/build_snack_bar.dart';
 
@@ -34,6 +37,9 @@ class BuildSubmitButton extends StatefulWidget {
 }
 
 class _BuildSubmitButtonState extends State<BuildSubmitButton> {
+  // ===== ثوابت خاصة بالملف =====
+  static const Color _errorColor = AppColors.red700;
+
   late String _textValue;
   bool _isLoading = false;
 
@@ -56,24 +62,24 @@ class _BuildSubmitButtonState extends State<BuildSubmitButton> {
         (widget.postModel!.userPostIsEmpty)) {
       BuildSnackBar.show(
           context: context,
-          backgroundColor: Colors.red.shade700,
+          backgroundColor: _errorColor,
           message: 'Please enter post details or add an image'
       );
       return;
     }
 
     if (widget.postModel!.myId == widget.currentId &&
-        widget.buttonName == 'Share Now') {
+        widget.buttonName == AppStrings.shareNow) {
       BuildSnackBar.show(
         context: context,
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: _errorColor,
         message: 'You cannot share your post',
       );
       return;
     }
 
     if (widget.postModel!.myId != widget.currentId &&
-        widget.buttonName == 'Share Now') {
+        widget.buttonName == AppStrings.shareNow) {
       late PostModel newPostModel;
       setState(() =>
       newPostModel = PostModel(
@@ -81,7 +87,7 @@ class _BuildSubmitButtonState extends State<BuildSubmitButton> {
         postIsShared: true,
         myDateTime: DateTime.now(),
         userPost: widget.postModel!.userPost,
-        myState: widget.state ?? 'public',
+        myState: widget.state ?? AppConstants.defaultState,
         userText: widget.textController.text,
         pathType: widget.postModel!.pathType,
         postType: widget.postModel!.postType,
@@ -107,7 +113,7 @@ class _BuildSubmitButtonState extends State<BuildSubmitButton> {
         dateTime: DateTime.now(),
         userPost: map!['url'] ?? '',
         pathType: map['type'] ?? '',
-        myState: widget.state ?? 'public',
+        myState: widget.state ?? AppConstants.defaultState,
         userText: widget.textController.text,
       );
       widget.onPressed(newPostModel);
@@ -121,16 +127,16 @@ class _BuildSubmitButtonState extends State<BuildSubmitButton> {
       width: double.infinity,
       child: MaterialButton(
           onPressed: _isLoading ? () => setData() : null,
-          color: Colors.blue.shade900,
+          color: AppColors.primaryBlue,
           child: widget.messageResult.isLoading ?
           Center(child: CircularProgressIndicator(
-              color: Colors.white)) :
+              color: AppColors.white)) :
           Text(
             widget.buttonName,
             style: const TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,
-                color: Colors.white
+                color: AppColors.white
             ),
           )
       ),

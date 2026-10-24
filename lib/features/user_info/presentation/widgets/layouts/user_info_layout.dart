@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/utils/validate_input.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/data/models/profile_info.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import 'package:social_app/core/presentation/widgets/app_spaces.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 import 'package:social_app/features/auth/presentation/mixins/auth_mixin.dart';
@@ -59,12 +63,12 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
 
   @override
   void dispose() {
-    super.dispose();
     _stateController.dispose();
     _workController.dispose();
     _livesController.dispose();
     _fromController.dispose();
     _relationalController.dispose();
+    super.dispose();
   }
 
   void _updateLockButton(bool value) {
@@ -92,30 +96,30 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.black,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           scrolledUnderElevation: 0,
           elevation: 0,
-          title: const Text(
+          title: Text(
             'Update Info',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: AppColors.white),
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            color: Colors.white,
+            color: AppColors.white,
             onPressed: () => Navigator.pop(context),
           ),
         ),
         body: SingleChildScrollView(
             child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: AppPaddings.all20,
                   child: Form(
                     key: _formKey,
                     child: Column(
                         children: [
-                          const SizedBox(height: 60.0),
+                          AppSpaces.vertical_60,
                           BuildInputField.build(
                             controller: _stateController,
                             keyboardType: TextInputType.text,
@@ -173,12 +177,11 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                           AppSpaces.vertical_24,
                           Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                  5.0),
-                              color: Colors.amber[700],
+                              borderRadius: AppBorders.borderRadius_5,
+                              color: AppColors.amber700,
                             ),
                             width: double.infinity,
-                            height: 50.0,
+                            height: AppSizes.xl,
                             child: ElevatedButton(
                                 style: buttonStyle(),
                                 onPressed: _isLocked ? null : _submitForm,
@@ -196,5 +199,3 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
     );
   }
 }
-
-

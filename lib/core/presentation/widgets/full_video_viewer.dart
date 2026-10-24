@@ -2,6 +2,10 @@ import 'video_time_indicator.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
 import 'package:video_player/video_player.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/presentation/widgets/states/loading_state_widget.dart';
 
 
 class FullVideoViewer extends StatefulWidget {
@@ -69,14 +73,14 @@ class _FullVideoViewerState extends State<FullVideoViewer> {
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized || _controller == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return LoadingStateWidget();
     }
 
+    final isPlaying = _controller!.value.isPlaying;
+
     return Dialog(
-      backgroundColor: Colors.black,
-      insetPadding: const EdgeInsets.all(20),
+      backgroundColor: AppColors.black,
+      insetPadding: AppPaddings.all20,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -88,16 +92,16 @@ class _FullVideoViewerState extends State<FullVideoViewer> {
                 alignment: Alignment.center,
                 children: [
                   VideoPlayer(_controller!),
-                  if (!_controller!.value.isPlaying)
+                  if (!isPlaying)
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
+                        color: AppColors.black30,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         Icons.play_arrow,
-                        size: 50,
-                        color: Colors.white,
+                        size: AppSizes.xl,
+                        color: AppColors.white,
                       ),
                     ),
                 ],
@@ -105,20 +109,17 @@ class _FullVideoViewerState extends State<FullVideoViewer> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
+            padding: AppPaddings.symmetricHorizontal16Vertical8,
             child: Column(
               children: [
                 VideoProgressIndicator(
                   _controller!,
                   allowScrubbing: true,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: AppPaddings.symmetricVertical8,
                   colors: const VideoProgressColors(
-                    playedColor: Colors.blue,
-                    bufferedColor: Colors.grey,
-                    backgroundColor: Colors.grey,
+                    playedColor: AppColors.primaryBlue,
+                    bufferedColor: AppColors.grey,
+                    backgroundColor: AppColors.grey,
                   ),
                 ),
                 VideoTimeIndicator(

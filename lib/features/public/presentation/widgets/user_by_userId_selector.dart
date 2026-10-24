@@ -21,7 +21,7 @@ class UserByUserIdSelector extends StatelessWidget {
     return BlocSelector<FriendsDetailsCubit, FriendsDetailsState, UserDetails?>(
         selector: (state) => state.friendsDetails[postModel.myId],
         builder: (context, userDetails) {
-          if (userDetails == null) return const SizedBox();
+          if (userDetails == null) return const SizedBox.shrink();
           return builder(userDetails);
         }
     );

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/data_sources/comments_likes_data_source.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/services/domain/i_user_account_service.dart';
@@ -12,7 +14,8 @@ class CommentsLikesDataSourceImpl extends FirestoreServiceImpl implements Commen
   CommentsLikesDataSourceImpl({
     required SessionService sessionService,
     required IUserAccountService userAccountService
-  }) : _sessionService = sessionService,
+  })
+      : _sessionService = sessionService,
         _userAccountService = userAccountService;
 
   @override
@@ -22,22 +25,23 @@ class CommentsLikesDataSourceImpl extends FirestoreServiceImpl implements Commen
   }) async* {
     final friendsSnapshot = await getSubCollection(
         docId: _sessionService.currentUid,
-        supCollectionPath: 'users',
-        subCollectionPath: 'friends'
-    );await getSubCollection(
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends
+    );
+    await getSubCollection(
         docId: _sessionService.currentUid,
-        supCollectionPath: 'users',
-        subCollectionPath: 'friends'
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends
     );
 
     final friendsList = friendsSnapshot.docs.map((doc) => doc.id).toSet();
 
     final docRef = firestore
-        .collection('posts')
+        .collection(AppStrings.posts)
         .doc(postId)
-        .collection('commentsList')
+        .collection(AppStrings.commentsList)
         .doc(commentId)
-        .collection('commentsLikes');
+        .collection(AppStrings.commentsLikes);
 
     await for (final commentLikesSnapshot in docRef.snapshots()) {
       if (commentLikesSnapshot.docs.isEmpty) {
@@ -50,16 +54,20 @@ class CommentsLikesDataSourceImpl extends FirestoreServiceImpl implements Commen
       for (final commentLike in commentLikesSnapshot.docs) {
         try {
           final userId = commentLike.id;
-          final accountDoc = await getDoc(docId: userId, collectionPath: 'accounts');
+          final accountDoc = await getDoc(
+              docId: userId, collectionPath: AppStrings.accounts);
           if (!accountDoc.exists) continue;
 
           final accountData = accountDoc.data() as Map<String, dynamic>;
           accountData['isFriend'] = friendsList.contains(userId);
 
-          final userAccount = await _userAccountService.getUserAccount(userAccount: accountData);
+          final userAccount = await _userAccountService.getUserAccount(
+              userAccount: accountData);
           validUsers.add(MyModel.fromJson(userAccount));
         } catch (e) {
-          print('Error processing comment like from user ${commentLike.id}: $e');
+          debugPrint(
+              'Error processing comment like from user ${commentLike.id}: $e');
+          rethrow;
         }
       }
       yield validUsers;

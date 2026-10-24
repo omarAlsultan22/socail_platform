@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_colors.dart';
 
 
 class StatusLoading extends CustomPainter {
   final double startLine;
   final Paint paintLine = Paint()
-    ..color = Colors.white
+    ..color = AppColors.white
     ..strokeWidth = 2.0;
 
   StatusLoading({required this.startLine});
@@ -17,7 +18,7 @@ class StatusLoading extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+  bool shouldRepaint(covariant StatusLoading oldDelegate) {
+    return oldDelegate.startLine != startLine;
   }
 }

@@ -6,6 +6,7 @@ import '../widgets/build_user_info_section.dart';
 import '../widgets/build_post_input_section.dart';
 import '../widgets/build_image_upload_section.dart';
 import '../../services/domain/i_media_upload_service.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/presentation/screens/split_screen.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
@@ -45,12 +46,13 @@ class _CreatePostState extends State<CreatePostScreen> {
     super.initState();
     _postModel = widget.postModel ?? PostModel();
     if (_postModel.myId == widget.currentId) {
-      textController.text = _postModel.userText ?? '';
+      textController.text = _postModel.userText ?? AppStrings.empty;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final mediaService = sl<IMediaUploadService>();
     return SplitScreen(
       titleName: widget.titleName,
       buildUserInfoSection: BuildUserInfoSection(
@@ -65,11 +67,11 @@ class _CreatePostState extends State<CreatePostScreen> {
       buildImageUploadSection: BuildImageUploadSection(
         uId: widget.currentId,
         postModel: _postModel,
-        mediaUploadService: sl<IMediaUploadService>(),
+        mediaUploadService: mediaService,
         onTap: (postModel) => setState(() => _postModel = postModel),
       ),
       buildSubmitButton: BuildSubmitButton(
-        folderName: 'posts',
+        folderName: AppStrings.posts,
         state: selectedValue,
         postModel: _postModel,
         currentId: widget.currentId,
@@ -77,7 +79,7 @@ class _CreatePostState extends State<CreatePostScreen> {
         buttonName: widget.buttonName,
         textController: textController,
         messageResult: widget.messageResult,
-        mediaUploadService: sl<IMediaUploadService>(),
+        mediaUploadService: mediaService,
       ),
     );
   }

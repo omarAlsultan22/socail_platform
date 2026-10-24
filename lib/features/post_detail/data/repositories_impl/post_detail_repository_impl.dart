@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/repositories/post_detail_repository.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
 import '../../domain/data_sources/post_detail_data_source.dart';
@@ -19,7 +20,7 @@ class PostDetailRepositoryImpl with BaseLikeMixinImpl implements PostDetailRepos
         _sessionService = sessionService;
 
   @override
-  String get likeCollectionPath => 'likesList';
+  String get likeCollectionPath => AppStrings.likesList;
 
   @override
   PostDetailDataSource get dataSource => _dataSource;
@@ -47,10 +48,10 @@ class PostDetailRepositoryImpl with BaseLikeMixinImpl implements PostDetailRepos
     {
       final postRef = dataSource.getDocRef(
           docId: postId,
-          collectionPath: 'posts'
+          collectionPath: AppStrings.posts
       );
       final likesCount = await dataSource.getCount(
-          docRef: postRef, collectionPath: 'likesList');
+          docRef: postRef, collectionPath: AppStrings.likesList);
       return likesCount.count;
     }
   }
@@ -69,7 +70,7 @@ class PostDetailRepositoryImpl with BaseLikeMixinImpl implements PostDetailRepos
       commentsWithLikes.map((doc) async {
         final commentData = doc.data();
         final commentUserDoc = await dataSource.getDoc(
-            docId: commentData['userId'], collectionPath: 'accounts'
+            docId: commentData[AppStrings.userId], collectionPath: AppStrings.accounts
         );
 
         if (!commentUserDoc.exists) return null;
@@ -81,7 +82,7 @@ class PostDetailRepositoryImpl with BaseLikeMixinImpl implements PostDetailRepos
         return CommentModel.fromJson({
           ...userAccount,
           ...commentData,
-          'likesNumber': commentData['likesNumber'],
+          AppStrings.likesNumber: commentData[AppStrings.likesNumber],
         });
       }),
     );
@@ -97,7 +98,7 @@ class PostDetailRepositoryImpl with BaseLikeMixinImpl implements PostDetailRepos
       isMerge: false,
       docId: notificationData.myId,
       data: notificationData.toJson(),
-      collectionPath: 'notifications',
+      collectionPath: AppStrings.notifications,
     );
   }
 }

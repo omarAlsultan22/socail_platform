@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 
 
 class SmallMenuWidget extends StatelessWidget {
@@ -19,10 +21,10 @@ class SmallMenuWidget extends StatelessWidget {
       child: InkWell(
         onTap: onPressed,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: AppPaddings.xs,
           child: Text(
             buttonName,
-            style: const TextStyle(color: Colors.black),
+            style: const TextStyle(color: AppColors.black),
           ),
         ),
       ),

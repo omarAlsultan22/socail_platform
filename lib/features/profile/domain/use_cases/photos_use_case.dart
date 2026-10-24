@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import '../repositories/profile_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
 import '../../../../core/data/models/paginated_posts.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 
 
 class PhotosUseCase {
   final ProfileRepository _repository;
+  static const _limit = AppSizes.limit;
 
   PhotosUseCase({
     required ProfileRepository repository,
@@ -15,7 +18,7 @@ class PhotosUseCase {
 
   Future<PaginatedPosts> executeGetPostsData(String userId, DocumentSnapshot? lastDoc) async {
     final snapshot = await _repository.getPosts(
-      limit: 10,
+      limit: _limit,
       userId: userId,
       lastDoc: lastDoc
     );
@@ -35,16 +38,16 @@ class PhotosUseCase {
       try {
         final postFields = doc.data() as Map<String, dynamic>;
         final accountData = await _repository.getAccountData(
-            postFields['userId']);
+            postFields[AppStrings.userId]);
         final counts = await _repository.getPostCounts(doc.id);
         final hasMeLiked = await _repository.hasMeLiked(doc.id);
 
-        final isActive = postFields['friendId'] != null;
+        final isActive = postFields[AppStrings.friendId] != null;
         Map<String, dynamic> friendAccount = {};
 
         if (isActive) {
           final friendAccountDoc = await _repository.getAccountData(
-              postFields['friendId']);
+              postFields[AppStrings.friendId]);
           friendAccount = friendAccountDoc;
         }
 
@@ -52,9 +55,9 @@ class PhotosUseCase {
           ...accountData,
           ...postFields,
           ...friendAccount,
-          'hasMeLiked': hasMeLiked,
-          'likesNumber': counts.likes,
-          'commentsNumber': counts.comments,
+          AppStrings.hasMeLiked: hasMeLiked,
+          AppStrings.likesNumber: counts.likes,
+          AppStrings.commentsNumber: counts.comments,
         });
         posts.add(post);
       } catch (e) {
@@ -67,16 +70,16 @@ class PhotosUseCase {
     return PaginatedPosts(
         dataList: posts,
         lastPostDoc: newLastDoc,
-        hasMoreData: snapshot.docs.length == 10
+        hasMoreData: snapshot.docs.length == _limit
     );
   }
 
   Future<PaginatedPosts> executeGetProfileImages(String userId, DocumentSnapshot? lastDoc) async {
     final snapshot = await _repository.getPosts(
-      limit: 10,
+      limit: _limit,
       userId: userId,
       lastDoc: lastDoc,
-      postType: 'profileImage'
+      postType: AppStrings.profileImage
     );
 
     if (snapshot.docs.isEmpty) {
@@ -100,9 +103,9 @@ class PhotosUseCase {
         final image = PostModel.fromFirestoreToPost({
           ...accountData,
           ...postFields,
-          'hasMeLiked': hasMeLiked,
-          'likesNumber': counts.likes,
-          'commentsNumber': counts.comments,
+          AppStrings.hasMeLiked: hasMeLiked,
+          AppStrings.likesNumber: counts.likes,
+          AppStrings.commentsNumber: counts.comments,
         });
         images.add(image);
       } catch (e) {
@@ -115,16 +118,16 @@ class PhotosUseCase {
     return PaginatedPosts(
         dataList: images,
         lastPostDoc: newLastDoc,
-        hasMoreData: snapshot.docs.length == 10
+        hasMoreData: snapshot.docs.length == _limit
     );
   }
 
   Future<PaginatedPosts> executeGetCoverImages(String userId, DocumentSnapshot? lastDoc) async {
     final snapshot = await _repository.getPosts(
-      limit: 10,
+      limit: _limit,
       userId: userId,
       lastDoc: lastDoc,
-      postType: 'coverImage',
+      postType: AppStrings.coverImage
     );
 
     if (snapshot.docs.isEmpty) {
@@ -148,9 +151,9 @@ class PhotosUseCase {
         final cover = PostModel.fromFirestoreToPost({
           ...accountData,
           ...postFields,
-          'hasMeLiked': hasMeLiked,
-          'likesNumber': counts.likes,
-          'commentsNumber': counts.comments,
+          AppStrings.hasMeLiked: hasMeLiked,
+          AppStrings.likesNumber: counts.likes,
+          AppStrings.commentsNumber: counts.comments,
         });
         covers.add(cover);
       } catch (e) {
@@ -163,7 +166,7 @@ class PhotosUseCase {
     return PaginatedPosts(
         dataList: covers,
         lastPostDoc: newLastDoc,
-        hasMoreData: snapshot.docs.length == 10
+        hasMoreData: snapshot.docs.length == _limit
     );
   }
 }

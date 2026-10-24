@@ -11,6 +11,7 @@ class FriendshipState extends MainAppSupState {
   final MessageResult messageResult;
   final List<MyModel> friendsRequestsList;
   final List<MyModel> friendsSuggestsList;
+  static const _deletedSuccessfully = 'Deleted Successfully';
 
   const FriendshipState({
     required this.friendsRequestsList,
@@ -43,8 +44,7 @@ class FriendshipState extends MainAppSupState {
   }
 
   FriendshipState addFriendSuggest(int index) {
-    if (friendsSuggestsList.isEmpty || index >= friendsSuggestsList.length)
-      return this;
+    if (friendsSuggestsList.isEmpty || index >= friendsSuggestsList.length) return this;
 
     final newSuggestsList = List<MyModel>.from(friendsSuggestsList)
       ..removeAt(index);
@@ -77,7 +77,7 @@ class FriendshipState extends MainAppSupState {
 
     return copyWith(
         friendsRequestsList: newRequestsList,
-        messageResult: MessageResult.success(message: 'Deleted Successfully')
+        messageResult: MessageResult.success(message: _deletedSuccessfully)
     );
   }
 
@@ -104,7 +104,7 @@ class FriendshipState extends MainAppSupState {
 
     return copyWith(
         friendsSuggestsList: newSuggestsList,
-        messageResult: MessageResult.success(message: 'Deleted Successfully')
+        messageResult: MessageResult.success(message: _deletedSuccessfully)
     );
   }
 

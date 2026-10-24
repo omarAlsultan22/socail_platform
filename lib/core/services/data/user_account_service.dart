@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../domain/data_sources/remote/firestore/firestore_service.dart';
 import 'package:social_app/core/services/domain/i_user_account_service.dart';
@@ -22,15 +23,15 @@ class UserAccountService implements IUserAccountService {
     required Map<String, dynamic> userAccount,
   }) async {
     try {
-      if (userAccount['userImage'] is DocumentReference) {
-        final imageDocRef = userAccount['userImage'] as DocumentReference;
+      if (userAccount[AppStrings.userImage] is DocumentReference) {
+        final imageDocRef = userAccount[AppStrings.userImage] as DocumentReference;
         final imageDoc = await imageDocRef.get();
 
         if (imageDoc.exists && imageDoc.data() != null) {
           final imageData = imageDoc.data() as Map<String, dynamic>;
-          userAccount['userImage'] = imageData['userPost'] as String? ?? '';
+          userAccount[AppStrings.userImage] = imageData['userPost'] as String? ?? '';
         } else {
-          userAccount['userImage'] = '';
+          userAccount[AppStrings.userImage] = '';
         }
       }
       return userAccount;
@@ -60,7 +61,7 @@ class UserAccountService implements IUserAccountService {
   }) async {
     final userDoc = await _dataSource.getDoc(
         docId: id,
-        collectionPath: 'accounts'
+        collectionPath: AppStrings.accounts
     );
     final data = await getAccountMap(userDoc: userDoc);
     return MyModel.fromJson(data);
@@ -69,7 +70,7 @@ class UserAccountService implements IUserAccountService {
   @override
   Future<MyModel> getUserAccountData() async {
     final docData = await _dataSource.getDoc(
-        collectionPath: 'accounts',
+        collectionPath: AppStrings.accounts,
         docId: _sessionService.currentUid
     );
     final userAccount = await getAccountMap(userDoc: docData);

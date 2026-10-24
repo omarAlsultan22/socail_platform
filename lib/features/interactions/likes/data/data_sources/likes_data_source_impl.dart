@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import '../../domain/data_sources/likes_data_source.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/services/domain/i_user_account_service.dart';
 import 'package:social_app/core/data/data_sources/remote/firestore/firestore_service_impl.dart';
@@ -20,16 +22,16 @@ class LikesDataSourceImpl extends FirestoreServiceImpl implements LikesDataSourc
   Stream<List<MyModel>> getLikesStream(String postId) async* {
     final friendsSnapshot = await getSubCollection(
         docId: _sessionService.currentUid,
-        supCollectionPath: 'users',
-        subCollectionPath: 'friends'
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends
     );
 
     final friendsList = friendsSnapshot.docs.map((doc) => doc.id).toList();
 
     await for (final likesSnapshot
     in getSubCollectionStream(docId: postId,
-        supCollectionPath: 'posts',
-        subCollectionPath: 'likesList')) {
+        supCollectionPath: AppStrings.posts,
+        subCollectionPath: AppStrings.likesList)) {
       if (likesSnapshot.docs.isEmpty) {
         yield [];
         continue;
@@ -40,7 +42,7 @@ class LikesDataSourceImpl extends FirestoreServiceImpl implements LikesDataSourc
         try {
           final userId = like.id;
           final accountDoc = await getDoc(
-              docId: userId, collectionPath: 'accounts');
+              docId: userId, collectionPath: AppStrings.accounts);
           if (!accountDoc.exists) continue;
 
           final accountData = accountDoc.data() as Map<String, dynamic>;
@@ -50,7 +52,8 @@ class LikesDataSourceImpl extends FirestoreServiceImpl implements LikesDataSourc
               userAccount: accountData);
           validUsers.add(MyModel.fromJson(userAccount));
         } catch (e) {
-          print('Error processing like from user ${like.id}: $e');
+          debugPrint('Error processing like from user ${like.id}: $e');
+          rethrow;
         }
       }
 

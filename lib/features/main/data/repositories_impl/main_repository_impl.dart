@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/data_sources/main_data_source.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/features/main/domain/repositories/main_repository.dart';
 
@@ -19,8 +20,8 @@ class MainRepositoryImpl implements MainRepository{
   Future<QuerySnapshot> getFriendsList({required String uId}) async {
     return await _dataSource.getSubCollection(
         docId: uId,
-        supCollectionPath: 'users',
-        subCollectionPath: 'friends'
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends
     );
   }
 
@@ -49,38 +50,18 @@ class MainRepositoryImpl implements MainRepository{
   @override
   Future<QuerySnapshot> getFriendRequests() async {
     return await _dataSource.getSubCollection(
-      supCollectionPath: 'users',
-      subCollectionPath: 'requests',
       docId: _sessionService.currentUid,
-
+      supCollectionPath: AppStrings.users,
+      subCollectionPath: AppStrings.requests,
     );
   }
 
   @override
   Stream<QuerySnapshot> getFriendRequestsStream() {
     return _dataSource.getSubCollectionStream(
-      supCollectionPath: 'users',
-      subCollectionPath: 'requests',
-      docId: _sessionService.currentUid,
-    );
-  }
-
-  @override
-  Future<QuerySnapshot> getAllMessages() async {
-    return await _dataSource.getSupCollection(collectionPath: 'messages');
-  }
-
-  @override
-  Future<QuerySnapshot> getUnreadConversations(String messageDocId) async {
-    return await _dataSource.getUnreadConversations(
-      messageDocId: messageDocId,
-    );
-  }
-
-  @override
-  Stream<QuerySnapshot> getUnreadConversationsStream(String messageDocId) {
-    return _dataSource.getUnreadConversationsStream(
-      messageDocId: messageDocId,
+        docId: _sessionService.currentUid,
+        supCollectionPath: AppStrings.users,
+      subCollectionPath: AppStrings.requests
     );
   }
 }

@@ -4,6 +4,10 @@ import '../screens/create_post_screen.dart';
 import '../widgets/icon_button_widget.dart';
 import '../widgets/navigation/navigator.dart';
 import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/presentation/mixins/post_context.dart';
 import 'package:social_app/core/presentation/widgets/full_video_viewer.dart';
 import '../../../features/interactions/likes/presentation/screens/likes_screen.dart';
@@ -43,9 +47,9 @@ mixin PostComponentsMixin<T extends StatefulWidget> on State<T> implements PostC
 
   Widget buildContent(Widget imageContentWidget) {
     switch (postModel.pathType) {
-      case 'image':
+      case AppStrings.image:
         return imageContentWidget;
-      case 'video':
+      case AppStrings.video:
         return FullVideoViewer(postModel: postModel);
       default:
         return SizedBox();
@@ -54,10 +58,10 @@ mixin PostComponentsMixin<T extends StatefulWidget> on State<T> implements PostC
 
   Widget interactionsFeedBack() {
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        padding: AppPaddings.symmetricVertical10,
         child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: AppBorders.borderRadius_10,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,7 +81,7 @@ mixin PostComponentsMixin<T extends StatefulWidget> on State<T> implements PostC
                         child: Container(
                           decoration: BoxDecoration(
                             color: AppColors.red,
-                            borderRadius: BorderRadius.circular(50.0),
+                            borderRadius: AppBorders.borderRadius_50,
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(3.0),
@@ -89,7 +93,7 @@ mixin PostComponentsMixin<T extends StatefulWidget> on State<T> implements PostC
                           ),
                         ),
                       ),
-                      SizedBox(width: 5.0),
+                      AppSpaces.horizontal_5,
                       Text(likes.toString()),
                     ],
                   ),
@@ -107,7 +111,7 @@ mixin PostComponentsMixin<T extends StatefulWidget> on State<T> implements PostC
                               ),
                             ),
                         child: Padding(
-                          padding: EdgeInsets.only(right: 15),
+                          padding: AppPaddings.onlyRight15,
                           child: Text('${comments.toString()} comments'),
                         ),
                       ),

@@ -243,11 +243,11 @@ class PublicState extends MainAppSupState {
   @override
   PublicSuccessState get dataModels =>
       PublicSuccessState(
-          postsModel: postsModel,
-          currentUid: currentUid,
-          statusesModel: statusesModel,
-          messageResult: messageResult,
-          usersDetailsMap: usersDetailsMap,
+        postsModel: postsModel,
+        currentUid: currentUid,
+        statusesModel: statusesModel,
+        messageResult: messageResult,
+        usersDetailsMap: usersDetailsMap,
       );
 
   @override

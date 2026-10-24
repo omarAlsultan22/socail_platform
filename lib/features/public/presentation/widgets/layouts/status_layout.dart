@@ -2,15 +2,25 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../../core/di/service _locator.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
+import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_durations.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/constants/status_constants.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 import '../../../../../core/presentation/mixins/more_options_mixin.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
 import '../../../../../core/services/domain/i_online_status_service.dart';
 import 'package:social_app/features/public/constants/public_constants.dart';
+import '../../../../../core/presentation/widgets/states/loading_state_widget.dart';
 import 'package:social_app/features/public/presentation/widgets/state_line_widget.dart';
 
 
@@ -48,9 +58,8 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
   bool _isDisposed = false;
 
   double startLine = 0.0;
-  double totalDuration = 5.0;
-  static double framesPerSecond = 60.0;
-  double totalFrames = 5.0 * framesPerSecond;
+  double totalDuration = StatusConstants.displayDurationSeconds;
+  double totalFrames = StatusConstants.displayDurationSeconds * StatusConstants.framesPerSecond;
 
   // Timer
   Timer? _timer;
@@ -63,10 +72,10 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
   late IOnlineStatusService _onlineStatusService;
 
   @override
-  String get postType => 'status';
+  String get postType => AppStrings.postStatus;
 
   @override
-  String get titleName => 'UpdateStatus';
+  String get titleName => AppStrings.updateStatus;
 
   @override
   PostModel get postModel => _firstStatus;
@@ -108,7 +117,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
 
     _timer?.cancel();
 
-    if (_currentStatus.pathType == 'video') {
+    if (_currentStatus.pathType == AppStrings.video) {
       if (_currentStatus.videoController == null ||
           !_currentStatus.videoIsInitialized) {
         return;
@@ -116,20 +125,20 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
 
       final controller = widget.statusesList[currentIndex].videoController!;
       totalDuration = controller.value.duration.inSeconds.toDouble();
-      totalFrames = totalDuration * framesPerSecond;
+      totalFrames = totalDuration * StatusConstants.framesPerSecond;
       startLine =
           controller.value.position.inSeconds.toDouble() / totalDuration;
 
       controller.removeListener(_updateProgress);
       controller.addListener(_updateProgress);
     } else {
-      totalDuration = 5.0;
-      totalFrames = totalDuration * framesPerSecond;
+      totalDuration = StatusConstants.displayDurationSeconds;
+      totalFrames = totalDuration * StatusConstants.framesPerSecond;
       startLine = 0.0;
       remainingFrames = totalFrames.toInt();
 
       _timer = Timer.periodic(
-        Duration(milliseconds: (1000 / framesPerSecond).round()),
+        Duration(milliseconds: (1000 / StatusConstants.framesPerSecond).round()),
             (timer) {
           if (!isPaused && mounted) {
             setState(() {
@@ -154,7 +163,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
 
     final currentStatus = widget.statusesList[currentIndex];
 
-    if (currentStatus.pathType == 'video' &&
+    if (currentStatus.pathType == AppStrings.video &&
         currentStatus.videoController != null) {
       final controller = currentStatus.videoController!;
       final duration = controller.value.duration.inSeconds.toDouble();
@@ -186,7 +195,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
       if (currentIndex < widget.statusesList.length - 1) {
         await _switchToNextItem();
       } else {
-        await Future.delayed(const Duration(milliseconds: 300));
+        await Future.delayed(AppDurations.animationShort);
         await _exitScreen();
       }
     } finally {
@@ -219,7 +228,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
   void pauseTimer() {
     if (_timer != null && _timer!.isActive && !isPaused) {
       isPaused = true;
-      if (_currentStatus.pathType == 'video') {
+      if (_currentStatus.pathType == AppStrings.video) {
         _currentStatus.pauseVideo;
       }
     }
@@ -229,7 +238,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
     if (isPaused) {
       isPaused = false;
     }
-    if (_currentStatus.pathType == 'video') {
+    if (_currentStatus.pathType == AppStrings.video) {
       _currentStatus.playVideo;
     }
   }
@@ -281,13 +290,13 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
                 onTap: () async {
                   if (currentIndex > 0) {
                     setState(() async {
-                      if (_currentStatus.pathType == 'video') {
+                      if (_currentStatus.pathType == AppStrings.video) {
                         await _currentStatus.pauseVideo;
                         await _currentStatus.seekToVideo;
                       }
                       currentIndex --;
                       startLine = 0.0;
-                      if (_currentStatus.pathType == 'video') {
+                      if (_currentStatus.pathType == AppStrings.video) {
                         await _currentStatus.playVideo;
                       }
                     });
@@ -307,13 +316,13 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
                 onTap: () async {
                   if (currentIndex < widget.statusesList.length - 1) {
                     setState(() async {
-                      if (_currentStatus.pathType == 'video') {
+                      if (_currentStatus.pathType == AppStrings.video) {
                         await _currentStatus.pauseVideo;
                         await _currentStatus.seekToVideo;
                       }
                       currentIndex ++;
                       startLine = 0.0;
-                      if (_currentStatus.pathType == 'video') {
+                      if (_currentStatus.pathType == AppStrings.video) {
                         await _currentStatus.playVideo;
                       }
                     });
@@ -331,7 +340,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
           ]),
           Column(
             children: [
-              SizedBox(height: 25.0),
+              AppSpaces.vertical_25,
               Row(
                 children: List.generate(
                   widget.statusesList.length,
@@ -344,27 +353,22 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(
-                  top: 20.0,
-                  left: 12.0,
-                  bottom: 15.0,
-                  right: 15.0,
-                ),
+                padding: AppPaddings.profileHeader,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(right: 15.0),
+                          padding: AppPaddings.onlyRight15,
                           child: Stack(
                             alignment: AlignmentDirectional.bottomEnd,
                             children: [
                               ClipOval(
                                 child: Material(
-                                  color: Colors.transparent,
+                                  color: AppColors.transparent,
                                   child: InkWell(
-                                    splashColor: Colors.blue,
+                                    splashColor: AppColors.primaryBlue,
                                     onTap: () =>
                                         FriendProfileNavigator.handle(
                                             context: context,
@@ -373,20 +377,20 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
                                                 .sessionService
                                         ),
                                     child: SizedBox(
-                                      width: 50.0,
-                                      height: 50.0,
+                                      width: AppSizes.xl,
+                                      height: AppSizes.xl,
                                       child: Image.network(
                                         widget.userDetails.myImageUrl,
                                         fit: BoxFit.cover,
                                         errorBuilder: (_, __, ___) =>
                                             Container(
-                                                width: 50.0,
-                                                height: 50.0,
+                                                width: AppSizes.xl,
+                                                height: AppSizes.xl,
                                                 decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius
-                                                        .circular(50.0),
+                                                    borderRadius: AppBorders
+                                                        .borderRadius_50,
                                                     border: Border.all(
-                                                        color: Colors.white)
+                                                        color: AppColors.white)
                                                 ),
                                                 child: Icon(
                                                     Icons.person, size: 40.0)),
@@ -397,13 +401,10 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
                               ),
                               if (_currentStatus.meIsOnline == true)
                                 Padding(
-                                  padding: EdgeInsetsDirectional.only(
-                                    bottom: 3.0,
-                                    end: 3.0,
-                                  ),
+                                  padding: AppPaddings.onlineIndicator,
                                   child: CircleAvatar(
-                                    radius: 5.0,
-                                    backgroundColor: Colors.blue,
+                                    radius: AppSizes.onlineIndicator,
+                                    backgroundColor: AppColors.primaryBlue,
                                   ),
                                 ),
                             ],
@@ -421,10 +422,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
                                   ),
                               child: Text(
                                 widget.userDetails.myName,
-                                style: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: AppTextStyles.boldXLarge,
                               ),
                             ),
                             Row(
@@ -449,8 +447,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
                     ),
                     if (_currentStatus.userTextIsEmpty)
                       Padding(
-                        padding: const EdgeInsets.only(
-                            top: 8.0, left: 8.0, right: 8.0),
+                        padding: AppPaddings.textContent,
                         child: Text(_currentStatus.userText!),
                       ),
                   ],
@@ -468,18 +465,18 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
     final currentStatus = widget.statusesList[currentIndex];
 
     switch (currentStatus.pathType) {
-      case 'image':
+      case AppStrings.image:
         return _buildImageContent();
-      case 'video':
+      case AppStrings.video:
         return _buildVideoContent(currentStatus);
       default:
-        return const SizedBox();
+        return SizedBox.shrink();
     }
   }
 
   Widget _buildVideoContent(PostModel postModel) {
     if (postModel.userPostIsEmpty) {
-      return const Center(child: Text('There is no available video'));
+      return Center(child: Text(AppStrings.noVideo));
     }
 
     if (postModel.videoController == null) {
@@ -487,7 +484,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
       VideoPlayerController.network(postModel.userPost)
         ..initialize()
         ..addListener(_updateProgress);
-      return const Center(child: CircularProgressIndicator());
+      return LoadingStateWidget();
     }
 
     if (postModel.videoController != null &&
@@ -499,7 +496,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
     }
 
     if (!postModel.videoIsInitialized) {
-      return const Center(child: CircularProgressIndicator());
+      return LoadingStateWidget();
     }
 
     return WillPopScope(

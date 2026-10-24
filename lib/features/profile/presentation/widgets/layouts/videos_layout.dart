@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
 import 'package:social_app/core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/features/profile/presentation/widgets/video_content_widget.dart';
@@ -65,21 +68,18 @@ class _VideosLayoutState extends State<VideosLayout> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: AppPaddings.xs,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Padding(padding: EdgeInsets.only(top: 20.0),
+              Padding(padding: AppPaddings.onlyTop20,
                 child: Text("My Videos",
-                  style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold
-                  ),
+                  style: AppTextStyles.boldLarge,
                 ),
               ),
               Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
+                  padding: AppPaddings.onlyTop20,
                   child: GridView.count(
                     controller: _scrollController,
                     crossAxisCount: 3,
@@ -92,8 +92,8 @@ class _VideosLayoutState extends State<VideosLayout> {
                           builder: (userDetails) =>
                               VideoContentWidget(
                                   postModel: e,
-                                  height: 200.0,
-                                  width: 200.0,
+                                  height: AppSizes.size200,
+                                  width: AppSizes.size200,
                                   onAdd: widget.onAdd,
                                   userDetails: userDetails,
                                   onUpsert: widget.onUpsert,
@@ -110,7 +110,3 @@ class _VideosLayoutState extends State<VideosLayout> {
     );
   }
 }
-
-
-
-

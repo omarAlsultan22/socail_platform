@@ -2,6 +2,7 @@ import '../../data/models/profile_success_state.dart';
 import '../../../../core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/data/models/user_info_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
@@ -80,7 +81,7 @@ class ProfileState extends MainAppSupState {
   // ✅ Post modification functions
 
   UserInfoModel addPost(PostModel postModel) {
-    if (postModel.pathType != 'image') return updateProfileInfo();
+    if (postModel.pathType != AppStrings.image) return updateProfileInfo();
 
     if(postModel.isProfilePost) {
       if (userInfoModel.profileImageDocId == postModel.myDocId) {
@@ -94,7 +95,7 @@ class ProfileState extends MainAppSupState {
   }
 
   UserInfoModel removePost(PostModel postModel) {
-    if (postModel.pathType != 'image') return updateProfileInfo();
+    if (postModel.pathType != AppStrings.image) return updateProfileInfo();
     if (userInfoModel.profileImageDocId == postModel.myDocId) {
       return updateProfileInfo(profileImage: postModel);
     }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/data_sources/notifications_data_source.dart';
 import '../../../../core/data/data_sources/remote/firestore/firestore_service_impl.dart';
 
@@ -10,9 +11,9 @@ class NotificationsDataSourceImpl extends FirestoreServiceImpl implements Notifi
     required String userId,
   }) {
     return firestore
-        .collection('notifications')
-        .where('userId', isEqualTo: userId)
-        .orderBy('dateTime', descending: true)
+        .collection(AppStrings.notifications)
+        .where(AppStrings.userId, isEqualTo: userId)
+        .orderBy(AppStrings.dateTime, descending: true)
         .snapshots()
         .timeout(duration);
   }
@@ -26,12 +27,12 @@ class NotificationsDataSourceImpl extends FirestoreServiceImpl implements Notifi
     required String postId,
     required String userId,
   }) async {
-    final postRef = firestore.collection('posts').doc(postId);
+    final postRef = firestore.collection(AppStrings.posts).doc(postId);
 
     final results = await Future.wait([
       postRef.get().timeout(duration),
-      getDoc(docId: userId, collectionPath: 'accounts'),
-      postRef.collection('commentsList').get().timeout(duration),
+      getDoc(docId: userId, collectionPath: AppStrings.accounts),
+      postRef.collection(AppStrings.commentsList).get().timeout(duration),
     ]);
 
     return (
@@ -46,9 +47,9 @@ class NotificationsDataSourceImpl extends FirestoreServiceImpl implements Notifi
     required String postId,
   }) async {
     final likesCount = await firestore
-        .collection('posts')
+        .collection(AppStrings.posts)
         .doc(postId)
-        .collection('likesList')
+        .collection(AppStrings.likesList)
         .count()
         .get()
         .timeout(duration);
@@ -64,17 +65,17 @@ class NotificationsDataSourceImpl extends FirestoreServiceImpl implements Notifi
     final commentsWithLikes = await Future.wait(
       commentsDocs.docs.map((doc) async {
         final likesCount = await firestore
-            .collection('posts')
+            .collection(AppStrings.posts)
             .doc(postId)
-            .collection('commentsList')
+            .collection(AppStrings.commentsList)
             .doc(doc.id)
-            .collection('likesList')
+            .collection(AppStrings.likesList)
             .count()
             .get()
             .timeout(duration);
 
         final commentData = doc.data();
-        commentData['likesNumber'] = likesCount.count;
+        commentData[AppStrings.likesNumber] = likesCount.count;
         return doc;
       }),
     );
@@ -87,9 +88,9 @@ class NotificationsDataSourceImpl extends FirestoreServiceImpl implements Notifi
   }) async {
     final userData = userDoc.data() as Map<String, dynamic>;
     return {
-      'userId': userDoc.id,
-      'userName': userData['userName'] ?? '',
-      'userImage': userData['userImage'] ?? ''
+      AppStrings.userId: userDoc.id,
+      AppStrings.userName: userData[AppStrings.userName] ?? AppStrings.empty,
+      AppStrings.userImage: userData[AppStrings.userImage] ?? AppStrings.empty
     };
   }
 }

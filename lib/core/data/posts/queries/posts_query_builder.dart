@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 
 
 class PostsQueryBuilder {
@@ -9,7 +10,7 @@ class PostsQueryBuilder {
     required Query baseQuery,
     DocumentSnapshot? lastPostDoc,
   }) {
-    var query = baseQuery.orderBy('dateTime', descending: true);
+    var query = baseQuery.orderBy(AppStrings.dateTime, descending: true);
     if (lastPostDoc != null) {
       query = query.startAfterDocument(lastPostDoc);
     }

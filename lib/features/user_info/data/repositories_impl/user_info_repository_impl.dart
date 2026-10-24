@@ -11,12 +11,14 @@ class UserInfoRepositoryImpl implements UserInfoRepository {
   })
       : _dataSource = dataSource;
 
+  static const _info = 'info';
+
   @override
   Future<Map<String, dynamic>> getInfo({
     required String uId
   }) async {
     final getUserInfo = await _dataSource.getDoc(
-        docId: uId, collectionPath: 'info');
+        docId: uId, collectionPath: _info);
     if (getUserInfo.exists) {
       final userInfo = getUserInfo.data() as Map<String, dynamic>;
 
@@ -33,7 +35,7 @@ class UserInfoRepositoryImpl implements UserInfoRepository {
     await _dataSource.setSupDoc(
       docId: docId,
       isMerge: true,
-      collectionPath: 'info',
+      collectionPath: _info,
       data: infoModel.toJson(),
     );
   }

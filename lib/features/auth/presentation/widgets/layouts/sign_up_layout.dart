@@ -1,8 +1,15 @@
 import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
+import '../../../../../core/constants/app_spaces.dart';
+import '../../../../../core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
 import 'package:social_app/core/utils/validate_input.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_shadows.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../../core/data/models/message_result.dart';
-import 'package:social_app/core/presentation/widgets/app_spaces.dart';
+import 'package:social_app/core/constants/app_gradients.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 
@@ -69,11 +76,11 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey.shade900,
+        backgroundColor: AppColors.grey900,
         body: Center(
             child: SingleChildScrollView(
                 child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: AppPaddings.all20,
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -82,19 +89,18 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Social',
+                                AppStrings.appName,
                                 style: TextStyle(
                                   fontSize: 40.0,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: AppColors.white,
                                 ),
                               ),
-                              const SizedBox(width: 15),
+                              AppSpaces.horizontal_15,
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                      5.0),
-                                  color: Colors.amber,
+                                  borderRadius: AppBorders.borderRadius_5,
+                                  color: AppColors.primaryAmber,
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -102,18 +108,18 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                     horizontal: 4.0,
                                   ),
                                   child: Text(
-                                    'Platform',
+                                    AppStrings.platform,
                                     style: TextStyle(
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                      color: AppColors.black,
                                     ),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 40),
+                          AppSpaces.vertical_40,
 
                           // Form Section
                           Form(
@@ -137,7 +143,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                           icon: Icons.person,
                                         ),
                                       ),
-                                      const SizedBox(width: 15.0),
+                                      AppSpaces.horizontal_15,
                                       Expanded(
                                         child: BuildInputField.build(
                                           controller: _lastNameController,
@@ -154,7 +160,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 20),
+                                  AppSpaces.vertical_20,
 
                                   // Email Field
                                   BuildInputField.build(
@@ -168,7 +174,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                     label: 'Email',
                                     icon: Icons.email_outlined,
                                   ),
-                                  const SizedBox(height: 20),
+                                  AppSpaces.vertical_20,
 
                                   // Password Field
                                   BuildInputField.build(
@@ -192,25 +198,12 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                   AppSpaces.vertical_30,
                                   Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          12.0),
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.amber.shade700,
-                                          Colors.amber.shade400,
-                                        ],
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.amber.withOpacity(
-                                              0.3),
-                                          blurRadius: 6,
-                                          offset: Offset(0, 3),
-                                        ),
-                                      ],
+                                      borderRadius: AppBorders.borderRadius_12,
+                                      gradient: AppGradients.amber,
+                                      boxShadow: AppShadows.amber,
                                     ),
                                     width: double.infinity,
-                                    height: 50.0,
+                                    height: AppSizes.xl,
                                     child: ElevatedButton(
                                       style: buttonStyle(),
                                       onPressed: _isLocked ? null : _submitForm,
@@ -219,7 +212,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                               .isLoading, text: 'Sign up'),
                                     ),
                                   ),
-                                  const SizedBox(height: 20),
+                                  AppSpaces.vertical_20,
 
                                   TextButton(
                                     onPressed: _navigateToBack,
@@ -227,14 +220,14 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                       text: TextSpan(
                                         text: 'Already have an account? ',
                                         style: TextStyle(
-                                          color: Colors.grey.shade400,
+                                          color: AppColors.lightGrey400,
                                           fontSize: 16,
                                         ),
                                         children: [
                                           TextSpan(
                                             text: 'Sign In',
                                             style: TextStyle(
-                                              color: Colors.amber,
+                                              color: AppColors.primaryAmber,
                                               fontWeight: FontWeight.bold,
                                               decoration: TextDecoration
                                                   .underline,
@@ -257,4 +250,3 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
     );
   }
 }
-

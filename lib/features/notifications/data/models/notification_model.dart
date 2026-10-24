@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 
 
@@ -22,23 +23,23 @@ class NotificationsModel extends MyModel {
   });
 
   NotificationsModel.empty()
-      : userAction = '',
-        iconName = '',
-        docId = '',
-        postId = '',
-        friendId = '';
+      : userAction = AppStrings.empty,
+        iconName = AppStrings.empty,
+        docId = AppStrings.empty,
+        postId = AppStrings.empty,
+        friendId = AppStrings.empty;
 
 
   factory NotificationsModel.fromJson(Map<String, dynamic> json) {
     return NotificationsModel(
-      myId: json['userId']  ?? '',
-      iconName: json['iconName']  ?? '',
-      myImageUrl: json['userImage']  ?? '',
-      userAction: json['userAction']  ?? '',
-      myName: json['userName']  ?? '',
-      friendId: json['friendId']  ?? '',
-      postId: json['postId'] ?? '',
-      docId: json['docId'] ?? ''
+      myId: json['userId']  ?? AppStrings.empty,
+      iconName: json['iconName']  ?? AppStrings.empty,
+      myImageUrl: json['userImage']  ?? AppStrings.empty,
+      userAction: json['userAction']  ?? AppStrings.empty,
+      myName: json['userName']  ?? AppStrings.empty,
+      friendId: json['friendId']  ?? AppStrings.empty,
+      postId: json['postId'] ?? AppStrings.empty,
+      docId: json['docId'] ?? AppStrings.empty
     );
   }
 
@@ -58,11 +59,11 @@ class NotificationsModel extends MyModel {
   Icon get icon {
     switch (iconName) {
       case 'thumb_up':
-        return const Icon(Icons.thumb_up,size: 15.0,);
+        return const Icon(Icons.thumb_up,size: 15.0);
       case 'mode_comment':
-        return const Icon(Icons.mode_comment, size: 15.0,);
+        return const Icon(Icons.mode_comment, size: 15.0);
       case 'share':
-        return const Icon(Icons.share, size: 15.0,);
+        return const Icon(Icons.share, size: 15.0);
       default:
         return const Icon(
             Icons.error);

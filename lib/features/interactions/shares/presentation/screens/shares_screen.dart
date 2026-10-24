@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/di/service _locator.dart';
 import '../../../presentation/layouts/user_row_builder.dart';
-import '../../../../../core/presentation/widgets/states/initial_state.dart';
-import '../../../../../core/presentation/widgets/states/loading_state.dart';
+import '../../../../../core/presentation/widgets/states/initial_state_widget.dart';
+import '../../../../../core/presentation/widgets/states/loading_state_widget.dart';
 import 'package:social_app/features/interactions/shares/presentation/states/shares_state.dart';
 
 

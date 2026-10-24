@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/presentation/widgets/app_spaces.dart';
+import '../../../../core/constants/app_spaces.dart';
 import '../../../../shared/coordination/post_coordinator.dart';
 import '../../../../shared/coordination/post_sync_groups.dart';
-import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
+import 'package:social_app/core/presentation/widgets/states/loading_state_widget.dart';
 import 'package:social_app/features/profile/presentation/cubits/videos_cubit.dart';
 import 'package:social_app/features/profile/presentation/states/videos_state.dart';
 import 'package:social_app/features/profile/presentation/widgets/layouts/videos_layout.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 
 
 class SplitScreen extends StatelessWidget {
@@ -24,7 +25,7 @@ class SplitScreen extends StatelessWidget {
         title: Center(child: Text(titleName)),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: AppPaddings.xs,
         child: Column(
           children: [
             buildUserInfoSection,

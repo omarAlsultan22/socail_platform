@@ -1,9 +1,9 @@
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
-import 'package:social_app/features/public/data/models/user_details.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
 import 'package:social_app/core/presentation/states/base/main_app_sup_state.dart';
 import 'package:social_app/features/profile/data/models/videos_success_state.dart';
@@ -52,7 +52,7 @@ class VideosState extends MainAppSupState {
   // ✅ Post modification functions
 
   VideosState upsertPost(PostModel postModel) {
-    if (postModel.pathType != 'video') return copyWith();
+    if (postModel.pathType != AppStrings.video) return copyWith();
 
     final index = videosList.indexWhere(
           (p) => p.myDocId == postModel.myDocId,
@@ -70,7 +70,7 @@ class VideosState extends MainAppSupState {
   }
 
   VideosState removePost(PostModel postModel) {
-    if (postModel.pathType == 'video') {
+    if (postModel.pathType == AppStrings.video) {
       return copyWith(
         videosList: videosList
             .where((p) => p.myDocId != postModel.myDocId)

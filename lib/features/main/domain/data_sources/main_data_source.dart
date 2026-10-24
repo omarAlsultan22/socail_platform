@@ -3,19 +3,11 @@ import '../../../../core/domain/data_sources/remote/firestore/firestore_service.
 
 
 abstract class MainDataSource implements FirestoreService {
-  Future<QuerySnapshot<Map<String, dynamic>>> getAllUsersExceptCurrent({
-    required String uId,
-  });
-
   Future<QuerySnapshot<Map<String, dynamic>>> getUnreadNotifications();
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getNotificationsStream();
 
-  Future<QuerySnapshot<Map<String, dynamic>>> getUnreadConversations({
-    required String messageDocId,
-  });
-
-  Stream<QuerySnapshot<Map<String, dynamic>>> getUnreadConversationsStream({
-    required String messageDocId,
+  Future<QuerySnapshot<Map<String, dynamic>>> getAllUsersExceptCurrent({
+    required String uId,
   });
 }

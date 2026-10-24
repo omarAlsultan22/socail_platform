@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/data/models/my_model.dart';
 import '../../../domain/use_cases/profile_use_case.dart';
 import '../../../../../core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../../core/data/models/message_result.dart';
 import '../../../../../core/data/models/user_info_model.dart';
 import '../../../../../core/domain/use_cases/like_use_case.dart';
@@ -163,19 +164,19 @@ abstract class MainProfileCubit extends Cubit<ProfileState> with PostOperationsM
   }
 
   Future<void> _specifyImageType(PostModel postModel) async {
-    if (postModel.postType == 'profileImage') {
+    if (postModel.postType == AppStrings.profileImage) {
       await _useCases.executeUploadImage(
         postModel: postModel,
-        collection: 'accounts',
-        imageType: 'userImage',
+        collection: AppStrings.accounts,
+        imageType: AppStrings.userImage
       );
       final userInfoModel = state.updateProfileInfo(profileImage: postModel);
       _setState(userInfoModel);
     } else {
       await _useCases.executeUploadImage(
         postModel: postModel,
-        collection: 'info',
-        imageType: 'userCover',
+        collection: AppStrings.info,
+        imageType: AppStrings.userCover
       );
       final userInfoModel = state.updateProfileInfo(
           coverImage: postModel);

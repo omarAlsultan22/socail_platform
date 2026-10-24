@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
@@ -23,19 +27,19 @@ class PostCreationWidget extends StatelessWidget {
     return CurrentUserSelector(
         builder: (userDetails) =>
             Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                padding: AppPaddings.symmetricVertical10,
                 child: TextButton(
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all<
                           RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.0),
+                          borderRadius: AppBorders.borderRadius_50,
                         ),
                       ),
                       backgroundColor: MaterialStateProperty.all(
-                          Colors.transparent),
+                          AppColors.transparent),
                       overlayColor: MaterialStateProperty.all(
-                          Colors.black12),
+                          AppColors.black12),
                       padding: MaterialStateProperty.all(
                           EdgeInsets.zero), // Remove default padding
                     ),
@@ -56,25 +60,25 @@ class PostCreationWidget extends StatelessWidget {
                     child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50.0),
+                            borderRadius: AppBorders.borderRadius_50,
                             border: Border.all(
-                                color: Colors.grey) // Rounded corners
+                                color: AppColors.grey) // Rounded corners
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(5.0),
+                          padding: AppPaddings.all5,
                           child: Row(
                               children: [
                                 ClipOval(
                                   child: Material(
-                                    color: Colors.transparent,
+                                    color: AppColors.transparent,
                                     child: SizedBox(
-                                      width: 50.0,
-                                      height: 50.0,
+                                      width: AppSizes.xl,
+                                      height: AppSizes.xl,
                                       child: (!userDetails.myImageUrlIsEmpty) ?
                                       Image.network(
                                         userDetails.myImageUrl,
                                         fit: BoxFit.cover,
-                                      ) : Icon(Icons.person, size: 50.0),
+                                      ) : Icon(Icons.person, size: AppSizes.xl),
                                     ),
                                   ),
                                 ),
@@ -92,14 +96,14 @@ class PostCreationWidget extends StatelessWidget {
                                 ),
                                 ClipOval(
                                   child: Material(
-                                    color: Colors.grey.shade700,
+                                    color: AppColors.grey700,
                                     child: SizedBox(
-                                      width: 50.0,
-                                      height: 50.0,
+                                      width: AppSizes.xl,
+                                      height: AppSizes.xl,
                                       child: Icon(
                                         Icons.image,
-                                        size: 30.0,
-                                        color: Colors.white,
+                                        size: AppSizes.size30,
+                                        color: AppColors.white,
                                       ),
                                     ),
                                   ),

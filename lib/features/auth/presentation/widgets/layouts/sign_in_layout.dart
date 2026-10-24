@@ -1,8 +1,16 @@
 import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../screens/sign_up_screen.dart';
+import '../../../../../core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
 import 'package:social_app/core/utils/validate_input.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_shadows.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../../core/data/models/message_result.dart';
+import 'package:social_app/core/constants/app_gradients.dart';
 import '../../../../main/presentation/screens/main_screen.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/domain/data_sources/local/cache_helper.dart';
@@ -93,11 +101,11 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade900,
+      backgroundColor: AppColors.grey900,
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: AppPaddings.all20,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,18 +115,18 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Social',
+                      AppStrings.appName,
                       style: TextStyle(
                         fontSize: 40.0,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                     ),
-                    const SizedBox(width: 15),
+                    AppSpaces.horizontal_15,
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5.0),
-                        color: Colors.amber, // تغيير لون الخلفية إلى Amber
+                        borderRadius: AppBorders.borderRadius_5,
+                        color: AppColors.primaryAmber, // تغيير لون الخلفية إلى Amber
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -126,18 +134,18 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                           horizontal: 4.0,
                         ),
                         child: Text(
-                          'Platform',
+                          AppStrings.platform,
                           style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: AppColors.black,
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 40),
+                AppSpaces.vertical_40,
 
                 // Form Section
                 Form(
@@ -155,7 +163,7 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                         label: 'Email',
                         icon: Icons.email_outlined,
                       ),
-                      const SizedBox(height: 20),
+                      AppSpaces.vertical_20,
 
                       // Password Field
                       BuildInputField.build(
@@ -176,29 +184,18 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                         icon: Icons.lock_outline,
                         isPassword: true,
                       ),
-                      const SizedBox(height: 30),
+                      AppSpaces.vertical_30,
 
                       // Sign In Button
                       Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.0),
+                          borderRadius: AppBorders.borderRadius_12,
                           // زيادة نصف القطر
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.amber.shade700,
-                              Colors.amber.shade400,
-                            ],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.amber.withOpacity(0.3),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
+                          gradient: AppGradients.amber,
+                          boxShadow: AppShadows.amber,
                         ),
                         width: double.infinity,
-                        height: 50.0,
+                        height: AppSizes.xl,
                         child: ElevatedButton(
                           style: buttonStyle(),
                           onPressed: _isLocked ? null : _submitForm,
@@ -206,7 +203,7 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                               .messageResult.isLoading, text: 'Sign in'),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      AppSpaces.vertical_20,
                       // Sign Up Button
                       TextButton(
                         onPressed: () =>
@@ -218,14 +215,14 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                           text: TextSpan(
                             text: 'Don\'t have an account? ',
                             style: TextStyle(
-                              color: Colors.grey.shade400,
+                              color: AppColors.lightGrey400,
                               fontSize: 16,
                             ),
                             children: [
                               TextSpan(
                                 text: 'Sign Up',
                                 style: TextStyle(
-                                  color: Colors.amber,
+                                  color: AppColors.primaryAmber,
                                   fontWeight: FontWeight.bold,
                                   decoration: TextDecoration.underline,
                                 ),
@@ -240,10 +237,10 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                                 context: context,
                                 link: const ForgetPasswordScreen()
                             ),
-                        child: const Text(
+                        child: Text(
                           'نسيت كلمة المرور؟',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: AppColors.primaryBlue,
                             decoration: TextDecoration.underline,
                           ),
                         ),
@@ -259,6 +256,3 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
     );
   }
 }
-
-
-

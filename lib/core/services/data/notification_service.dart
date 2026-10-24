@@ -7,9 +7,11 @@ import '../domain/i_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../features/main/presentation/cubits/main_cubit.dart';
 import '../../../features/main/presentation/screens/main_screen.dart';
+import 'package:social_app/core/constants/notification_constants.dart';
 import '../../domain/data_sources/remote/firestore/firestore_service.dart';
 import '../../../features/notifications/data/models/notification_model.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -17,7 +19,35 @@ import '../../../features/post_detail/presentation/screens/post_detail_screen.da
 
 
 class NotificationService implements INotificationService {
-  // Singleton (نُبقيه للتوافق مع الكود الأصلي).
+  // ===== الثوابت الخاصة بالملف =====
+  static const String _channelId = 'social_app_channel';
+  static const String _channelName = 'Social App Notifications';
+  static const String _channelDescription = 'Channel for social app notifications';
+  static const AndroidInitializationSettings _androidInit =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+  static const AndroidNotificationDetails _androidDetails =
+  AndroidNotificationDetails(
+    _channelId,
+    _channelName,
+    channelDescription: _channelDescription,
+    importance: Importance.max,
+    priority: Priority.high,
+    showWhen: true,
+    enableVibration: true,
+    playSound: true,
+  );
+  static const DarwinNotificationDetails _darwinDetails =
+  DarwinNotificationDetails(
+    presentAlert: true,
+    presentBadge: true,
+    presentSound: true,
+  );
+  static const NotificationDetails _notificationDetails = NotificationDetails(
+    android: _androidDetails,
+    iOS: _darwinDetails,
+  );
+
+  // Singleton
   static final NotificationService _instance = NotificationService._internal();
 
   factory NotificationService() => _instance;
@@ -49,7 +79,7 @@ class NotificationService implements INotificationService {
       await _setupBackgroundMessageHandler();
       _initialized = true;
     } catch (e) {
-      debugPrint('Error initializing NotificationService: $e');
+      _logError('initializing NotificationService', e);
       rethrow;
     }
   }
@@ -65,8 +95,8 @@ class NotificationService implements INotificationService {
   @override
   Future<void> sendInteractionNotification(Map<String, dynamic> data) async {
     try {
-      final type = data['iconName'];
-      final senderName = data['friendName'];
+      final type = data[NotificationKeys.iconName];
+      final senderName = data[NotificationKeys.friendName];
 
       String title = 'New';
       String body = '';
@@ -93,12 +123,12 @@ class NotificationService implements INotificationService {
         title: title,
         body: body,
         payload: {
-          'type': type,
-          'data': data,
+          NotificationKeys.type: type,
+          NotificationKeys.data: data,
         },
       );
     } catch (e) {
-      debugPrint('Error sending interaction notification: $e');
+      _logError('sending interaction notification', e);
     }
   }
 
@@ -109,11 +139,11 @@ class NotificationService implements INotificationService {
         title: 'New friend request',
         body: 'Tap to view the request',
         payload: {
-          'type': 'friend_request',
+          NotificationKeys.type: NotificationType.friendRequest.value,
         },
       );
     } catch (e) {
-      debugPrint('Error sending friend request notification: $e');
+      _logError('sending friend request notification', e);
     }
   }
 
@@ -130,8 +160,9 @@ class NotificationService implements INotificationService {
   @override
   void handleNotification(Map<String, dynamic> dataMap) {
     try {
-      final type = dataMap['type'] ;
-      final data = dataMap['data'] as Map<String, dynamic>? ?? {};
+      final type = dataMap[NotificationKeys.type];
+      final data = dataMap[NotificationKeys.data] as Map<String, dynamic>? ??
+          {};
 
       debugPrint('Handling notification of type: $type');
 
@@ -163,12 +194,12 @@ class NotificationService implements INotificationService {
                     _cubit!.changeIndexScreen(1);
                     return PostDetailScreen(
                         notificationsModel: NotificationsModel(
-                            myId: data['userId'] ?? '',
-                            userAction: data['userAction'] ?? '',
-                            iconName: data['iconName'] ?? '',
-                            friendId: data['friendId'] ?? '',
-                            postId: data['postId'] ?? '',
-                            docId: data['docId'] ?? ''));
+                            myId: data[NotificationKeys.userId] ?? AppStrings.empty,
+                            userAction: data[NotificationKeys.userAction] ?? AppStrings.empty,
+                            iconName: data[NotificationKeys.iconName] ?? AppStrings.empty,
+                            friendId: data[NotificationKeys.friendId] ?? AppStrings.empty,
+                            postId: data[NotificationKeys.postId] ?? AppStrings.empty,
+                            docId: data[NotificationKeys.docId] ?? AppStrings.empty));
                   }
               ),
             );
@@ -178,11 +209,15 @@ class NotificationService implements INotificationService {
         }
       });
     } catch (e) {
-      debugPrint('Error handling notification: $e');
+      _logError('handling notification', e);
     }
   }
 
   // ==================== تفاصيل التنفيذ (خاصة) ====================
+
+  void _logError(String context, Object e) {
+    debugPrint('Error $context: $e');
+  }
 
   void _initializeDependencies() {
     _dataSource = sl<FirestoreService>();
@@ -213,22 +248,19 @@ class NotificationService implements INotificationService {
   Future<void> _saveTokenToFirestore(String token) async {
     try {
       await _dataSource.updateDoc(
-          collectionPath: 'users',
           data: {'fcmToken': token},
+          collectionPath: AppStrings.users,
           docId: _sessionService.currentUid
       );
       debugPrint('FCM token saved successfully');
     } catch (e) {
-      debugPrint('Error saving FCM token: $e');
+      _logError('saving FCM token', e);
       rethrow;
     }
   }
 
   Future<void> _setupLocalNotifications() async {
     try {
-      const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-
       final DarwinInitializationSettings initializationSettingsIOS =
       DarwinInitializationSettings(
         requestAlertPermission: true,
@@ -252,12 +284,13 @@ class NotificationService implements INotificationService {
 
       final InitializationSettings initializationSettings =
       InitializationSettings(
-        android: initializationSettingsAndroid,
+        android: _androidInit,
         iOS: initializationSettingsIOS,
         macOS: initializationSettingsIOS,
       );
 
-      await _flutterLocalNotificationsPlugin.initialize(settings: initializationSettings,
+      await _flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse details) {
           if (details.payload != null) {
             handleNotification(jsonDecode(details.payload!));
@@ -265,7 +298,7 @@ class NotificationService implements INotificationService {
         },
       );
     } catch (e) {
-      debugPrint('Error setting up local notifications: $e');
+      _logError('setting up local notifications', e);
       rethrow;
     }
   }
@@ -296,37 +329,15 @@ class NotificationService implements INotificationService {
 
   Future<void> _showNotification(RemoteMessage message) async {
     try {
-      const androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'social_app_channel',
-        'Social App Notifications',
-        channelDescription: 'Channel for social app notifications',
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: true,
-        enableVibration: true,
-        playSound: true,
-      );
-
-      const darwinNotificationDetails = DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      );
-
-      const notificationDetails = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: darwinNotificationDetails,
-      );
-
       await _flutterLocalNotificationsPlugin.show(
         id: message.hashCode,
         title: message.notification?.title ?? 'New Notification',
         body: message.notification?.body ?? 'You have a new notification',
-        notificationDetails: notificationDetails,
+        notificationDetails: _notificationDetails,
         payload: jsonEncode(message.data),
       );
     } catch (e) {
-      debugPrint('Error showing notification: $e');
+      _logError('showing notification', e);
     }
   }
 
@@ -338,39 +349,17 @@ class NotificationService implements INotificationService {
     try {
       final processedPayload = _processPayload(payload);
 
-      const androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'social_app_channel',
-        'Social App Notifications',
-        channelDescription: 'Channel for social app notifications',
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: true,
-        enableVibration: true,
-        playSound: true,
-      );
-
-      const darwinNotificationDetails = DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      );
-
-      const notificationDetails = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: darwinNotificationDetails,
-      );
-
       await _flutterLocalNotificationsPlugin.show(
         id: DateTime
             .now()
             .millisecondsSinceEpoch ~/ 1000,
         title: title,
         body: body,
-        notificationDetails: notificationDetails,
+        notificationDetails: _notificationDetails,
         payload: jsonEncode(processedPayload),
       );
     } catch (e) {
-      debugPrint('Error showing local notification: $e');
+      _logError('showing local notification', e);
       debugPrint('Stack trace: ${e.toString()}');
     }
   }
@@ -412,9 +401,6 @@ class NotificationService implements INotificationService {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
 
-    const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-
     final DarwinInitializationSettings initializationSettingsIOS =
     DarwinInitializationSettings(
       requestAlertPermission: false,
@@ -424,11 +410,12 @@ class NotificationService implements INotificationService {
 
     final InitializationSettings initializationSettings =
     InitializationSettings(
-      android: initializationSettingsAndroid,
+      android: _androidInit,
       iOS: initializationSettingsIOS,
     );
 
-    await FlutterLocalNotificationsPlugin().initialize(settings: initializationSettings);
+    await FlutterLocalNotificationsPlugin().initialize(
+        settings: initializationSettings);
   }
 }
 

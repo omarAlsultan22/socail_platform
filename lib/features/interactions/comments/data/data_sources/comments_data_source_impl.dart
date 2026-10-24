@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/data_sources/comments_data_source.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
 import 'package:social_app/core/services/data/session_service.dart';
@@ -21,7 +23,7 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
         _userAccountService = userAccountService;
 
   @override
-  String get likeCollectionPath => 'commentsLikes';
+  String get likeCollectionPath => AppStrings.commentsLikes;
 
   @override
   FirestoreService get dataSource => this;
@@ -30,7 +32,7 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
   SessionService get sessionService => _sessionService;
 
   CollectionReference<Map<String, dynamic>> _commentsRef(String postId) =>
-      firestore.collection('posts').doc(postId).collection('commentsList');
+      firestore.collection(AppStrings.posts).doc(postId).collection(AppStrings.commentsList);
 
   @override
   Stream<List<CommentModel>> getCommentsStream(String postId) async* {
@@ -47,19 +49,19 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
       for (final comment in snapshot.docs) {
         try {
           final commentFields = comment.data();
-          final userId = commentFields['userId'] as String?;
+          final userId = commentFields[AppStrings.userId] as String?;
           final commentId = comment.id;
 
           if (userId == null) continue;
 
     final likesCount = await getCount(
-              collectionPath: 'commentsLikes',
+              collectionPath: AppStrings.commentsLikes,
               docRef: commentsRef.doc(commentId)
           );
           final hasMeLiked_ = await hasMeLiked(comment.id);
 
           final accountDoc = await getDoc(
-              docId: userId, collectionPath: 'accounts');
+              docId: userId, collectionPath: AppStrings.accounts);
           if (!accountDoc.exists) continue;
 
           final userAccount = await _userAccountService.getAccountMap(
@@ -70,12 +72,13 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
               ...userAccount,
               ...commentFields,
               'docUid': commentId,
-              'hasMeLiked': hasMeLiked_,
-              'likesNumber': likesCount.count,
+              AppStrings.hasMeLiked: hasMeLiked_,
+              AppStrings.likesNumber: likesCount.count,
             }),
           );
         } catch (e) {
-          print('Error processing comment ${comment.id}: $e');
+          debugPrint('Error processing comment ${comment.id}: $e');
+          rethrow;
         }
       }
 
@@ -90,7 +93,7 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
     required String comment,
   }) async {
     final accountDoc = await getDoc(
-        docId: _sessionService.currentUid, collectionPath: 'accounts');
+        docId: _sessionService.currentUid, collectionPath: AppStrings.accounts);
     if (!accountDoc.exists) return;
 
     final docRef = _commentsRef(postId).doc();
@@ -127,10 +130,10 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
     final commentRef = _commentsRef(postId).doc(commentId);
 
     if (commentOwnerId == _sessionService.currentUid) {
-      await commentRef.update({'isActive': true});
+      await commentRef.update({AppStrings.isActive: true});
     }
 
-    final likeRef = commentRef.collection('commentsLikes').doc(
+    final likeRef = commentRef.collection(AppStrings.commentsLikes).doc(
         _sessionService.currentUid);
 
     final userModel = MyModel(
@@ -150,10 +153,10 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
     final commentRef = _commentsRef(postId).doc(commentId);
 
     if (commentOwnerId == _sessionService.currentUid) {
-      await commentRef.update({'isActive': false});
+      await commentRef.update({AppStrings.isActive: false});
     }
 
-    await commentRef.collection('commentsLikes')
+    await commentRef.collection(AppStrings.commentsLikes)
         .doc(_sessionService.currentUid)
         .delete();
   }

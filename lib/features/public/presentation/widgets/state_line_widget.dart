@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
 import 'status_loading_painter.dart';
+import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 
 
 class StateLineWidget extends StatelessWidget {
@@ -18,19 +21,19 @@ class StateLineWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: AppPaddings.xs,
         child: Container(
           height: 2.0,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30.0),
-            color: Colors.white.withOpacity(0.5),
+            borderRadius: AppBorders.borderRadius_30,
+            color: AppColors.white50,
           ),
           child: currentIndex == indexLine
               ? CustomPaint(
             size: Size(double.infinity, 2.0),
             painter: StatusLoading(startLine: startLine),
           )
-              : SizedBox(),
+              : SizedBox.shrink(),
         ),
       ),
     );

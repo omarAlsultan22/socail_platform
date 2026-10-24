@@ -9,21 +9,6 @@ abstract class FirestoreService {
     required Map<String, dynamic> data,
   });
 
-  DocumentReference<Map<String, dynamic>> getDocRef({
-    required String? docId,
-    required String collectionPath
-  });
-
-  Future<QuerySnapshot<Map<String, dynamic>>> getSupCollection({
-    required String collectionPath,
-  });
-
-  Future<QuerySnapshot<Map<String, dynamic>>> getSubCollection({
-    required String docId,
-    required String supCollectionPath,
-    required String subCollectionPath,
-  });
-
   Future<void> updateDoc({
     required String? docId,
     required String collectionPath,
@@ -42,11 +27,6 @@ abstract class FirestoreService {
     required String subCollectionPath,
   });
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> getDoc({
-    required String docId,
-    required String collectionPath,
-  });
-
   Future<void> setSupDoc({
     String? docId,
     required bool isMerge,
@@ -62,10 +42,10 @@ abstract class FirestoreService {
     required Map<String, dynamic> data,
   });
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> getSubCollectionStream({
+  DocumentReference getSpecificDocRef({
     required String docId,
-    required String supCollectionPath,
-    required String subCollectionPath,
+    required String collectionPath,
+    required DocumentReference docRef
   });
 
   Future<AggregateQuerySnapshot> getCount({
@@ -73,9 +53,29 @@ abstract class FirestoreService {
     required DocumentReference docRef
   });
 
-  DocumentReference getSpecificDocRef({
+  DocumentReference<Map<String, dynamic>> getDocRef({
+    required String? docId,
+    required String collectionPath
+  });
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getDoc({
     required String docId,
     required String collectionPath,
-    required DocumentReference docRef
+  });
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getSupCollection({
+    required String collectionPath,
+  });
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getSubCollection({
+    required String docId,
+    required String supCollectionPath,
+    required String subCollectionPath,
+  });
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getSubCollectionStream({
+    required String docId,
+    required String supCollectionPath,
+    required String subCollectionPath,
   });
 }

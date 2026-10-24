@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:social_app/core/themes/app_theme.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
+import 'package:social_app/core/presentation/widgets/states/loading_state_widget.dart';
 
 
 class ExitDialogHelper {
@@ -13,33 +13,39 @@ class ExitDialogHelper {
   }) async {
     return await showDialog(
       context: context,
-      builder: (context) =>
-      !messageResult.isLoading ?
-      AlertDialog(
-        content: Text('Are you sure you want to delete this $type?'),
-        actions: [
-          ElevatedButton(
-            onPressed: () =>
-                onPressed(true),
-            child: Text(
-              'Yes',
-              style: TextStyle(
-                  color: AppTheme.getAdaptiveColor(context)
-              ),
+      builder: (context) {
+        final adaptiveColor = AppTheme.getAdaptiveColor(context);
+        return !messageResult.isLoading ?
+        AlertDialog(
+          content: Text('Are you sure you want to delete this $type?'),
+          actions: [
+            _buildActionButton(
+              label: 'Yes',
+              color: adaptiveColor,
+              onPressed: () => onPressed(true),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () =>
-                onPressed(false),
-            child: Text(
-              'No',
-              style: TextStyle(
-                  color: AppTheme.getAdaptiveColor(context)
-              ),
+            _buildActionButton(
+              label: 'No',
+              color: adaptiveColor,
+              onPressed: () => onPressed(false),
             ),
-          ),
-        ],
-      ) : LoadingStateWidget(),
+          ],
+        ) : LoadingStateWidget();
+      },
+    );
+  }
+
+  static Widget _buildActionButton({
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Text(
+        label,
+        style: TextStyle(color: color),
+      ),
     );
   }
 }

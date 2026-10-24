@@ -1,6 +1,7 @@
 import 'dart:async';
 import '../../../../core/data/models/my_model.dart';
 import '../repositories/user_details_repository.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../core/services/data/session_service.dart';
 import '../../../../core/services/domain/i_user_account_service.dart';
 
@@ -21,7 +22,7 @@ class UserDetailsUseCase {
 
   Stream<MyModel>? executeGetUserDetails({String? uId}) {
       return _repository.getMyDetailsStream(
-          collectionPath: 'accounts', docId: uId ?? _sessionService.currentUid
+          collectionPath: AppStrings.accounts, docId: uId ?? _sessionService.currentUid
       ).asyncMap((userDoc) async {
         final data = await _userAccountService.getAccountMap(userDoc: userDoc);
         return MyModel.fromJson(data);

@@ -3,20 +3,27 @@ import '../cubits/public_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service _locator.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/data/models/post_model.dart';
-import 'package:social_app/core/services/data/session_service.dart';
-import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_durations.dart';
 import '../../../../core/presentation/widgets/post_card.dart';
-import '../../../../core/presentation/widgets/current_user_selector.dart';
+import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/services/data/session_service.dart';
+import 'package:social_app/core/presentation/widgets/skeleton_box.dart';
 import '../../../../core/presentation/mixins/message_result_mixin.dart';
+import '../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:social_app/features/public/presentation/states/public_state.dart';
 import 'package:social_app/features/public/presentation/widgets/post_template.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:social_app/features/public/presentation/widgets/user_by_userId_selector.dart';
 import 'package:social_app/features/public/presentation/widgets/statuses_template.dart';
+import 'package:social_app/features/public/presentation/widgets/user_by_userId_selector.dart';
 
 
 class PublicBuilder extends StatefulWidget {
@@ -79,7 +86,7 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
   }
 
   void animationRepeat() {
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(AppDurations.debounce, () {
       if (mounted) {
         setState(() {
           animationToggle = !animationToggle;
@@ -130,25 +137,24 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
               children: [
                 // Status Section
                 SizedBox(
-                  height: 200,
+                  height: AppSizes.size200,
                   child: Row(
                     children: [
                       CurrentUserSelector(
                           builder: (userDetails) {
                             widget.onUpdate(userDetails);
                             return Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 3.0, left: 10.0),
+                              padding: AppPaddings.onlyRight3Left10,
                               child: Container(
-                                height: 180.0,
-                                width: 90.0,
+                                height: AppSizes.size180,
+                                width: AppSizes.size90,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: AppBorders.borderRadius_10,
                                   border: Border.all(
-                                      color: Colors.grey, width: 1.0),
+                                      color: AppColors.grey, width: 1.0),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black26,
+                                      color: AppColors.black26,
                                       blurRadius: 4.0,
                                       offset: Offset(2.0, 2.0),
                                     )
@@ -174,13 +180,10 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                                     alignment: AlignmentDirectional.topCenter,
                                     children: [
                                       SizedBox(
-                                        height: 120.0,
+                                        height: AppSizes.statusMediaHeight,
                                         width: double.infinity,
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10.0),
-                                            topRight: Radius.circular(10.0),
-                                          ),
+                                          borderRadius: AppBorders.topRounded_10,
                                           child: (!userDetails
                                               .myImageUrlIsEmpty) ?
                                           Image(
@@ -190,26 +193,26 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                                             errorBuilder: (context, error,
                                                 stackTrace) {
                                               return Container(
-                                                  color: Colors.grey);
+                                                  color: AppColors.grey);
                                             },
-                                          ) : Icon(Icons.person, size: 50.0),
+                                          ) : Icon(Icons.person, size: AppSizes.xl),
                                         ),
                                       ),
                                       Positioned(
                                         bottom: 45.0,
                                         child: Container(
-                                          height: 30.0,
-                                          width: 30.0,
+                                          height: AppSizes.size30,
+                                          width: AppSizes.size30,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius
-                                                .circular(50.0),
-                                            color: Colors.blue.shade900,
+                                            borderRadius: AppBorders
+                                                .borderRadius_50,
+                                            color: AppColors.primaryBlue,
                                           ),
                                           child: Center(
                                             child: Icon(
                                               Icons.add,
-                                              size: 25.0,
-                                              color: Colors.white,
+                                              size: AppSizes.size25,
+                                              color: AppColors.white,
                                             ),
                                           ),
                                         ),
@@ -248,27 +251,17 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                                           )
                                   );
                                 } else if (_isLoadingStatuses) {
-                                  return Padding(padding: EdgeInsets.all(8.0),
-                                    child: Container(
-                                      height: 180.0,
-                                      width: 90.0,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            10.0),
-                                        border: Border.all(
-                                            color: Colors.grey.shade400,
-                                            width: 1.0),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: Colors.black26,
-                                              blurRadius: 4.0,
-                                              offset: Offset(2.0, 2.0))
-                                        ],
-                                      ),
+                                  return Padding(
+                                    padding: AppPaddings.xs,
+                                    child: SkeletonBox(
+                                      width: AppSizes.size90,
+                                      height: AppSizes.size180,
+                                      animationToggle: animationToggle,
+                                      borderRadius: AppBorders.borderRadius_10,
                                     ),
                                   );
                                 } else {
-                                  return SizedBox();
+                                  return SizedBox.shrink();
                                 }
                               },
                             );
@@ -281,7 +274,7 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                     ],
                   ),
                 ),
-                Container(height: 1.0, color: Colors.grey),
+                Container(height: 1.0, color: AppColors.grey),
                 // Posts Section
                 ConditionalBuilder(
                   condition: widget.homePosts.isNotEmpty,
@@ -310,15 +303,15 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                         }
                         else {
                           return widget.hasMorePosts ? Padding(
-                            padding: EdgeInsets.all(16.0),
+                            padding: AppPaddings.medium,
                             child: Center(child: Text(
-                              'Loading more...',
+                              AppStrings.loadingMore,
                               style: TextStyle(
-                                  color: Colors.blue.shade700
+                                  color: AppColors.primaryBlue
                               ),
                             )),
                           ) :
-                          const SizedBox();
+                          const SizedBox.shrink();
                         }
                       },
                     );

@@ -1,6 +1,6 @@
 import '../repositories/user_account_repository.dart';
-import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/data/models/user_account.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 
 
 class UserAccountUseCase {

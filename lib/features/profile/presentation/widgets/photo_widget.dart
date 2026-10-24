@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../../core/di/service _locator.dart';
 import '../../../../core/data/models/post_model.dart';
 import '../../../public/data/models/user_details.dart';
-import 'package:social_app/core/services/data/session_service.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../core/presentation/screens/view_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 
@@ -46,15 +49,15 @@ class PhotoWidget extends StatelessWidget {
               )
           ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: AppBorders.borderRadius_8,
         child: Image(
-          image: NetworkImage(data.userPost ?? ''),
+          image: NetworkImage(data.userPost),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Container(
-              height: 200.0,
-              width: 200.0,
-              color: Colors.grey,
+              height: AppSizes.size200,
+              width: AppSizes.size200,
+              color: AppColors.grey,
               child: const Icon(Icons.image),
             );
           },

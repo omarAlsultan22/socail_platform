@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_durations.dart';
 
 
 class BuildSnackBar {
@@ -11,9 +13,9 @@ class BuildSnackBar {
       backgroundColor: backgroundColor,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: AppBorders.borderRadius_10,
       ),
-      duration: const Duration(seconds: 3),
+      duration: AppDurations.short,
     );
   }
 

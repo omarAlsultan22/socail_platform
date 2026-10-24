@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/repositories/friendship_repository.dart';
 import '../../../../core/domain/data_sources/remote/firestore/firestore_service.dart';
 
@@ -19,8 +20,8 @@ class FriendshipRepositoryImpl implements FriendshipRepository {
       supDocId: userId,
       data: friendInfo.toJson(),
       subDocId: friendInfo.myId,
-      supCollectionPath: 'users',
-      subCollectionPath: 'requests',
+      supCollectionPath: AppStrings.users,
+      subCollectionPath: AppStrings.requests,
     );
   }
 
@@ -33,16 +34,16 @@ class FriendshipRepositoryImpl implements FriendshipRepository {
       _dataSource.setSubDoc(
         subDocId: friendId,
         supDocId: currentUserId,
-        supCollectionPath: 'users',
-        subCollectionPath: 'friends',
-        data: {'uId': friendId}
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends,
+        data: {AppStrings.uId: friendId}
       ),
       _dataSource.setSubDoc(
           supDocId: friendId,
           subDocId: currentUserId,
-          supCollectionPath: 'users',
-          subCollectionPath: 'friends',
-          data: {'uId': currentUserId}
+          supCollectionPath: AppStrings.users,
+          subCollectionPath: AppStrings.friends,
+          data: {AppStrings.uId: currentUserId}
       )
     ]);
   }
@@ -54,8 +55,8 @@ class FriendshipRepositoryImpl implements FriendshipRepository {
   }) {
     return _dataSource.getSubCollectionStream(
         docId: userId,
-        supCollectionPath: 'users',
-        subCollectionPath: 'requests')
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.requests)
         .asyncMap((querySnapshot) async {
       final userModels = await Future.wait(
         querySnapshot.docs.map((friendDoc) async {
@@ -74,8 +75,8 @@ class FriendshipRepositoryImpl implements FriendshipRepository {
     await _dataSource.deleteSubDoc(
         supDoc: currentUserId,
         subDoc: friendId,
-        supCollectionPath: 'users',
-        subCollectionPath: 'requests'
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.requests
     );
   }
 
@@ -88,16 +89,16 @@ class FriendshipRepositoryImpl implements FriendshipRepository {
     required String currentUserId,
   }) async {
     final result = await Future.wait([
-      _dataSource.getSupCollection(collectionPath: 'users'),
+      _dataSource.getSupCollection(collectionPath: AppStrings.users),
       _dataSource.getSubCollection(
           docId: currentUserId,
-          supCollectionPath: 'users',
-          subCollectionPath: 'friends'
+          supCollectionPath: AppStrings.users,
+          subCollectionPath: AppStrings.friends
       ),
       _dataSource.getSubCollection(
           docId: currentUserId,
-          supCollectionPath: 'users',
-          subCollectionPath: 'requests'
+          supCollectionPath: AppStrings.users,
+          subCollectionPath: AppStrings.requests
       ),
     ]);
     return (

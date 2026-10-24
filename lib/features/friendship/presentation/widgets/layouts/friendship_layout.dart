@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../domain/enums/friendship_type.dart';
 import '../../../../../core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import '../../../../profile/presentation/screens/user_profile_screen.dart';
 import '../../../../../core/presentation/widgets/navigation/navigator.dart';
 
@@ -31,59 +36,45 @@ class FriendshipLayout extends StatelessWidget {
     return InkWell(
       onTap: () {
         BuildNavigator.build(
-            context: context, link: UserProfileScreen(friendId: userModel.myId!));
+            context: context,
+            link: UserProfileScreen(friendId: userModel.myId));
       },
       child: Padding(
-        padding: const EdgeInsets.only(left: 10.0),
+        padding: AppPaddings.onlyLeft10,
         child: Row(
           children: [
             SizedBox(
-              width: 50.0,
-              height: 50.0,
+              width: AppSizes.xl,
+              height: AppSizes.xl,
               child: ClipOval(
                 child: Image.network(
-                    userModel.myImageUrl!,
+                    userModel.myImageUrl,
                     fit: BoxFit.cover
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: AppPaddings.xs,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    userModel.myName!,
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    userModel.myName,
+                    style: AppTextStyles.boldLarge,
                   ),
                   Row(
                     children: [
-                      MaterialButton(
+                      _buildActionButton(
                         onPressed: acceptButton,
-                        color: Colors.blue.shade900,
-                        child: Text(
-                          labels.acceptLabel,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                        label: labels.acceptLabel,
+                        color: AppColors.primaryBlue,
+                        textColor: AppColors.white,
                       ),
-                      SizedBox(width: 10.0),
-                      MaterialButton(
+                      AppSpaces.horizontal_10,
+                      _buildActionButton(
                         onPressed: refuseButton,
-                        color: Colors.grey,
-                        child: Text(
-                          labels.refuseLabel,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        label: labels.refuseLabel,
+                        color: AppColors.grey,
                       ),
                     ],
                   ),
@@ -96,6 +87,26 @@ class FriendshipLayout extends StatelessWidget {
     );
   }
 
+  Widget _buildActionButton({
+    required VoidCallback onPressed,
+    required String label,
+    required Color color,
+    Color? textColor,
+  }) {
+    return MaterialButton(
+      onPressed: onPressed,
+      color: color,
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -103,16 +114,13 @@ class FriendshipLayout extends StatelessWidget {
       children: [
         notificationData.isNotEmpty ?
         Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: AppPaddings.xs,
             child:
             Text(
               friendshipType.title,
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTextStyles.boldXLarge,
             )
-        ) : SizedBox(),
+        ) : SizedBox.shrink(),
         ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),

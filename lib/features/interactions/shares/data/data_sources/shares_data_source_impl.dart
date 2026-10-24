@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import '../../domain/data_sources/shares_data_source.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/services/domain/i_user_account_service.dart';
 import '../../../../../core/data/data_sources/remote/firestore/firestore_service_impl.dart';
@@ -20,14 +22,14 @@ class SharesDataSourceImpl extends FirestoreServiceImpl implements SharesDataSou
   Stream<List<MyModel>> getSharesStream(String postId) async* {
     final friendsSnapshot = await getSubCollection(
         docId: _sessionService.currentUid,
-        supCollectionPath: 'users',
-        subCollectionPath: 'friends'
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends
     );
 
     final friendsList = friendsSnapshot.docs.map((doc) => doc.id).toList();
     await for (final sharesSnapshot in getSubCollectionStream(docId: postId,
-        supCollectionPath: 'posts',
-        subCollectionPath: 'sharesList')) {
+        supCollectionPath: AppStrings.posts,
+        subCollectionPath: AppStrings.sharesList)) {
       if (sharesSnapshot.docs.isEmpty) {
         yield [];
         continue;
@@ -38,7 +40,7 @@ class SharesDataSourceImpl extends FirestoreServiceImpl implements SharesDataSou
         try {
           final userId = share.id;
           final accountDoc = await getDoc(
-              docId: userId, collectionPath: 'accounts');
+              docId: userId, collectionPath: AppStrings.accounts);
           if (!accountDoc.exists) continue;
 
           final accountData = accountDoc.data() as Map<String, dynamic>;
@@ -48,7 +50,7 @@ class SharesDataSourceImpl extends FirestoreServiceImpl implements SharesDataSou
               userAccount: accountData);
           validUsers.add(MyModel.fromJson(userAccount));
         } catch (e) {
-          print('Error processing share from user ${share.id}: $e');
+          debugPrint('Error processing share from user ${share.id}: $e');
         }
       }
 

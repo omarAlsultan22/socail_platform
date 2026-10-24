@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 
 
@@ -13,7 +16,7 @@ class CommentForm extends StatelessWidget { // notifications & post components
   Widget build(BuildContext context) {
     final commentController = TextEditingController();
     return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: AppPaddings.xs,
         child: Row(
           children: [
             Expanded(
@@ -34,9 +37,9 @@ class CommentForm extends StatelessWidget { // notifications & post components
             IconButton(
                 onPressed: () {
                   onPressed(commentController.text);
-                  commentController.text = '';
+                  commentController.text = AppStrings.empty;
                 },
-                icon: Icon(Icons.send, color: Colors.blue.shade900,))
+                icon: Icon(Icons.send, color: AppColors.primaryBlue,))
           ],
         )
     );

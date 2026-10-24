@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/repositories/profile_repository.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/data_sources/profile_data_source.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/services/data/session_service.dart';
@@ -23,7 +24,7 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
         _userAccountService = userAccountService;
 
   @override
-  String get likeCollectionPath => 'likesList';
+  String get likeCollectionPath => AppStrings.likesList;
 
   @override
   ProfileDataSource get dataSource => _dataSource;
@@ -35,8 +36,8 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   Future<({DocumentSnapshot? info, DocumentSnapshot? account})> getProfileInfo(
       String uId) async {
     final results = await Future.wait([
-      dataSource.getDoc(docId: uId, collectionPath: 'info'),
-      dataSource.getDoc(docId: uId, collectionPath: 'accounts'),
+      dataSource.getDoc(docId: uId, collectionPath: AppStrings.info),
+      dataSource.getDoc(docId: uId, collectionPath: AppStrings.accounts),
     ]);
 
     final infoDoc = results[0] as DocumentSnapshot;
@@ -67,15 +68,15 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
     return await dataSource.getPosts(
         limit: limit,
         userId: userId,
-        postType: 'video',
-        lastPostDoc: lastDoc
+        lastPostDoc: lastDoc,
+        postType: AppStrings.video
     );
   }
 
   @override
   Future<Map<String, dynamic>> getAccountData(String userId) async {
     final doc = await dataSource.getDoc(
-        docId: userId, collectionPath: 'accounts'
+        docId: userId, collectionPath: AppStrings.accounts
     );
     return await _userAccountService.getAccountMap(userDoc: doc);
   }
@@ -83,10 +84,10 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   @override
   Future<({int? comments, int? likes})> getPostCounts(String postId) async {
     final postRef = dataSource.getDocRef(
-        docId: postId, collectionPath: 'posts');
+        docId: postId, collectionPath: AppStrings.posts);
     final results = await Future.wait([
-      dataSource.getCount(docRef: postRef, collectionPath: 'likesList'),
-      dataSource.getCount(docRef: postRef, collectionPath: 'commentsList')
+      dataSource.getCount(docRef: postRef, collectionPath: AppStrings.likesList),
+      dataSource.getCount(docRef: postRef, collectionPath: AppStrings.commentsList)
     ]);
     return (likes: results[0].count, comments: results[1].count);
   }
@@ -109,10 +110,10 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   Future<void> sendFriendRequest(String userId, MyModel friendInfo) async {
     await dataSource.setSubDoc(
       supDocId: userId,
-      supCollectionPath: 'users',
-      subCollectionPath: 'requests',
-      data: friendInfo.toJson(),
       subDocId: friendInfo.myId,
+      data: friendInfo.toJson(),
+      supCollectionPath: AppStrings.users,
+      subCollectionPath: AppStrings.requests
     );
   }
 
@@ -120,9 +121,9 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   Future<void> deleteFriendRequest(String userId) async {
     await dataSource.deleteSubDoc(
       supDoc: userId,
-      supCollectionPath: 'users',
-      subCollectionPath: 'requests',
       subDoc: sessionService.currentUid,
+      supCollectionPath: AppStrings.users,
+      subCollectionPath: AppStrings.requests
 
     );
   }
@@ -132,15 +133,15 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
     await Future.wait([
       dataSource.deleteSubDoc(
           subDoc: userId,
-          supCollectionPath: 'users',
-          subCollectionPath: 'friends',
-          supDoc: sessionService.currentUid
+          supDoc: sessionService.currentUid,
+          supCollectionPath: AppStrings.users,
+          subCollectionPath: AppStrings.friends
       ),
       dataSource.deleteSubDoc(
           supDoc: userId,
-          supCollectionPath: 'users',
-          subCollectionPath: 'friends',
-          subDoc: sessionService.currentUid
+          subDoc: sessionService.currentUid,
+          supCollectionPath: AppStrings.users,
+          subCollectionPath: AppStrings.friends
       ),
     ]);
   }
@@ -149,10 +150,10 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   Future<void> addFriend(String docId, MyModel friendInfo) async {
     await dataSource.setSubDoc(
         subDocId: docId,
-        supCollectionPath: 'users',
+        data: friendInfo.toJson(),
         supDocId: friendInfo.myId,
-        subCollectionPath: 'friends',
-        data: friendInfo.toJson()
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends
     );
   }
 
@@ -160,8 +161,8 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   Future<List<MyModel>> getFriends(String userId) async {
     final snapshot = await dataSource.getSubCollection(
         docId: userId,
-        supCollectionPath: 'users',
-        subCollectionPath: 'friends'
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends
     );
 
     final List<MyModel> friends = [];
@@ -176,9 +177,9 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   Future<bool> checkRequestExists(String userId) async {
     final doc = await dataSource.getSubDoc(
         subDoc: userId,
-        supCollectionPath: 'users',
-        subCollectionPath: 'requests',
-        supDoc: sessionService.currentUid
+        supDoc: sessionService.currentUid,
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.requests
     );
     return doc.exists;
   }
@@ -187,9 +188,9 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   Future<bool> checkFriendExists(String userId) async {
     final doc = await dataSource.getSubDoc(
         subDoc: userId,
-        supCollectionPath: 'users',
-        subCollectionPath: 'friends',
-        supDoc: sessionService.currentUid
+        supDoc: sessionService.currentUid,
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends
     );
     return doc.exists;
   }

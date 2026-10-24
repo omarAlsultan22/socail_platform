@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/constants/app_sizes.dart';
 import '../../../../../core/di/service _locator.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/app_spaces.dart';
 import 'package:social_app/core/themes/app_theme.dart';
+import '../../../../../core/constants/app_borders.dart';
+import '../../../../../core/constants/app_paddings.dart';
 import '../../../../../core/data/models/comment_model.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
-import 'package:social_app/core/services/data/session_service.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/presentation/widgets/comment_form.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
@@ -33,33 +39,33 @@ class CommentsLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-          return Scaffold(
-            appBar: AppBar(
-              scrolledUnderElevation: 0.0,
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: ListBuilder(
-                    list: commentsList,
-                    object: (commentModel) =>
-                        CommentModelLayout(
-                          userId: userId,
-                          comment: commentModel,
-                          onTap: (value) =>
-                              onCheck(value, commentModel),
-                          onLongPressed: (value) =>
-                              onRemove(commentModel),
-                          messageResult: messageResult,
-                          sessionService: sl<SessionService>(),
-                        ),
-                    fallback: Text('There are no any comments'),
+    return Scaffold(
+      appBar: AppBar(
+        scrolledUnderElevation: 0.0,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListBuilder(
+              list: commentsList,
+              object: (commentModel) =>
+                  CommentModelLayout(
+                    userId: userId,
+                    comment: commentModel,
+                    onTap: (value) =>
+                        onCheck(value, commentModel),
+                    onLongPressed: (value) =>
+                        onRemove(commentModel),
+                    messageResult: messageResult,
+                    sessionService: sl<SessionService>(),
                   ),
-                ),
-                CommentForm(onPressed: (commentText) =>
-                    onAdd(commentText))
-              ],
+              fallback: Text('There are no any comments'),
             ),
+          ),
+          CommentForm(onPressed: (commentText) =>
+              onAdd(commentText))
+        ],
+      ),
     );
   }
 }
@@ -126,7 +132,7 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
   Widget build(BuildContext context) {
     return Padding(
       key: widget.targetKey,
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: AppPaddings.symmetricVertical8,
       child: GestureDetector(
         onTap: () =>
             FriendProfileNavigator.handle(
@@ -140,36 +146,33 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: AppPaddings.xs,
               child: CircleAvatar(
-                  radius: 25.0,
+                  radius: AppSizes.avatarSmall,
                   backgroundImage: NetworkImage(widget.comment.myImageUrl)
               ),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: AppPaddings.xs,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       decoration: BoxDecoration(
                         color: AppTheme.getAdaptiveColor(
-                            context, firstColor: Colors.grey
-                            .shade200, secondColor: Colors.grey.shade700),
-                        borderRadius: BorderRadius.circular(10.0),
+                            context, firstColor: AppColors.lightGrey200,
+                            secondColor: AppColors.grey700),
+                        borderRadius: AppBorders.borderRadius_10,
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: AppPaddings.xs,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               widget.comment.myName,
-                              style: const TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: AppTextStyles.boldMedium,
                             ),
                             if (widget.comment.userAction != null)
                               Text(widget.comment.userAction!),
@@ -177,26 +180,26 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 4.0),
+                    AppSpaces.vertical_4,
                     Row(
                       children: [
                         if (widget.comment.myDateTime != null)
                           Text(TimeAgoHelper.getTimeAgo(widget.comment
                               .myDateTime!)),
-                        const SizedBox(width: 8.0),
+                        AppSpaces.horizontal_8,
                         GestureDetector(
                           onTap: likeToggle,
                           child: Text(
                             'Like',
                             style: TextStyle(
                                 color: isActive
-                                    ? Colors.blue.shade700
+                                    ? AppColors.primaryBlue
                                     : AppTheme.getAdaptiveColor(context)
                             ),
                           ),
                         ),
                         if (likes > 0) ...[
-                          const SizedBox(width: 8.0),
+                          AppSpaces.horizontal_8,
                           GestureDetector(
                             onTap: () =>
                                 BuildNavigator.build(
@@ -208,17 +211,17 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade500,
-                                    borderRadius: BorderRadius.circular(50.0),
+                                    color: AppColors.grey500,
+                                    borderRadius: AppBorders.borderRadius_50,
                                   ),
                                   padding: const EdgeInsets.all(3.0),
                                   child: const Icon(
                                     Icons.favorite,
-                                    color: Colors.red,
+                                    color: AppColors.red,
                                     size: 15.0,
                                   ),
                                 ),
-                                const SizedBox(width: 4.0),
+                                AppSpaces.horizontal_4,
                                 Text(likes.toString()),
                               ],
                             ),
@@ -236,6 +239,3 @@ class _CommentModelLayoutState extends State<CommentModelLayout> {
     );
   }
 }
-
-
-

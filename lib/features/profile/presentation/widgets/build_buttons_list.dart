@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../data/models/button_model.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 
 
 class BuildButtonsList extends StatefulWidget {
@@ -59,12 +62,12 @@ class _BuildButtonsListState extends State<BuildButtonsList> {
     required VoidCallback onTap
   }) {
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: AppPaddings.all5,
       child: Container(
         decoration: BoxDecoration(
-          color: isActive ? Colors.black : Colors.white,
-          borderRadius: BorderRadius.circular(30.0),
-          border: Border.all(color: Colors.black),
+          color: isActive ? AppColors.black : AppColors.white,
+          borderRadius: AppBorders.borderRadius_30,
+          border: Border.all(color: AppColors.black),
         ),
         child: TextButton(
           onPressed: onTap,
@@ -74,7 +77,7 @@ class _BuildButtonsListState extends State<BuildButtonsList> {
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w700,
-                color: isActive ? Colors.white : Colors.black,
+                color: isActive ? AppColors.white : AppColors.black,
               ),
             ),
           ),

@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
 import '../../services/domain/i_media_upload_service.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/presentation/screens/publishing_confirmation_screen.dart';
 
 
@@ -30,7 +34,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
       _postModel = widget.postModel.copyWith(
           file: file,
           pathType: pathType,
-        userPost: file.path
+          userPost: file.path
       );
     });
     widget.onTap(_postModel);
@@ -50,7 +54,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
                   onTap: () async {
                     Navigator.pop(context);
                     final file = await widget.mediaUploadService.pickImage();
-                    _setMedia(file!, 'image');
+                    _setMedia(file!, AppStrings.image);
                   },
                 ),
                 ListTile(
@@ -59,7 +63,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
                   onTap: () async {
                     Navigator.pop(context);
                     final file = await widget.mediaUploadService.pickVideo();
-                    _setMedia(file!, 'video');
+                    _setMedia(file!, AppStrings.video);
                   },
                 ),
               ],
@@ -71,16 +75,16 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: AppPaddings.all10,
       child: _postModel.userPostIsEmpty ?
       InkWell(
         onTap: () async =>
             _showMediaPicker(context),
         child: Container(
-            height: 200.0,
+            height: AppSizes.size200,
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: AppBorders.borderRadius_10,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -88,8 +92,8 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.photo_library, size: 50.0),
-                    Icon(Icons.video_collection, size: 50.0),
+                    Icon(Icons.photo_library, size: AppSizes.xl),
+                    Icon(Icons.video_collection, size: AppSizes.xl),
                   ],
                 ),
                 const Text('Add photos/videos'),
@@ -100,14 +104,14 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
           : Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: AppBorders.borderRadius_10,
         ),
         child: Column(
           children: [
             if(_postModel.userText != null &&
                 _postModel.myId != widget.uId)...[
               Padding(
-                padding: const EdgeInsets.only(left: 15.0),
+                padding: AppPaddings.onlyLeft15,
                 child: Text(
                   _postModel.userText ?? '',
                   style: const TextStyle(
@@ -118,7 +122,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
               ),
             ],
             if(!_postModel.userPostIsEmpty)...[
-              _postModel.pathType == 'image' ?
+              _postModel.pathType == AppStrings.image ?
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
@@ -128,7 +132,7 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  height: 350.0,
+                  height: AppSizes.size350,
                   width: double.infinity,
                 ),
               ) : Expanded(child:

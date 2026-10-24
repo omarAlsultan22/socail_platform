@@ -4,9 +4,9 @@ import '../widgets/public_builder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/shared/coordination/post_sync_groups.dart';
 import 'package:social_app/shared/coordination/post_coordinator.dart';
-import '../../../../core/presentation/widgets/states/initial_state.dart';
+import '../../../../core/presentation/widgets/states/initial_state_widget.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
-import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
+import 'package:social_app/core/presentation/widgets/states/loading_state_widget.dart';
 import 'package:social_app/features/public/presentation/states/public_state.dart';
 import 'package:social_app/core/presentation/widgets/create_post_input_widget.dart';
 

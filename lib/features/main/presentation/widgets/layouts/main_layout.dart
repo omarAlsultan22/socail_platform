@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:social_app/core/themes/app_theme.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/app_borders.dart';
 import '../../../../public/presentation/screens/public_screen.dart';
 import '../../../../search/presentation/screens/search_screen.dart';
 import '../../../../profile/presentation/screens/my_profile_screen.dart';
@@ -45,7 +49,7 @@ class MainLayout extends StatelessWidget {
             right: 0,
             child: CircleAvatar(
               radius: 8,
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.red,
               child: Text(
                 count.toString(),
                 style: const TextStyle(fontSize: 10),
@@ -65,16 +69,16 @@ class MainLayout extends StatelessWidget {
         title: Row(
           children: [
             const Text(
-              'Social',
+              AppStrings.appName,
               style: TextStyle(
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 10.0),
+            AppSpaces.horizontal_10,
             Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
+                  borderRadius: AppBorders.borderRadius_5,
                   color: AppTheme.getAdaptiveColor(context)
               ),
               child: Padding(
@@ -83,7 +87,7 @@ class MainLayout extends StatelessWidget {
                   horizontal: 5.0,
                 ),
                 child: Text(
-                  'Platform',
+                  AppStrings.platform,
                   style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
@@ -147,7 +151,7 @@ class MainLayout extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
           unselectedLabelStyle: const TextStyle(fontSize: 12),
-          splashBorderRadius: BorderRadius.circular(10.0),
+          splashBorderRadius: AppBorders.borderRadius_10,
         ),
       ),
       body: mainScreens[currentScreen],

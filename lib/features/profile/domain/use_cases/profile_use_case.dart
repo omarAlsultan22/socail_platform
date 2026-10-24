@@ -1,9 +1,9 @@
-import '../../../../core/services/domain/i_user_account_service.dart';
 import '../repositories/profile_repository.dart';
 import '../../data/converters/Info_data_converter.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/data/models/user_info_model.dart';
+import '../../../../core/services/domain/i_user_account_service.dart';
 
 
 class ProfileUseCase {

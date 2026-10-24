@@ -18,7 +18,7 @@ class CurrentUserSelector extends StatelessWidget {
     return BlocSelector<MyDetailsCubit, MyDetailsState, UserDetails?>(
         selector: (state) => state.userDetails,
         builder: (context, userDetails) {
-          if (userDetails == null) return const SizedBox();
+          if (userDetails == null) return const SizedBox.shrink();
           return builder(userDetails);
         }
     );

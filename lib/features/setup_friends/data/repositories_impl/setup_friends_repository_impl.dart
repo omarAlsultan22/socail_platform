@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../core/domain/data_sources/remote/firestore/firestore_service.dart';
 import 'package:social_app/features/setup_friends/domain/repositories/setup_friends_repository.dart';
@@ -26,7 +27,7 @@ class SetupFriendsRepositoryImpl implements SetupFriendsRepository {
   }
 
   Future<QuerySnapshot> _getAllUsersFromFirebase() async {
-    return await _dataSource.getSupCollection(collectionPath: 'users');
+    return await _dataSource.getSupCollection(collectionPath: AppStrings.users);
   }
 
   Future<List<MyModel?>> _fetchAccountsData(QuerySnapshot users,
@@ -35,7 +36,7 @@ class SetupFriendsRepositoryImpl implements SetupFriendsRepository {
       if (doc.id == currentUserId) return null;
 
       final account = await _dataSource.getDoc(
-          collectionPath: 'accounts', docId: doc.id);
+          collectionPath: AppStrings.accounts, docId: doc.id);
 
       if (!account.exists) return null;
 
@@ -55,18 +56,18 @@ class SetupFriendsRepositoryImpl implements SetupFriendsRepository {
   }) async {
     await Future.wait([
       _dataSource.setSubDoc(
-          supCollectionPath: 'users',
-          subCollectionPath: 'friends',
+          supCollectionPath: AppStrings.users,
+          subCollectionPath: AppStrings.friends,
           subDocId: friendId,
           supDocId: _sessionService.currentUid,
-          data: {'uId': friendId}
+          data: {AppStrings.uId: friendId}
       ),
       _dataSource.setSubDoc(
-          supCollectionPath: 'users',
-          subCollectionPath: 'friends',
+          supCollectionPath: AppStrings.users,
+          subCollectionPath: AppStrings.friends,
           supDocId: friendId,
           subDocId: _sessionService.currentUid,
-          data: {'uId': _sessionService.currentUid}
+          data: {AppStrings.uId: _sessionService.currentUid}
       )
     ]);
   }

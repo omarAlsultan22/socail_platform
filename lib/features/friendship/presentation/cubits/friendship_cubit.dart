@@ -130,33 +130,25 @@ class FriendshipCubit extends Cubit<FriendshipState> with ErrorHandlerMixin<Frie
       );
       _mainCubit.deleteRequest();
     } catch (e) {
-      print('Error in _executeDeclineAfterConfirm: $e');
+      debugPrint('Error in _executeDeclineAfterConfirm: $e');
+      rethrow;
     }
   }
 
   Future<void> _getFriendsRequests() async {
-    try {
-      _conversationsSubscription?.cancel();
-      _conversationsSubscription =
-          _useCase.executeGetConversationsStream(
-            getUserModelData: (id) =>
-                _userAccountService.getUserModelData(id: id),
-          ).listen((groupedConversations) {
-            emit(state.updateFriendsRequestsList(groupedConversations));
-          });
-    } catch (e) {
-      rethrow;
-    }
+    _conversationsSubscription?.cancel();
+    _conversationsSubscription =
+        _useCase.executeGetConversationsStream(
+          getUserModelData: (id) =>
+              _userAccountService.getUserModelData(id: id),
+        ).listen((groupedConversations) {
+          emit(state.updateFriendsRequestsList(groupedConversations));
+        });
   }
 
   Future<void> _getFriendsSuggests() async {
-    try {
       final suggestsList = await _useCase.executeGetFriendsSuggests();
       emit(state.updateFriendsSuggestsList(suggestsList));
-    }
-    catch (e){
-      rethrow;
-    }
   }
 
   void deleteFriendSuggest({required int index}) {

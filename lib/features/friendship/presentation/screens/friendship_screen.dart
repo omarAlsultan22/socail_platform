@@ -3,9 +3,9 @@ import '../cubits/friendship_cubit.dart';
 import '../states/friendship_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/layouts/friendship_layout.dart';
-import 'package:social_app/core/presentation/widgets/app_spaces.dart';
-import 'package:social_app/core/presentation/widgets/states/initial_state.dart';
-import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/presentation/widgets/states/initial_state_widget.dart';
+import 'package:social_app/core/presentation/widgets/states/loading_state_widget.dart';
 import 'package:social_app/features/friendship/domain/enums/friendship_type.dart';
 
 

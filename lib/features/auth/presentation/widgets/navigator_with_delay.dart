@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_durations.dart';
 
 
 class NavigatorWithDelay {
@@ -6,12 +7,13 @@ class NavigatorWithDelay {
     required Widget link,
     required BuildContext context,
   }) {
-    Future.delayed(const Duration(seconds: 1), () =>
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => link
-          ),
-        )
-    );
+    Future.delayed(AppDurations.veryShort, () {
+      if(!context.mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => link
+        ),
+      );
+    });
   }
 }

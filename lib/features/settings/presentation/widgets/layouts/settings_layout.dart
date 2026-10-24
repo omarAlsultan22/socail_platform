@@ -2,6 +2,9 @@ import '../menu_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/themes/theme_notifier.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/cache_keys.dart';
+import 'package:social_app/core/constants/theme_values.dart';
 import '../../../../auth/presentation/screens/sign_in_screen.dart';
 import '../../../../../core/domain/data_sources/local/cache_helper.dart';
 import '../../../../user_account/presentation/screens/user_account_screen.dart';
@@ -28,14 +31,20 @@ class _SettingsLayoutState extends State<SettingsLayout> {
   }
 
   Future<void> _initPrefs() async {
-    setState(() async {
-      toggle = await widget.cacheHelper.getString(key: 'theme') == 'light';
-    });
+    final isLight = await widget.cacheHelper.getString(key: CacheKeys.theme) ==
+        ThemeValues.light;
+    if (mounted) {
+      setState(() {
+        toggle = isLight;
+      });
+    }
   }
 
   Future<void> changeMode(bool toggle, BuildContext context) async {
     await widget.cacheHelper.setString(
-        key: 'theme', value: toggle ? 'light' : 'dark');
+        key: CacheKeys.theme,
+        value: toggle ? ThemeValues.light : ThemeValues.dark);
+    if (!context.mounted) return;
     final themeNotifier = Provider.of<ThemeNotifier>(context, listen: false);
     themeNotifier.setTheme(
       toggle ? ThemeMode.light : ThemeMode.dark,
@@ -60,7 +69,7 @@ class _SettingsLayoutState extends State<SettingsLayout> {
                       context: context, link: const UserAccountScreen());
                 },
               ),
-              const SizedBox(width: 20),
+              AppSpaces.horizontal_20,
               MenuButton(
                 text: 'Profile',
                 icon: Icons.info,
@@ -71,7 +80,7 @@ class _SettingsLayoutState extends State<SettingsLayout> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          AppSpaces.vertical_20,
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -86,12 +95,14 @@ class _SettingsLayoutState extends State<SettingsLayout> {
                   await changeMode(toggle, context);
                 },
               ),
-              const SizedBox(width: 20),
+              AppSpaces.horizontal_20,
               MenuButton(
                 text: 'Exit',
                 icon: Icons.exit_to_app,
                 onTap: () async {
-                  await widget.cacheHelper.removeValue(key: 'isLoggedIn');
+                  await widget.cacheHelper.removeValue(
+                      key: CacheKeys.isLoggedIn);
+                  if (!context.mounted) return;
                   NavigatorWithDelay.build(
                       context: context, link: const SignInScreen());
                 },

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 
 
 class BuildInputField {
+  static const Color _amberColor = AppColors.amber700;
+
   static Widget build({
     required TextEditingController controller,
     String? hint,
@@ -19,35 +24,35 @@ class BuildInputField {
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
-      cursorColor:  Colors.amber[700],
+      cursorColor: _amberColor,
       validator: validator,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: AppColors.white),
       decoration: decoration ?? InputDecoration(
-        contentPadding: const EdgeInsets.all(16),
+        contentPadding: AppPaddings.medium,
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppBorders.borderRadius_12,
           borderSide: BorderSide(
-            color:  Colors.amber.shade700,
+            color: _amberColor,
             width: 1.8,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppBorders.borderRadius_12,
           borderSide: BorderSide(
-            color:  Colors.amber.shade700,
+            color: _amberColor,
             width: 2.2,
           ),
         ),
         hintText: hint,
-        hintStyle: TextStyle(color:  Colors.amber[700]),
+        hintStyle: TextStyle(color: _amberColor),
         labelText: label,
-        labelStyle: TextStyle(color:  Colors.amber[700]),
+        labelStyle: TextStyle(color: _amberColor),
         prefixIcon: icon != null
-            ? Icon(icon, color: Colors.amber[700])
+            ? Icon(icon, color: _amberColor)
             : null,
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.grey[700]!.withOpacity(0.5),
+        fillColor: AppColors.grey700_50,
       ),
     );
   }

@@ -15,13 +15,13 @@ class MainState {
   const MainState({
     this.messagesCount = 0,
     this.currentScreen = 0,
-    this.notificationsCount = 0,
     this.friendshipCount = 0,
-    this.suggestsList = const [],
+    this.notificationsCount = 0,
     this.messagesIds = const {},
+    this.suggestsList = const [],
+    this.isMessageActive = false,
     this.notificationsDocIds = const {},
     this.friendRequestsDocIds = const {},
-    this.isMessageActive = false,
   });
 
   factory MainState.initial() {

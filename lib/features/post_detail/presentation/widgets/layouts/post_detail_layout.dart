@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import '../../../../../core/di/service _locator.dart';
 import 'package:social_app/core/themes/app_theme.dart';
 import '../../../../../core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_colors.dart';
 import '../../../../../core/data/models/comment_model.dart';
-import 'package:social_app/core/services/data/session_service.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_durations.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/post_card.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/presentation/widgets/comment_form.dart';
+import 'package:social_app/core/constants/notification_constants.dart';
 import '../../../../interactions/comments/presentation/cubits/comments_cubit.dart';
 import '../../../../interactions/comments/presentation/layouts/comments_layout.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
@@ -59,10 +64,11 @@ class _PostDetailLayoutState extends State<PostDetailLayout> {
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_targetCommentKey.currentContext != null &&
-            widget.notificationsModel.iconName != 'thumb_up') {
+            widget.notificationsModel.iconName !=
+                NotificationType.thumbUp.value) {
           Scrollable.ensureVisible(
             _targetCommentKey.currentContext!,
-            duration: const Duration(seconds: 1),
+            duration: AppDurations.veryShort,
             curve: Curves.easeInOut,
             alignment: 0.5,
           );
@@ -123,12 +129,12 @@ class _PostDetailLayoutState extends State<PostDetailLayout> {
                       );
                     },
                     separatorBuilder: (context, index) =>
-                    const SizedBox(height: 1.0),
+                    AppSpaces.vertical_1,
                     itemCount: widget.commentsList.length,
                   )
                 else
-                  const Padding(
-                    padding: EdgeInsets.all(20.0),
+                  Padding(
+                    padding: AppPaddings.all20,
                     child: Text('No comments yet'),
                   ),
                 SizedBox(height: MediaQuery
@@ -142,8 +148,8 @@ class _PostDetailLayoutState extends State<PostDetailLayout> {
           ),
           Container(
             color: AppTheme.getAdaptiveColor(
-                context, firstColor: Colors.grey.shade100,
-                secondColor: Colors.grey.shade900),
+                context, firstColor: AppColors.lightGrey200,
+                secondColor: AppColors.grey900),
             child: CommentForm(
               onPressed: (comment) =>
                   _commentsCubit.addComment(
@@ -157,5 +163,3 @@ class _PostDetailLayoutState extends State<PostDetailLayout> {
     );
   }
 }
-
-

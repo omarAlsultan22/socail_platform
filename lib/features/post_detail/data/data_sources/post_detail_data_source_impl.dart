@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/data_sources/post_detail_data_source.dart';
 import '../../../../core/data/data_sources/remote/firestore/firestore_service_impl.dart';
 
 
-class PostDetailDataSourceImpl extends FirestoreServiceImpl implements PostDetailDataSource{
+class PostDetailDataSourceImpl extends FirestoreServiceImpl implements PostDetailDataSource {
 
   @override
   Future<({
@@ -14,12 +15,12 @@ class PostDetailDataSourceImpl extends FirestoreServiceImpl implements PostDetai
     required String postId,
     required String userId,
   }) async {
-    final postRef = getDocRef(docId: postId, collectionPath: 'posts');
+    final postRef = getDocRef(docId: postId, collectionPath: AppStrings.posts);
 
     final results = await Future.wait([
       postRef.get().timeout(duration),
-      getDoc(docId: userId, collectionPath: 'accounts'),
-      postRef.collection('commentsList').get().timeout(duration),
+      getDoc(docId: userId, collectionPath: AppStrings.accounts),
+      postRef.collection(AppStrings.commentsList).get().timeout(duration),
     ]);
 
     return (
@@ -37,13 +38,16 @@ class PostDetailDataSourceImpl extends FirestoreServiceImpl implements PostDetai
   }) async {
     final commentsWithLikes = await Future.wait(
       commentsDocs.docs.map((doc) async {
-        final postRef = getDocRef(docId: postId, collectionPath: 'posts');
+        final postRef = getDocRef(
+            docId: postId, collectionPath: AppStrings.posts);
         final commentRef = getSpecificDocRef(
-            docId: doc.id, collectionPath: 'commentsList', docRef: postRef);
+            docId: doc.id,
+            collectionPath: AppStrings.commentsList,
+            docRef: postRef);
         final likesCount = await getCount(
-            collectionPath: 'commentsLikes', docRef: commentRef);
+            collectionPath: AppStrings.commentsLikes, docRef: commentRef);
         final commentData = doc.data();
-        commentData['likesNumber'] = likesCount.count;
+        commentData[AppStrings.likesNumber] = likesCount.count;
         return doc;
       }),
     );
@@ -56,9 +60,9 @@ class PostDetailDataSourceImpl extends FirestoreServiceImpl implements PostDetai
   }) async {
     final userData = userDoc.data() as Map<String, dynamic>;
     return {
-      'userId': userDoc.id,
-      'userName': userData['userName'] ?? '',
-      'userImage': userData['userImage'] ?? ''
+      AppStrings.userId: userDoc.id,
+      AppStrings.userName: userData[AppStrings.userName] ?? AppStrings.empty,
+      AppStrings.userImage: userData[AppStrings.userImage] ?? AppStrings.empty
     };
   }
 }

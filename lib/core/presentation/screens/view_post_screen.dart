@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import '../../../features/public/data/models/user_details.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/services/data/session_service.dart';
@@ -40,10 +44,10 @@ class ViewPostScreen extends StatefulWidget {
 class _ViewPostScreenState extends State<ViewPostScreen> with SingleTickerProviderStateMixin, MoreOptionsMixin<ViewPostScreen>, PostComponentsMixin<ViewPostScreen> {
 
   @override
-  String get postType => 'post';
+  String get postType => AppStrings.post;
 
   @override
-  String get titleName => 'UpdatePost';
+  String get titleName => AppStrings.updatePost;
 
   @override
   String? get userId => widget.userId;
@@ -86,7 +90,7 @@ class _ViewPostScreenState extends State<ViewPostScreen> with SingleTickerProvid
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 15.0),
+                padding: AppPaddings.onlyTop15,
                 child: IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: Icon(Icons.close, size: 25.0),
@@ -99,8 +103,7 @@ class _ViewPostScreenState extends State<ViewPostScreen> with SingleTickerProvid
           SizedBox(height: 50.0),
           buildContent(_buildImageContent()),
           Padding(
-            padding: const EdgeInsets.only(
-                right: 10.0, left: 10.0, top: 10.0),
+            padding: AppPaddings.textContent,
             child: Column(
               children: [
                 Row(
@@ -111,17 +114,14 @@ class _ViewPostScreenState extends State<ViewPostScreen> with SingleTickerProvid
                         children: [
                           Text(
                             userDetails.myName,
-                            style: const TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: AppTextStyles.boldBody,
                           ),
                           Row(
                             children: [
                               Text(
                                 '${TimeAgoHelper.getTimeAgo(
                                     dateTime!)} . ',
-                                style: TextStyle(fontSize: 13.0),
+                                style: AppTextStyles.bodySmall,
                               ),
                               Icon(PublicConstants.postStatuses[userState],
                                   size: 15.0),
@@ -135,7 +135,7 @@ class _ViewPostScreenState extends State<ViewPostScreen> with SingleTickerProvid
                     ),
                   ],
                 ),
-                Container(height: 1.0, color: Colors.grey),
+                Container(height: 1.0, color: AppColors.grey),
                 iconsInteractions()
               ],
             ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import '../repositories/public_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/data/models/paginated_posts.dart';
 import 'package:social_app/core/services/data/session_service.dart';
@@ -66,42 +67,42 @@ class PublicUseCase {
     final List<PostModel> posts = [];
 
     await Future.wait(querySnapshot.docs.map((doc) async {
-        if (deletedPosts.contains(doc.id)) return;
+      if (deletedPosts.contains(doc.id)) return;
 
-        final data = doc.data() as Map<String, dynamic>;
-        if (data.isEmpty || !data.containsKey('userId')) return;
+      final data = doc.data() as Map<String, dynamic>;
+      if (data.isEmpty || !data.containsKey(AppStrings.userId)) return;
 
-        final userId = data['userId'];
-        final isActive = data['friendId'] != null;
+      final userId = data[AppStrings.userId];
+      final isActive = data[AppStrings.friendId] != null;
 
-        final userAccountDoc = await _repository.getAccountData(userId);
-        if (!userAccountDoc.exists) return;
+      final userAccountDoc = await _repository.getAccountData(userId);
+      if (!userAccountDoc.exists) return;
 
-        final userAccount = await _repository.getAccountMap(userAccountDoc);
+      final userAccount = await _repository.getAccountMap(userAccountDoc);
 
-        Map<String, dynamic> friendAccount = {};
-        if (isActive) {
-          final friendAccountDoc = await _repository.getAccountData(
-              data['friendId']);
-          if (friendAccountDoc.exists) {
-            friendAccount = await _repository.getAccountMap(friendAccountDoc);
-          }
+      Map<String, dynamic> friendAccount = {};
+      if (isActive) {
+        final friendAccountDoc = await _repository.getAccountData(
+            data[AppStrings.friendId]);
+        if (friendAccountDoc.exists) {
+          friendAccount = await _repository.getAccountMap(friendAccountDoc);
         }
+      }
 
-        final counts = await _repository.getPostCounts(doc.id);
-        final hasMeLiked = await _repository.hasMeLiked(doc.id);
+      final counts = await _repository.getPostCounts(doc.id);
+      final hasMeLiked = await _repository.hasMeLiked(doc.id);
 
-        posts.add(
-          PostModel.fromFirestoreToPost({
-            ...userAccount,
-            ...data,
-            ...friendAccount,
-            'docId': doc.id,
-            'hasMeLiked': hasMeLiked,
-            'likesNumber': counts.likesCount,
-            'commentsNumber': counts.commentsCount,
-          }),
-        );
+      posts.add(
+        PostModel.fromFirestoreToPost({
+          ...userAccount,
+          ...data,
+          ...friendAccount,
+          AppStrings.docId: doc.id,
+          AppStrings.hasMeLiked: hasMeLiked,
+          AppStrings.likesNumber: counts.likesCount,
+          AppStrings.commentsNumber: counts.commentsCount,
+        }),
+      );
     }).toList());
 
     posts.sort((a, b) => b.myDateTime!.compareTo(a.myDateTime!));
@@ -127,8 +128,8 @@ class PublicUseCase {
     }
 
     var friendsQuery = _repository.getFriendsForStatus(
-      lastStatusDoc: lastStatusDoc,
-      limit: 10,
+        limit: 10,
+        lastStatusDoc: lastStatusDoc
     );
 
     final friendsSnapshot = await friendsQuery;
@@ -138,10 +139,10 @@ class PublicUseCase {
 
     if (friendsSnapshot.docs.isEmpty) {
       return PublicStatuses(
-        myStatuses: [],
-        homeStatusesList: [],
-        hasMoreStatuses: false,
-        lastStatusDoc: lastStatusDoc,
+          myStatuses: [],
+          homeStatusesList: [],
+          hasMoreStatuses: false,
+          lastStatusDoc: lastStatusDoc
       );
     }
 
@@ -150,8 +151,8 @@ class PublicUseCase {
         .toList();
     friendsUIds.add(_sessionService.currentUid);
 
-    List<List<PostModel>> statusModelList = [];
     List<PostModel> myStatuses = [];
+    List<List<PostModel>> statusModelList = [];
 
     for (final uId in friendsUIds) {
       try {
@@ -159,7 +160,7 @@ class PublicUseCase {
         if (statusSnapshot.docs.isEmpty) continue;
 
         final accountSnapshot = await _repository.getAccountData(
-            statusSnapshot.docs.first['userId']
+            statusSnapshot.docs.first[AppStrings.userId]
         );
         if (!accountSnapshot.exists) continue;
 

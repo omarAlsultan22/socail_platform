@@ -9,7 +9,7 @@ class InitialStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return text != null ? Center(child: Text(text!)) : const Center(
-        child: SizedBox()
+        child: SizedBox.shrink()
     );
   }
 }

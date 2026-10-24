@@ -1,26 +1,20 @@
-import 'package:social_app/core/data/models/my_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/data/models/my_model.dart';
 
 
 abstract class MainRepository {
 
-  Future<QuerySnapshot> getAllUsersExceptCurrent({required String uId});
-
-  List<MyModel> convertUsersToModels(QuerySnapshot snapshot);
-
-  Future<QuerySnapshot> getFriendsList({required String uId});
+  Future<QuerySnapshot> getFriendRequests();
 
   Future<QuerySnapshot> getUnreadNotifications();
 
   Stream<QuerySnapshot> getNotificationsStream();
 
-  Future<QuerySnapshot> getFriendRequests();
-
-  Future<QuerySnapshot> getAllMessages();
-
   Stream<QuerySnapshot> getFriendRequestsStream();
 
-  Future<QuerySnapshot> getUnreadConversations(String messageDocId);
+  List<MyModel> convertUsersToModels(QuerySnapshot snapshot);
 
-  Stream<QuerySnapshot> getUnreadConversationsStream(String messageDocId);
+  Future<QuerySnapshot> getFriendsList({required String uId});
+
+  Future<QuerySnapshot> getAllUsersExceptCurrent({required String uId});
 }

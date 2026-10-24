@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
 
 
 class BuildCameraIcon extends StatelessWidget {
@@ -20,12 +22,12 @@ class BuildCameraIcon extends StatelessWidget {
       child: ClipOval(
         child: Material(
           child: InkWell(
-            splashColor: Colors.blue,
+            splashColor: AppColors.primaryBlue,
             onTap: onTap,
             child:
             SizedBox(
-              width: 30.0,
-              height: 30.0,
+              width: AppSizes.size30,
+              height: AppSizes.size30,
               child: Icon(Icons.camera),
             ),
           ),

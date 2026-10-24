@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_durations.dart';
 
 
 class SearchDebounce {
@@ -10,7 +11,7 @@ class SearchDebounce {
   final VoidCallback onClear;
 
   SearchDebounce({
-    this.delay = const Duration(milliseconds: 500),
+    this.delay = AppDurations.debounce,
     required this.onSearch,
     required this.onClear,
   }) {

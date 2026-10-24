@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_colors.dart';
 
 
 class VideoTimeIndicator extends StatelessWidget {
@@ -10,6 +11,11 @@ class VideoTimeIndicator extends StatelessWidget {
     required this.duration,
     super.key,
   });
+
+  static const TextStyle _timeStyle = TextStyle(
+    color: AppColors.white,
+    fontSize: 12,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +31,11 @@ class VideoTimeIndicator extends StatelessWidget {
       children: [
         Text(
           '$minutes:$seconds',
-          style: const TextStyle(color: Colors.white, fontSize: 12),
+          style: _timeStyle,
         ),
         Text(
           '$totalMinutes:$totalSeconds',
-          style: const TextStyle(color: Colors.white, fontSize: 12),
+          style: _timeStyle,
         ),
       ],
     );

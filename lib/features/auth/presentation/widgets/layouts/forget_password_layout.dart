@@ -2,6 +2,7 @@ import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../../constants/auth_strings.dart';
 import '../../../../../core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
 import '../../../../../core/data/models/message_result.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 
@@ -67,7 +68,7 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey.shade900,
+        backgroundColor: AppColors.grey900,
         appBar: AppBar(
             title: const Text('Forget Password'),
             backgroundColor: AppColors.transparent
@@ -82,7 +83,7 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
                   border: const OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 20),
+              AppSpaces.vertical_20,
               ElevatedButton(
                 style: buttonStyle(),
                 onPressed: _isLocked ? null : _sendResetEmail,
@@ -94,4 +95,3 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
     );
   }
 }
-

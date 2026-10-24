@@ -5,8 +5,8 @@ import '../widgets/layouts/profile_layout.dart';
 import '../../../../core/di/service _locator.dart';
 import '../../../../core/services/data/session_service.dart';
 import '../../../../core/services/domain/i_media_upload_service.dart';
-import '../../../../core/presentation/widgets/states/initial_state.dart';
-import '../../../../core/presentation/widgets/states/loading_state.dart';
+import '../../../../core/presentation/widgets/states/initial_state_widget.dart';
+import '../../../../core/presentation/widgets/states/loading_state_widget.dart';
 import 'package:social_app/features/profile/presentation/cubits/user_profile_cubit.dart';
 
 

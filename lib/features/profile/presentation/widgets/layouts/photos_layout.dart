@@ -2,9 +2,16 @@ import '../view_images.dart';
 import 'package:flutter/material.dart';
 import '../../../constants/profile_strings.dart';
 import '../../../data/models/albums_buttons.dart';
+import '../../../../../core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import '../../../../../core/data/models/paginated_posts.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/features/profile/constants/photo_section.dart';
 
 
@@ -48,34 +55,22 @@ class _PhotosLayoutState extends State<PhotosLayout> {
   List<PostModel> get profilePictures => widget.paginatedPostsMap[PhotoSection.profile]!.dataList;
 
   List<ViewImages> get _albumsScreens => [
-    ViewImages(
-      onAdd: widget.onAdd,
-      onUpsert: widget.onUpsert,
-      onRemove: widget.onRemove,
-      onToggle: widget.onToggle,
-      imagesList: postsImages,
-      messageResult: widget.messageResult,
-      title: ProfileStrings.postsImages,
-    ),
-    ViewImages(
-      onAdd: widget.onAdd,
-      onUpsert: widget.onUpsert,
-      onRemove: widget.onRemove,
-      onToggle: widget.onToggle,
-      imagesList: profilePictures,
-      messageResult: widget.messageResult,
-      title: ProfileStrings.profilePictures,
-    ),
-    ViewImages(
-      onAdd: widget.onAdd,
-      onUpsert: widget.onUpsert,
-      onRemove: widget.onRemove,
-      onToggle: widget.onToggle,
-      imagesList: coverPhotos,
-      messageResult: widget.messageResult,
-      title: ProfileStrings.coverPhotos,
-    ),
+    _buildViewImages(postsImages, ProfileStrings.postsImages),
+    _buildViewImages(profilePictures, ProfileStrings.profilePictures),
+    _buildViewImages(coverPhotos, ProfileStrings.coverPhotos),
   ];
+
+  ViewImages _buildViewImages(List<PostModel> images, String title) {
+    return ViewImages(
+      onAdd: widget.onAdd,
+      onUpsert: widget.onUpsert,
+      onRemove: widget.onRemove,
+      onToggle: widget.onToggle,
+      imagesList: images,
+      messageResult: widget.messageResult,
+      title: title,
+    );
+  }
 
   List<AlbumsButtons> get _albumsButtons => [
     AlbumsButtons(
@@ -117,41 +112,38 @@ class _PhotosLayoutState extends State<PhotosLayout> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min, // Important change
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    "Albums",
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SizedBox(
-                    height: 220.0,
-                    child: AlbumsList(
-                      albumsButtons: _albumsButtons,
-                      onPressed: (index) {
-                        widget.changeIndex(index);
-                      },
-                      currentIndex: widget.currentIndex,
-                    ),
-                  ),
-                ),
-                Container(height: 1.0, color: Colors.grey),
-                _albumsScreens[widget.currentIndex],
-              ],
+      child: Padding(
+        padding: AppPaddings.xs,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min, // Important change
+          children: [
+            Padding(
+              padding: AppPaddings.onlyTop10,
+              child: Text(
+                "Albums",
+                style: AppTextStyles.boldLarge,
+              ),
             ),
-          ),
+            Padding(
+              padding: AppPaddings.onlyTop20,
+              child: SizedBox(
+                height: AppSizes.size220,
+                child: AlbumsList(
+                  albumsButtons: _albumsButtons,
+                  onPressed: (index) {
+                    widget.changeIndex(index);
+                  },
+                  currentIndex: widget.currentIndex,
+                ),
+              ),
+            ),
+            Container(height: 1.0, color: AppColors.grey),
+            _albumsScreens[widget.currentIndex],
+          ],
+        ),
+      ),
     );
   }
 }
@@ -206,45 +198,42 @@ class AlbumLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: AppPaddings.xs,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           AspectRatio(
             aspectRatio: 1,
             child: Container(
-              height: 180.0,
+              height: AppSizes.size180,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: Colors.white70),
+                borderRadius: AppBorders.borderRadius_10,
+                border: Border.all(color: AppColors.white70),
               ),
               child: InkWell(
                 onTap: onPressed,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: AppBorders.borderRadius_10,
                   child: albumIButtons.imagesListIsNotEmpty
                       ? Image.network(
-                    albumIButtons.userPost ?? '',
+                    albumIButtons.userPost ?? AppStrings.empty,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        color: Colors.grey,
+                        color: AppColors.grey,
                         child: const Icon(Icons.image),
                       );
                     },
                   )
-                      : SizedBox(),
+                      : SizedBox.shrink(),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 8.0),
+          AppSpaces.vertical_8,
           Text(
             albumIButtons.albumText,
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.boldMedium,
           ),
         ],
       ),

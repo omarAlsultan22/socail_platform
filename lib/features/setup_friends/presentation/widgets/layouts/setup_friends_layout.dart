@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_constants.dart';
 import '../../../../main/presentation/screens/main_screen.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
 import '../../../../../core/presentation/widgets/layouts/user_row_layout.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import '../../../../../core/presentation/widgets/states/loading_state_widget.dart';
 
 
 class AddNewFriendsLayout extends StatefulWidget {
@@ -28,15 +31,12 @@ class AddNewFriendsLayout extends StatefulWidget {
 class _AddNewFriendsLayoutState extends State<AddNewFriendsLayout> {
   bool isActive = false;
 
-  bool _checkButtonIsActive(int friendsNumber) {
-    if (friendsNumber >= 10) {
-      setState(() {
-        isActive = true;
-      });
-      widget.onSave();
-      return isActive;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.friendsNumber >= AppConstants.minFriends) {
+      isActive = true;
     }
-    return isActive;
   }
 
   @override
@@ -56,15 +56,14 @@ class _AddNewFriendsLayoutState extends State<AddNewFriendsLayout> {
                       userRow: friend,
                       onPressed: () => widget.onAdd(friend),
                     ),
-                fallback: const Center(
-                    child: CircularProgressIndicator())
+                fallback: LoadingStateWidget()
             ),
           ),
           Container(
             width: double.infinity,
-            color: isActive ? Colors.amber : null,
+            color: isActive ? AppColors.primaryAmber : null,
             child: MaterialButton(
-              onPressed: _checkButtonIsActive(widget.friendsNumber)
+              onPressed: isActive
                   ? () =>
                   BuildNavigator.build(context: context, link: MainScreen())
                   : null,
@@ -76,4 +75,3 @@ class _AddNewFriendsLayoutState extends State<AddNewFriendsLayout> {
     );
   }
 }
-

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
 import 'package:social_app/features/notifications/presentation/widgets/layouts/notifications_layout.dart';
@@ -14,14 +18,11 @@ class NotificationListBuilder extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.all(8.0),
+        Padding(
+          padding: AppPaddings.xs,
           child: Text(
             'Notifications',
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.boldXLarge,
           ),
         ),
         ConditionalBuilder(
@@ -38,19 +39,14 @@ class NotificationListBuilder extends StatelessWidget {
                 key: const Key('notification_list'), // Add a key
               ),
           fallback: (context) =>
-          const Center(
-            child: Text(
-              "No notifications available",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          ),
+              Center(
+                child: Text(
+                  AppStrings.noNotifications,
+                  style: AppTextStyles.bodyXLarge.copyWith(color: AppColors.grey),
+                ),
+              ),
         ),
       ],
     );
   }
 }
-
-
-
-
-

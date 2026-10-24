@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:social_app/core/themes/app_theme.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../features/public/constants/public_constants.dart';
 
 
@@ -23,25 +26,26 @@ class _BuildUserInfoSectionState extends State<BuildUserInfoSection> {
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = widget.myImageUrl.isNotEmpty;
     return Row(
       children: [
         Padding(
-          padding: const EdgeInsets.only(right: 10.0),
+          padding: AppPaddings.onlyRight10,
           child: Container(
             height: 50.0,
             width: 50.0,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50.0),
-              border: widget.myImageUrl.isEmpty ? Border.all(
+              borderRadius: AppBorders.borderRadius_50,
+              border: hasImage ? null : Border.all(
                   color: AppTheme.getAdaptiveColor(context)
-              ) : null,
+              ),
               image: DecorationImage(
                 image: NetworkImage(widget.myImageUrl),
                 fit: BoxFit.cover,
               ),
             ),
-            child: widget.myImageUrl.isEmpty ?
-            Icon(Icons.person) : SizedBox(),
+            child: hasImage ?
+            SizedBox.shrink() : Icon(Icons.person),
           ),
         ),
         Column(
@@ -57,14 +61,14 @@ class _BuildUserInfoSectionState extends State<BuildUserInfoSection> {
               ),
             ),
             DropdownButton<String>(
-              value: selectedValue ?? 'public',
+              value: selectedValue ?? PublicConstants.public,
               items: PublicConstants.statusesElements.map((e) {
                 return DropdownMenuItem<String>(
                   value: e.value,
                   child: Row(
                     children: [
                       Icon(e.icon),
-                      const SizedBox(width: 8.0),
+                      AppSpaces.horizontal_8,
                       Text(e.text),
                     ],
                   ),

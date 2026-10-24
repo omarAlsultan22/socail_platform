@@ -1,8 +1,14 @@
+import '../friend_button.dart';
 import 'package:flutter/material.dart';
 import '../../../di/service _locator.dart';
 import '../../../../../core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_assets.dart';
+import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/services/data/session_service.dart';
-import '../friend_button.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 
 
@@ -22,7 +28,7 @@ class UserRowLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: AppPaddings.symmetricVertical8,
       child: InkWell(
         onTap: () =>
             FriendProfileNavigator.handle(
@@ -38,33 +44,30 @@ class UserRowLayout extends StatelessWidget {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: AppPaddings.xs,
                   child: CircleAvatar(
                     radius: 25.0,
-                    backgroundImage: userRow.myImageUrl != null
-                        ? NetworkImage(userRow.myImageUrl!)
+                    backgroundImage: !userRow.myImageUrlIsEmpty
+                        ? NetworkImage(userRow.myImageUrl)
                         : const AssetImage(
-                        'assets/default_avatar.png') as ImageProvider,
+                        AppAssets.defaultAvatar) as ImageProvider,
                   ),
                 ),
-                const SizedBox(width: 8.0),
+                AppSpaces.horizontal_8,
                 Text(
-                  userRow.myName ?? 'Unknown User',
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  userRow.myName ?? AppStrings.unknownUser,
+                  style: AppTextStyles.boldMedium,
                 ),
               ],
             ),
             // Friend Button Section
             if (userRow.isFriend == true && onPressed != null)
               Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: AppPaddings.onlyRight8,
                 child: FriendButton(
-                  buttonName: 'Add Friend',
-                  backgroundColor: Colors.blue.shade900,
-                  textColor: Colors.white,
+                  buttonName: AppStrings.addFriend,
+                  backgroundColor: AppColors.primaryBlue,
+                  textColor: AppColors.white,
                   onPressed: onPressed!,
                 ),
               ),

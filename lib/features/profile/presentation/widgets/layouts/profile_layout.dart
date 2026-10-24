@@ -5,9 +5,16 @@ import '../../screens/posts_screen.dart';
 import '../../screens/photos_screen.dart';
 import '../../screens/videos_screen.dart';
 import '../../../../public/data/models/user_details.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/data/models/user_info_model.dart';
+import 'package:social_app/core/constants/friend_button_state.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/presentation/widgets/friend_button.dart';
 import '../../../../../core/services/domain/i_media_upload_service.dart';
@@ -70,22 +77,22 @@ class _ProfileLayoutState extends State<ProfileLayout> {
       ];
 
   late final Map<String, FriendButton> _friendshipButton = {
-    'friend': FriendButton(
-        buttonName: 'Unfriend',
+    FriendButtonState.friend.key: FriendButton(
+        buttonName: FriendButtonState.unfriend.label,
         onPressed: () =>
             widget.deleteFriendship(_uId)
     ),
 
-    'request': FriendButton(
-        buttonName: 'Cancel Request',
+    FriendButtonState.request.key: FriendButton(
+        buttonName: FriendButtonState.cancelRequest.label,
         onPressed: () =>
             widget.deleteRequests(_uId)
     ),
 
-    'unfriend': FriendButton(
-        buttonName: 'Add Friend',
-        backgroundColor: Colors.blue.shade900,
-        textColor: Colors.white,
+    FriendButtonState.unfriend.key: FriendButton(
+        buttonName: FriendButtonState.addFriend.label,
+        backgroundColor: AppColors.primaryBlue,
+        textColor: AppColors.white,
         onPressed: () =>
             widget.insertFriendsRequests(_uId)
     )
@@ -139,7 +146,7 @@ class _ProfileLayoutState extends State<ProfileLayout> {
           titleName: titleName,
           postModel: PostModel(
               file: file,
-              pathType: 'image',
+              pathType: AppStrings.image,
               isProfilePost: true,
               userPost: file!.path,
               postType: folderName
@@ -175,12 +182,12 @@ class _ProfileLayoutState extends State<ProfileLayout> {
           },
           child: SizedBox(
             width: double.infinity,
-            height: 200.0,
+            height: AppSizes.size200,
             child: !widget.userInfoModel.coverImageIsEmpty ?
             Image.network(
               widget.userInfoModel.coverImageUrl,
               fit: BoxFit.cover,
-            ): const SizedBox(),
+            ) : const SizedBox.shrink(),
           ),
         ),
         _uId == _currentUid ?
@@ -190,11 +197,11 @@ class _ProfileLayoutState extends State<ProfileLayout> {
             onTap: () =>
                 _createPost(
                   userDetails: userDetails,
-                  folderName: 'coverImage',
+                  folderName: AppStrings.coverImage,
                   titleName: 'Create cover photo',
                 )
         )
-            : const SizedBox(),
+            : const SizedBox.shrink(),
         _buildProfileImage(userDetails),
         _uId == _currentUid ?
         BuildCameraIcon(
@@ -203,33 +210,30 @@ class _ProfileLayoutState extends State<ProfileLayout> {
             onTap: () =>
                 _createPost(
                     userDetails: userDetails,
-                    folderName: 'profileImage',
+                    folderName: AppStrings.profileImage,
                     titleName: 'Create profile picture'
                 )
         ) :
         widget.userInfoModel.meIsOnline == true ?
-        const Padding(
-          padding: EdgeInsets.only(
-            left: 125.0,
-            top: 225.0,
-          ),
+        Padding(
+          padding: AppPaddings.onlyLeft125Top225,
           child: CircleAvatar(
-            radius: 7.0,
-            backgroundColor: Colors.blue,
+            radius: AppSizes.onlineIndicatorLarge,
+            backgroundColor: AppColors.primaryBlue,
           ),
-        ) : const SizedBox(),
+        ) : const SizedBox.shrink(),
       ],
     );
   }
 
   Widget _buildProfileImage(UserDetails userDetails) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0, top: 100.0),
+      padding: AppPaddings.onlyLeft10Top100,
       child:
       ClipOval(
         child: Material(
           child: InkWell(
-            splashColor: Colors.blue,
+            splashColor: AppColors.primaryBlue,
             onTap: () {
               BuildNavigator.build(
                   context: context,
@@ -247,13 +251,13 @@ class _ProfileLayoutState extends State<ProfileLayout> {
             },
             child:
             SizedBox(
-              width: 150.0,
-              height: 150.0,
+              width: AppSizes.avatarLarge,
+              height: AppSizes.avatarLarge,
               child: !widget.userInfoModel.profileImageIsEmpty ?
               Image.network(
                 widget.userInfoModel.profileImageUrl,
                 fit: BoxFit.cover,
-              ) : Icon(Icons.person, size: 50.0),
+              ) : Icon(Icons.person, size: AppSizes.xl),
             ),
           ),
         ),
@@ -268,15 +272,15 @@ class _ProfileLayoutState extends State<ProfileLayout> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, top: 10.0),
+              padding: AppPaddings.onlyLeft10Top10,
               child: Text(
                 userDetails.myName,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+                style: AppTextStyles.boldTitle,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 15.0, bottom: 10.0),
+              padding: AppPaddings.onlyLeft15Bottom10,
               child: Text(
                 widget.userInfoModel.myState,
                 style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),
@@ -284,14 +288,14 @@ class _ProfileLayoutState extends State<ProfileLayout> {
             ),
           ],
         ),
-        SizedBox(width: 10.0,),
+        AppSpaces.horizontal_10,
         _uId != _currentUid ?
-        friendshipButton() : SizedBox(),
+        friendshipButton() : SizedBox.shrink(),
       ],
     );
   }
 
   Widget friendshipButton() {
-    return _friendshipButton[widget.friendshipButtonKey] ?? SizedBox();
+    return _friendshipButton[widget.friendshipButtonKey] ?? SizedBox.shrink();
   }
 }

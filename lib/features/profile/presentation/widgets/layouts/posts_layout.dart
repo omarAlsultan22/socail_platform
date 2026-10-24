@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
 import 'package:social_app/core/data/models/my_model.dart';
-import 'package:social_app/core/services/data/session_service.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/data/models/profile_info.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
 import 'package:social_app/core/presentation/widgets/post_card.dart';
 import '../../../../../core/presentation/widgets/current_user_selector.dart';
@@ -84,14 +90,13 @@ class _PostsLayoutState extends State<PostsLayout> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: AppPaddings.all10,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Details',
-              style: TextStyle(
-                  fontSize: 18.0, fontWeight: FontWeight.bold),
+              style: AppTextStyles.boldLarge,
             ),
             _personalDetails(icon: Icons.work,
                 textAddress: 'Works at',
@@ -104,9 +109,9 @@ class _PostsLayoutState extends State<PostsLayout> {
                 textValue: widget.profileInfo.userFrom),
             _personalDetails(icon: Icons.favorite,
                 textAddress: widget.profileInfo.userRelational),
-            Container(height: 1.0, color: Colors.grey),
+            Container(height: 1.0, color: AppColors.grey),
             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: AppPaddings.onlyTop8,
               child: GestureDetector(
                 onTap: () =>
                     BuildNavigator.build(context: context,
@@ -115,10 +120,9 @@ class _PostsLayoutState extends State<PostsLayout> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('Friends', style: TextStyle(
-                        fontSize: 18.0, fontWeight: FontWeight.bold)),
+                    Text('Friends', style: AppTextStyles.boldLarge),
                     Text('friends ${widget.friendsList.length}',
-                        style: TextStyle(fontSize: 16.0)),
+                        style: AppTextStyles.bodyXLarge),
                   ],
                 ),
               ),
@@ -133,14 +137,14 @@ class _PostsLayoutState extends State<PostsLayout> {
                 startIndex: 3,
                 length: length
             ),
-            Container(height: 1.0, color: Colors.grey),
+            Container(height: 1.0, color: AppColors.grey),
             widget.userId == widget.sessionService.currentUid ?
             PostCreationWidget(
               uId: widget.userId,
               onUpsert: widget.onUpsert,
               messageResult: widget.messageResult,
-            ) : SizedBox(),
-            Container(height: 1.0, color: Colors.grey),
+            ) : SizedBox.shrink(),
+            Container(height: 1.0, color: AppColors.grey),
             _postsBuilder(
               profileData: widget.postsList,
             )
@@ -192,15 +196,15 @@ class _PostsLayoutState extends State<PostsLayout> {
             } else {
               return widget.hasMorePosts
                   ? Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: AppPaddings.medium,
                 child: Center(
                   child: Text(
-                    'Loading more...',
-                    style: TextStyle(color: Colors.blue.shade700),
+                    AppStrings.loadingMore,
+                    style: TextStyle(color: AppColors.primaryBlue),
                   ),
                 ),
               )
-                  : const SizedBox();
+                  : const SizedBox.shrink();
             }
           },
           separatorBuilder: (context, index) =>
@@ -215,15 +219,12 @@ class _PostsLayoutState extends State<PostsLayout> {
     required IconData icon,
   }) =>
       Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        padding: AppPaddings.symmetricVertical10,
         child: Row(
             children: [
               Icon(icon),
               Text(textAddress ?? 'N/A',
-                style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.normal
-                ),
+                style: AppTextStyles.bodyXLarge,
               ),
               Text(textValue ?? 'N/A',
                 style: TextStyle(
@@ -242,16 +243,16 @@ class _PostsLayoutState extends State<PostsLayout> {
   }) =>
       Expanded(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: AppPaddings.xs,
           child: Column(
             children: [
               AspectRatio(
                 aspectRatio: 1,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: AppBorders.borderRadius_10,
                   ),
-                  height: 100.0,
+                  height: AppSizes.size100,
                   child: InkWell(
                     onTap: onTap,
                     child: Image(image: NetworkImage(image), fit: BoxFit.cover),
@@ -260,7 +261,7 @@ class _PostsLayoutState extends State<PostsLayout> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: AppBorders.borderRadius_10,
                 ),
                 child: InkWell(
                   onTap: onTap,
@@ -289,7 +290,7 @@ class _PostsLayoutState extends State<PostsLayout> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(displayCount, (index) {
           int friendIndex = startIndex + index;
-          if (friendIndex >= length) return SizedBox();
+          if (friendIndex >= length) return SizedBox.shrink();
 
           final friendModel = friends[friendIndex];
           final userId = friendModel.myId;

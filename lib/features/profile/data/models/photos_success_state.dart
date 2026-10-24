@@ -1,6 +1,5 @@
 import '../../../../core/data/models/message_result.dart';
 import '../../../../core/data/models/paginated_posts.dart';
-import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/core/presentation/states/base/main_loaded_state.dart';
 
 

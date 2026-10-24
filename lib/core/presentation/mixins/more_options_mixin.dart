@@ -4,6 +4,8 @@ import '../widgets/small_menu_widget.dart';
 import '../screens/create_post_screen.dart';
 import '../widgets/exit_dialog_helper.dart';
 import '../widgets/navigation/navigator.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/presentation/mixins/post_context.dart';
 
 
@@ -38,7 +40,7 @@ mixin MoreOptionsMixin <T extends StatefulWidget> on State<T>, TickerProvider im
 
   void addAnimationValue() {
     if (postModel.myId == sessionService.currentUid) {
-        value = 70.0;
+      value = 70.0;
     }
   }
 
@@ -68,8 +70,8 @@ mixin MoreOptionsMixin <T extends StatefulWidget> on State<T>, TickerProvider im
           width: 100.0,
           height: isOpen ? animation.value : animation.value,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: Colors.grey.shade300
+              borderRadius: AppBorders.borderRadius_10,
+              color: AppColors.lightGrey300
           ),
           child: Column(
             children: [

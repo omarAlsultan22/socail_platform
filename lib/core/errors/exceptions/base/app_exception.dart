@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import '../../../presentation/widgets/states/error_state.dart';
+import '../../../presentation/widgets/states/error_state_widget.dart';
 
 
 abstract class AppException implements Exception {

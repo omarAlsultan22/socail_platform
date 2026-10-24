@@ -10,10 +10,6 @@ class MainUseCases {
   MainUseCases({required MainRepository repository})
       : _repository = repository;
 
-  Future<QuerySnapshot<Object?>> getMessages() async {
-    return await _repository.getAllMessages();
-    }
-
   Future<List<MyModel>> executeCheckOnAnyFriends(
       {required String uId}) async {
     final friendsSnapshot = await _repository.getFriendsList(uId: uId);
@@ -70,54 +66,6 @@ class MainUseCases {
       return (
       count: snapshot.size,
       docIds: snapshot.docs.map((doc) => doc.id).toSet(),
-      );
-    });
-  }
-
-  Future<({
-  int count,
-  Set<String> docIds,
-  List<StreamSubscription> subscriptions,
-  })> executeGetInitialMessagesCount() async {
-    final messagesQuery = await _repository.getAllMessages();
-    int totalCount = 0;
-    final Set<String> allDocIds = {};
-    final List<StreamSubscription> subscriptions = [];
-
-    for (final doc in messagesQuery.docs) {
-      final snapshot = await _repository.getUnreadConversations(doc.id);
-      totalCount += snapshot.size;
-      allDocIds.addAll(snapshot.docs.map((d) => d.id));
-    }
-
-    return (
-    count: totalCount,
-    docIds: allDocIds,
-    subscriptions: subscriptions,
-    );
-  }
-
-  Stream<({
-  int count,
-  Set<String> docIds,
-  })> executeGetMessagesStreamForDoc(String docId, int currentCount,
-      Set<String> currentDocIds) {
-    return _repository.getUnreadConversationsStream(docId).map((snapshot) {
-      final newDocIds = snapshot.docs.map((d) => d.id).toSet();
-      int unreadMessages = 0;
-
-      for (var doc in snapshot.docs) {
-        if (doc['unreadMessage'] == true) {
-          unreadMessages++;
-        }
-      }
-
-      final newCount = currentCount + unreadMessages -
-          (currentDocIds.length - newDocIds.length);
-
-      return (
-      count: newCount,
-      docIds: newDocIds,
       );
     });
   }

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:social_app/core/themes/app_theme.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 
 
 class PublishingConfirmationScreen extends StatefulWidget {
@@ -118,7 +120,7 @@ class _PublishingConfirmationScreenState extends State<PublishingConfirmationScr
     }
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: AppPaddings.medium,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -142,7 +144,7 @@ class _PublishingConfirmationScreenState extends State<PublishingConfirmationScr
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: AppPaddings.symmetricHorizontal16Vertical0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -161,7 +163,7 @@ class _PublishingConfirmationScreenState extends State<PublishingConfirmationScr
                 border: Border.all(
                     color: AppTheme.getAdaptiveColor(context)
                 ),
-                borderRadius: BorderRadius.circular(50.0)
+                borderRadius: AppBorders.borderRadius_50
             ),
             child: IconButton(
               icon: Icon(

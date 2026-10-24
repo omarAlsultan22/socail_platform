@@ -1,5 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/data/models/post_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../core/data/posts/constants/posts_collection.dart';
 import 'package:social_app/core/data/posts/queries/posts_query_builder.dart';
 import '../../../../core/data/data_sources/remote/firestore/firestore_service_impl.dart';
@@ -10,13 +11,15 @@ class ProfileDataSourceImpl extends FirestoreServiceImpl implements ProfileDataS
 
   @override
   Future<String> createAndSetDoc({
-    bool merge = true,
+    bool isMerge = true,
     required String collectionPath,
     required Map<String, dynamic> data,
   }) async {
-    final docRef = firestore.collection(collectionPath).doc();
-    await docRef.set(data, SetOptions(merge: merge)).timeout(duration);
-    return docRef.id;
+    return getRefAndSetDoc(
+        data: data,
+        isMerge: isMerge,
+        collectionPath: collectionPath
+    );
   }
 
   @override
@@ -49,10 +52,10 @@ class ProfileDataSourceImpl extends FirestoreServiceImpl implements ProfileDataS
     required DocumentSnapshot? lastPostDoc,
   }) async {
     var query = firestore
-        .collection('posts')
-        .where('userId', isEqualTo: userId)
+        .collection(AppStrings.posts)
+        .where(AppStrings.userId, isEqualTo: userId)
         .where(
-        'postType', whereIn: [postType ?? PostsCollection.postTypesList]);
+        AppStrings.postType, whereIn: [postType ?? PostsCollection.postTypesList]);
 
     return PostsQueryBuilder.build(
         limit: limit,
@@ -68,7 +71,7 @@ class ProfileDataSourceImpl extends FirestoreServiceImpl implements ProfileDataS
     required PostModel postModel,
     required String collectionPath,
   }) async {
-    final docRef = createDoc(collectionPath: 'posts');
+    final docRef = createDoc(collectionPath: AppStrings.posts);
     await setSupDoc(
         isMerge: true,
         docId: currentUid,

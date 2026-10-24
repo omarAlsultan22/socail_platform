@@ -2,6 +2,7 @@ import 'dart:async';
 import '../states/main_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/use_cases/main_use_case.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../core/services/domain/i_notification_service.dart';
 import '../../../../core/services/domain/i_user_account_service.dart';
@@ -118,7 +119,7 @@ class MainCubit extends Cubit<MainState> with ErrorHandlerMixin<MainState> {
 
         for (var doc in data.docs) {
           final userModel = await _userAccountService.getUserModelData(
-              id: doc['friendId']);
+              id: doc[AppStrings.friendId]);
           if (state.isMessageActive) {
             _notificationService.sendInteractionNotification({
               ...doc.data() as Map<String, dynamic>,

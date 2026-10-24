@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import '../../../../profile/presentation/screens/user_profile_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
-import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 
 
 class SearchLayout extends StatelessWidget {
@@ -20,30 +22,27 @@ class SearchLayout extends StatelessWidget {
     return InkWell(
       onTap: () {
         BuildNavigator.build(
-            context: context, link: UserProfileScreen(friendId: userModel.myId!));
+            context: context,
+            link: UserProfileScreen(friendId: userModel.myId));
       },
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: AppPaddings.all10,
         child: Row(
           children: [
             SizedBox(
-              width: 40.0,
-              height: 40.0,
+              width: AppSizes.size40,
+              height: AppSizes.size40,
               child: ClipOval(
                 child: Image.network(
-                  userModel.myImageUrl!,
+                  userModel.myImageUrl,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  left: 10.0),
-              child: Text(userModel.myName!,
-                style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold
-                ),
+              padding: AppPaddings.onlyLeft10,
+              child: Text(userModel.myName,
+                style: AppTextStyles.boldLarge,
               ),
             )
           ],
@@ -54,20 +53,16 @@ class SearchLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConditionalBuilder(
-        condition: searchData.isNotEmpty,
-        builder: (context) =>
-            Expanded(
-              child: ListView.separated(
-                  itemBuilder: (context, index) =>
-                      _searchItemsBuilder(
-                          userModel: searchData[index],
-                          context: context
-                      ),
-                  separatorBuilder: (context, index) => SizedBox(height: 1.0),
-                  itemCount: searchData.length),
-            ),
-        fallback: (context) => Container());
+    return Expanded(
+        child: ListView.separated(
+            itemBuilder: (context, index) =>
+                _searchItemsBuilder(
+                    userModel: searchData[index],
+                    context: context
+                ),
+            separatorBuilder: (context, index) => SizedBox(height: 1.0),
+            itemCount: searchData.length
+        )
+    );
   }
 }
-

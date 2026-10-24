@@ -2,13 +2,15 @@ import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../screens/sign_in_screen.dart';
 import '../../../../../core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_spaces.dart';
 import 'package:social_app/core/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/services/data/session_service.dart';
-import 'package:social_app/core/presentation/widgets/app_spaces.dart';
+import 'package:social_app/core/presentation/widgets/ltr_wrapper.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
+import '../../../../../core/presentation/widgets/states/loading_state_widget.dart';
 
 
 class ChangeEmailAndPasswordLayout extends StatefulWidget {
@@ -97,21 +99,20 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
+    return LtrWrapper(
       child: Scaffold(
-        backgroundColor: Colors.grey.shade900,
+        backgroundColor: AppColors.grey900,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            color: Colors.white,
+            color: AppColors.white,
             onPressed: _isLocked ? null : () => Navigator.pop(context),
           ),
           title: const Text(
             'Change email and password',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: AppColors.white),
           ),
           actions: [
             Padding(
@@ -145,7 +146,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
       ignoring: widget.messageResult.isLoading,
       child: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: AppPaddings.all24,
           child: Form(
             key: _formKey,
             child: Column(
@@ -206,10 +207,8 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
                   },
                 ),
                 if (_isLocked) ...[
-                  const SizedBox(height: 24),
-                  const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
-                  ),
+                  AppSpaces.vertical_24,
+                  LoadingStateWidget(),
                 ],
               ],
             ),

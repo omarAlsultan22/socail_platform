@@ -6,8 +6,8 @@ import '../../../../shared/coordination/post_coordinator.dart';
 import '../../../../shared/coordination/post_sync_groups.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../core/services/domain/i_media_upload_service.dart';
-import '../../../../core/presentation/widgets/states/initial_state.dart';
-import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
+import '../../../../core/presentation/widgets/states/initial_state_widget.dart';
+import 'package:social_app/core/presentation/widgets/states/loading_state_widget.dart';
 import 'package:social_app/features/profile/presentation/states/profile_state.dart';
 import 'package:social_app/features/profile/presentation/cubits/my_profile_cubit.dart';
 

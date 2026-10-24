@@ -1,6 +1,8 @@
-import 'app_spaces.dart';
 import 'package:flutter/material.dart';
+import '../../constants/app_spaces.dart';
 import '../../network/domain/i_connectivity_service.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 
 
 class InternetUnavailability extends StatelessWidget {
@@ -15,8 +17,6 @@ class InternetUnavailability extends StatelessWidget {
     required this.connectivityService
   });
 
-  static const _noInternetMessage = 'No Internet Connection';
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -25,20 +25,20 @@ class InternetUnavailability extends StatelessWidget {
           const Icon(
             Icons.wifi_off,
             size: 80.0,
-            color: Color(0xFF757575),
+            color: AppColors.grey600,
           ),
-          const SizedBox(height: 20.0),
-          Text(message ?? _noInternetMessage,
+          AppSpaces.vertical_20,
+          Text(message ?? 'No Internet Connection',
               style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF424242)
+                  color: AppColors.mediumGrey
               )
           ),
           AppSpaces.vertical_30,
           ElevatedButton(
             onPressed: onRetry,
-            child: const Text('Retry'),
+            child: Text(AppStrings.retry),
           ),
         ],
       ),

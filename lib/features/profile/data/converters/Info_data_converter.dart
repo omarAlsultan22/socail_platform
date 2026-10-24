@@ -1,5 +1,6 @@
 import '../../../../core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/user_info_model.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/presentation/mixins/base_like_mixin_impl.dart';
@@ -16,7 +17,7 @@ class AccountDataConverter with BaseLikeMixinImpl{
         _sessionService = sessionService;
 
   @override
-  String get likeCollectionPath => 'likesList';
+  String get likeCollectionPath => AppStrings.likesList;
 
   @override
   FirestoreService get dataSource => _repository;
@@ -31,17 +32,17 @@ class AccountDataConverter with BaseLikeMixinImpl{
 
     if (infoDoc != null) {
       profileInfo = infoDoc.data() as Map<String, dynamic>;
-      jsonData['userState'] = profileInfo['userState'] ?? '';
+      jsonData[AppStrings.userState] = profileInfo[AppStrings.userState] ?? '';
     }
 
-    final userImage = await _getDocRef(userAccount: jsonData, image: 'userImage');
-    final userCover = await _getDocRef(userAccount: profileInfo, image: 'userCover');
+    final userImage = await _getDocRef(userAccount: jsonData, image: AppStrings.userImage);
+    final userCover = await _getDocRef(userAccount: profileInfo, image: AppStrings.userCover);
 
 
-    jsonData['userImage'] = userImage!
-      ..myName = profileInfo['userName'] ?? '';
-    jsonData['userCover'] = userCover!
-      ..myName = profileInfo['userName'] ?? '';
+    jsonData[AppStrings.userImage] = userImage!
+      ..myName = profileInfo[AppStrings.userName] ?? '';
+    jsonData[AppStrings.userCover] = userCover!
+      ..myName = profileInfo[AppStrings.userName] ?? '';
 
     final userInfo = UserInfoModel.fromJson(jsonData);
     return userInfo;
@@ -55,11 +56,11 @@ class AccountDataConverter with BaseLikeMixinImpl{
     if (userAccount[image] is DocumentReference) {
       final imageDocRef = userAccount[image] as DocumentReference;
       final imageDoc = await imageDocRef.get();
-      final postRef = firestore.collection('posts').doc(imageDoc.id);
+      final postRef = firestore.collection(AppStrings.posts).doc(imageDoc.id);
 
       final interactions = await Future.wait([
-        postRef.collection('likesList').count().get(),
-        postRef.collection('commentsList').count().get(),
+        postRef.collection(AppStrings.likesList).count().get(),
+        postRef.collection(AppStrings.commentsList).count().get(),
       ]);
 
       if (imageDoc.exists && imageDoc.data() != null) {
@@ -68,9 +69,9 @@ class AccountDataConverter with BaseLikeMixinImpl{
 
         return userAccount[image] = PostModel.fromFirestoreToPost({
           ...imageData,
-          'hasMeLiked': isLiked,
-          'likesNumber': interactions[0].count,
-          'commentsNumber': interactions[1].count,
+          AppStrings.hasMeLiked: isLiked,
+          AppStrings.likesNumber: interactions[0].count,
+          AppStrings.commentsNumber: interactions[1].count
         });
       }
     }

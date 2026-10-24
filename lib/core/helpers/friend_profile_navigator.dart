@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:social_app/core/services/data/session_service.dart';
 import '../presentation/widgets/navigation/navigator.dart';
 import '../../features/main/presentation/cubits/main_cubit.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import '../../features/profile/presentation/screens/user_profile_screen.dart';
 
 

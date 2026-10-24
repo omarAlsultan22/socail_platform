@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../../../core/data/models/user_account.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';

@@ -21,8 +21,8 @@ class CommentsRepositoryImpl implements CommentsRepository {
                 myId: c.myId,
                 userAction: c.userAction,
                 myDateTime: c.myDateTime,
-                likesNumber: c.likesNumber ?? 0,
                 hasMeLiked: c.hasMeLiked,
+                likesNumber: c.likesNumber ?? 0,
               )).toList(),
     );
   }

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/constants/app_spaces.dart';
 import 'package:social_app/core/utils/validate_input.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../../auth/presentation/mixins/auth_mixin.dart';
 import 'package:social_app/core/data/models/user_account.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import 'package:social_app/core/presentation/widgets/app_spaces.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
@@ -78,18 +82,18 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.black,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           scrolledUnderElevation: 0,
           elevation: 0,
-          title: const Text(
+          title: Text(
             'Update Account',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: AppColors.white),
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            color: Colors.white,
+            color: AppColors.white,
             onPressed: widget.messageResult.isLoading ? null : () =>
                 Navigator.pop(context),
           ),
@@ -104,7 +108,7 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
     return IgnorePointer(
       ignoring: widget.messageResult.isLoading,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: AppPaddings.all24,
         child: Form(
           key: _formKey,
           child: Column(
@@ -147,19 +151,13 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
       children: [
         Text(
           'Update profile',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.amber[400],
-          ),
+          style: AppTextStyles.boldHeader.copyWith(color: AppColors.amber400),
         ),
-        const SizedBox(height: 8),
+        AppSpaces.vertical_8,
         Text(
           'Update your personal information',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[400],
-          ),
+          style: AppTextStyles.bodyXLarge.copyWith(
+              color: AppColors.lightGrey400),
         ),
       ],
     );
@@ -178,27 +176,24 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: Colors.grey[300],
-            fontSize: 16,
-          ),
+          style: AppTextStyles.bodyXLarge.copyWith(
+              color: AppColors.lightGrey300),
         ),
-        const SizedBox(height: 8),
+        AppSpaces.vertical_8,
         BuildInputField.build(
           controller: controller,
           keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Colors.grey[500]),
-            prefixIcon: Icon(icon, color: Colors.amber[700]),
+            hintStyle: TextStyle(color: AppColors.grey500),
+            prefixIcon: Icon(icon, color: AppColors.amber700),
             filled: true,
-            fillColor: Colors.grey[700]!.withOpacity(0.5),
+            fillColor: AppColors.grey700_50,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppBorders.borderRadius_12,
               borderSide: BorderSide.none,
             ),
-            contentPadding: const EdgeInsets.symmetric(
-                vertical: 16, horizontal: 16),
+            contentPadding: AppPaddings.symmetricVertical16Horizontal16,
           ),
           validator: validator,
         ),
@@ -211,10 +206,10 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
       width: double.infinity,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          side: BorderSide(color: Colors.amber[700]!),
+          padding: AppPaddings.symmetricVertical16,
+          side: BorderSide(color: AppColors.amber700),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppBorders.borderRadius_12,
           ),
         ),
         onPressed: () =>
@@ -225,7 +220,7 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
           'Change email and password',
           style: TextStyle(
             fontSize: 18,
-            color: Colors.amber[700],
+            color: AppColors.amber700,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -245,4 +240,3 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
     );
   }
 }
-

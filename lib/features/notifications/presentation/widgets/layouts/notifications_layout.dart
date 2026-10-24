@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../post_detail/presentation/screens/post_detail_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
@@ -24,7 +27,7 @@ class NotificationsLayout extends StatelessWidget {
         );
       },
       child: Padding(
-        padding: const EdgeInsets.only(left: 10.0),
+        padding: AppPaddings.onlyLeft10,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -32,12 +35,12 @@ class NotificationsLayout extends StatelessWidget {
               alignment: AlignmentDirectional.bottomEnd,
               children: [
                 SizedBox(
-                  width: 50.0,
-                  height: 50.0,
+                  width: AppSizes.xl,
+                  height: AppSizes.xl,
                   child: ClipOval(
                     child: CachedNetworkImage(
                       fit: BoxFit.cover,
-                      imageUrl: notificationsModel.myImageUrl ?? '',
+                      imageUrl: notificationsModel.myImageUrl,
                     ),
                   ),
                 ),
@@ -45,22 +48,18 @@ class NotificationsLayout extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: AppPaddings.xs,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    notificationsModel.myName ?? 'Unknown User',
-                    // Fallback for null name
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    notificationsModel.myName,
+                    style: AppTextStyles.boldLarge,
                   ),
                   Text(
                     notificationsModel.userAction,
                     // Fallback for null action
-                    style: const TextStyle(fontSize: 15),
+                    style: AppTextStyles.bodyLarge,
                   ),
                 ],
               ),
@@ -71,8 +70,3 @@ class NotificationsLayout extends StatelessWidget {
     );
   }
 }
-
-
-
-
-

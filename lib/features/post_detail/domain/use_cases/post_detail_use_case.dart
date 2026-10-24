@@ -2,6 +2,7 @@ import '../../data/models/post_detail_model.dart';
 import '../repositories/post_detail_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 
@@ -58,9 +59,9 @@ class PostDetailUseCase {
     final post = PostModel.fromFirestoreToPost({
       ...userAccount,
       ...postDocData,
-      'hasMeLiked': hasMeLiked,
-      'likesNumber': likesCount,
-      'commentsNumber': comments.length,
+      AppStrings.hasMeLiked: hasMeLiked,
+      AppStrings.likesNumber: likesCount,
+      AppStrings.commentsNumber: comments.length,
     });
 
     return PostDetailModel(postModel: post, commentsList: comments);
@@ -71,9 +72,9 @@ class PostDetailUseCase {
   }) async {
     final userData = userDoc.data() as Map<String, dynamic>;
     return {
-      'userImage': userData['userImage'] ?? '',
-      'userName': userData['userName'] ?? '',
-      'userId': userDoc.id,
+      AppStrings.userImage: userData[AppStrings.userImage] ?? AppStrings.empty,
+      AppStrings.userName: userData[AppStrings.userName] ?? AppStrings.empty,
+      AppStrings.userId: userDoc.id,
     };
   }
 }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_borders.dart';
 
 
 class MenuButton extends StatelessWidget {
@@ -17,27 +20,27 @@ class MenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        height: 200.0,
+        height: AppSizes.size200,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          color: Colors.grey,
+          borderRadius: AppBorders.borderRadius_10,
+          color: AppColors.grey,
         ),
         child: InkWell(
-          onTap: () => onTap(), // Call the function here
+          onTap: onTap,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                color: Colors.white,
-                size: 50.0,
+                color: AppColors.white,
+                size: AppSizes.xl,
               ),
               Text(
                 text,
                 style: TextStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: AppColors.black,
                 ),
               ),
             ],

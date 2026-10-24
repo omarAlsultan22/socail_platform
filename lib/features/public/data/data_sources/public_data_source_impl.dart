@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../core/data/posts/constants/posts_collection.dart';
 import 'package:social_app/core/data/posts/queries/posts_query_builder.dart';
 import 'package:social_app/features/public/domain/data_sources/public_data_source.dart';
@@ -32,9 +33,9 @@ class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSou
     required String userId,
   }) async {
     return await firestore
-        .collection('status')
-        .where('userId', isEqualTo: userId)
-        .orderBy('dateTime', descending: true)
+        .collection(AppStrings.status)
+        .where(AppStrings.userId, isEqualTo: userId)
+        .orderBy(AppStrings.dateTime, descending: true)
         .get()
         .timeout(duration);
   }
@@ -46,9 +47,9 @@ class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSou
     required int limit,
   }) async {
     var query = firestore
-        .collection('posts')
-        .where('userId', whereIn: friendsUIds)
-        .where('postType', whereIn: PostsCollection.postTypesList);
+        .collection(AppStrings.posts)
+        .where(AppStrings.userId, whereIn: friendsUIds)
+        .where(AppStrings.postType, whereIn: PostsCollection.postTypesList);
 
     return PostsQueryBuilder.build(
         limit: limit,
@@ -62,11 +63,11 @@ class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSou
       String postId) async {
     final postRef = getDocRef(
         docId: postId,
-        collectionPath: 'posts'
+        collectionPath: AppStrings.posts
     );
     final results = await Future.wait([
-      getCount(docRef: postRef, collectionPath: 'likesList'),
-      getCount(docRef: postRef, collectionPath: 'commentsList'),
+      getCount(docRef: postRef, collectionPath: AppStrings.likesList),
+      getCount(docRef: postRef, collectionPath: AppStrings.commentsList),
     ]);
     return (
     likesCount: results[0].count,

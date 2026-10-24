@@ -5,7 +5,7 @@ import '../../../../core/domain/data_sources/remote/firestore/firestore_service.
 
 abstract class ProfileDataSource extends FirestoreService {
   Future<String> createAndSetDoc({
-    bool merge = true,
+    bool isMerge = true,
     required String collectionPath,
     required Map<String, dynamic> data,
   });

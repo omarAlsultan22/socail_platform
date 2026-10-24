@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service _locator.dart';
 import 'package:social_app/features/search/utils/search_debouncer.dart';
-import '../../../../core/presentation/widgets/states/loading_state.dart';
-import 'package:social_app/core/presentation/widgets/states/initial_state.dart';
+import '../../../../core/presentation/widgets/states/loading_state_widget.dart';
 import 'package:social_app/features/search/presentation/states/search_state.dart';
+import 'package:social_app/core/presentation/widgets/states/initial_state_widget.dart';
 import 'package:social_app/features/search/presentation/widgets/search_text_field.dart';
 import 'package:social_app/features/search/presentation/widgets/layouts/search_layout.dart';
 
@@ -70,7 +70,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildBody(SearchState state) {
     return state.when(
-      onInitial: () => const InitialStateWidget(text: 'Type to start searching'),
+      onInitial: () =>
+      const InitialStateWidget(text: 'Type to start searching'),
       onLoading: () => const LoadingStateWidget(),
       onLoaded: (data) {
         if (!data.queryIsEmpty && data.dataIsEmpty) {

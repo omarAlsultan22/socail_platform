@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/data_sources/public_data_source.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/services/data/session_service.dart';
@@ -9,6 +10,8 @@ import 'package:social_app/features/public/domain/repositories/public_repository
 class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
   final PublicDataSource _dataSource;
   final SessionService _sessionService;
+  static const _deletedPosts = 'deleted_posts';
+  static const _deletedStatuses = 'deleted_statuses';
 
   PublicRepositoryImpl({
     required PublicDataSource dataSource,
@@ -18,7 +21,7 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
         _sessionService = sessionService;
 
   @override
-  String get likeCollectionPath => 'likesList';
+  String get likeCollectionPath => AppStrings.likesList;
 
   @override
   PublicDataSource get dataSource => _dataSource;
@@ -29,9 +32,9 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getFriendsList() {
     return dataSource.getSubCollection(
-      supCollectionPath: 'users',
-      subCollectionPath: 'friends',
       docId: sessionService.currentUid,
+      supCollectionPath: AppStrings.users,
+      subCollectionPath: AppStrings.friends
     );
   }
 
@@ -51,9 +54,9 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getDeletedPosts() {
     return dataSource.getSubCollection(
-        docId: sessionService.currentUid,
-        supCollectionPath: 'users',
-        subCollectionPath: 'deleted_posts'
+      subCollectionPath: _deletedPosts,
+      docId: sessionService.currentUid,
+      supCollectionPath: AppStrings.users,
     );
   }
 
@@ -61,7 +64,7 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
   Future<DocumentSnapshot> getAccountData(String userId) async {
     return await dataSource.getDoc(
         docId: userId,
-        collectionPath: 'accounts'
+        collectionPath: AppStrings.accounts
     );
   }
 
@@ -77,19 +80,19 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
   }) async {
     return await dataSource.getQuery(
         limit: limit,
-        supCollectionPath: 'users',
-        subCollectionPath: 'friends',
         lastStatusDoc: lastStatusDoc,
-        docId: sessionService.currentUid
+        docId: sessionService.currentUid,
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: AppStrings.friends
     );
   }
 
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getDeletedStatuses() {
     return dataSource.getSubCollection(
-        supCollectionPath: 'users',
-        subCollectionPath: 'deleted_statuses',
-        docId: sessionService.currentUid
+        docId: sessionService.currentUid,
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: _deletedStatuses
     );
   }
 
@@ -105,8 +108,8 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
     await dataSource.getRefAndSetDoc(
       isMerge: true,
       docId: postModel.myDocId,
-      collectionPath: 'posts',
       data: postModel.toJson(),
+      collectionPath: AppStrings.posts
     );
   }
 
@@ -115,14 +118,14 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
     await dataSource.getRefAndSetDoc(
       isMerge: true,
       docId: statusModel.myDocId,
-      collectionPath: 'status',
       data: statusModel.toJson(),
+      collectionPath: AppStrings.status
     );
   }
 
   @override
   Future<void> deletePostFromFirestore(String postId) async {
-    await dataSource.deleteSupDoc(collectionPath: 'posts', docId: postId);
+    await dataSource.deleteSupDoc(collectionPath: AppStrings.posts, docId: postId);
   }
 
   @override
@@ -130,15 +133,15 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
     await dataSource.setSubDoc(
         data: {},
         subDocId: postId,
-        supCollectionPath: 'users',
-        subCollectionPath: 'deleted_posts',
+        subCollectionPath: _deletedPosts,
+        supCollectionPath: AppStrings.users,
         supDocId: sessionService.currentUid
     );
   }
 
   @override
   Future<void> deleteStatusFromFirestore(String statusId) async {
-    await dataSource.deleteSupDoc(collectionPath: 'status', docId: statusId);
+    await dataSource.deleteSupDoc(collectionPath: AppStrings.status, docId: statusId);
   }
 
   @override
@@ -146,8 +149,8 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
     await dataSource.setSubDoc(
         data: {},
         subDocId: statusId,
-        supCollectionPath: 'users',
-        subCollectionPath: 'deleted_statuses',
+        supCollectionPath: AppStrings.users,
+        subCollectionPath: _deletedStatuses,
         supDocId: sessionService.currentUid
     );
   }

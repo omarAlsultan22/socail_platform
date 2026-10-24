@@ -4,9 +4,14 @@ import '../mixins/more_options_mixin.dart';
 import '../../data/models/post_model.dart';
 import '../mixins/post_components_mixin.dart';
 import 'package:social_app/core/themes/app_theme.dart';
+import 'package:social_app/core/constants/app_sizes.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
-import 'package:social_app/core/services/data/session_service.dart';
+import 'package:social_app/core/constants/app_borders.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/features/public/constants/public_constants.dart';
@@ -45,13 +50,16 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin, MoreOptionsMixin<PostCard>, PostComponentsMixin<PostCard> {
+  // ===== ثابت خاص بالملف =====
+  static const double _borderWidth = 0.5;
+
   late UserDetails _userDetails;
 
   @override
-  String get postType => 'post';
+  String get postType => AppStrings.post;
 
   @override
-  String get titleName => 'UpdatePost';
+  String get titleName => AppStrings.updatePost;
 
   @override
   String? get userId => widget.userId;
@@ -90,6 +98,9 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
     _userDetails = userDetails;
   }
 
+  BorderSide _borderSide(Color color) =>
+      BorderSide(width: _borderWidth, color: color);
+
   @override
   Widget build(BuildContext context) {
     final isPost = !postModel.myDocIdIsEmpty;
@@ -110,28 +121,21 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
                     if (postModel.userId != null &&
                         postModel.userId!.isNotEmpty)
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 15.0, right: 15.0),
+                        padding: AppPaddings.onlyLeft15Right15,
                         child: Center(
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               border: Border(
-                                top: BorderSide(
-                                    width: 0.5, color: borderColor),
-                                right: BorderSide(
-                                    width: 0.5, color: borderColor),
-                                left: BorderSide(
-                                    width: 0.5, color: borderColor),
+                                top: _borderSide(borderColor),
+                                right: _borderSide(borderColor),
+                                left: _borderSide(borderColor),
                                 bottom: isPost
                                     ? BorderSide.none
-                                    : BorderSide(
-                                    width: 0.5, color: borderColor),
+                                    : _borderSide(borderColor),
                               ),
                               borderRadius: isPost
-                                  ? const BorderRadius.only(
-                                  topLeft: Radius.circular(10.0),
-                                  topRight: Radius.circular(10.0))
-                                  : BorderRadius.circular(10.0),
+                                  ? AppBorders.topRounded_10
+                                  : AppBorders.borderRadius_10,
                             ),
                             child: SizedBox(
                               width: double.infinity,
@@ -162,10 +166,10 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
   }) {
     final sizeFactor = isRealUser ? 1.0 : 0.8;
     final position = isRealUser ? 3.0 : 2.0;
-    final avatarSize = 50.0 * sizeFactor;
+    final avatarSize = AppSizes.xl * sizeFactor;
     final fontSize = 20.0 * sizeFactor;
     final iconSize = 20.0 * sizeFactor;
-    final onlineIndicatorSize = 5.0 * sizeFactor;
+    final onlineIndicatorSize = AppSizes.onlineIndicator * sizeFactor;
     final padding = EdgeInsets.only(
       top: 20.0,
       left: isRealUser ? 12.0 : 16.0,
@@ -194,15 +198,15 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 15.0),
+                padding: AppPaddings.onlyRight15,
                 child: Stack(
                   alignment: AlignmentDirectional.bottomEnd,
                   children: [
                     ClipOval(
                       child: Material(
-                        color: Colors.transparent,
+                        color: AppColors.transparent,
                         child: InkWell(
-                          splashColor: Colors.blue,
+                          splashColor: AppColors.primaryBlue,
                           onTap: () =>
                               FriendProfileNavigator.handle(
                                   userId: userId,
@@ -214,7 +218,7 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
                             width: avatarSize,
                             height: avatarSize,
                             child: Image.network(
-                              imageUrl ?? '',
+                              imageUrl ?? AppStrings.empty,
                               fit: BoxFit.cover,
                               errorBuilder: (_, __, ___) =>
                                   Icon(Icons.person, size: avatarSize),
@@ -231,7 +235,7 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
                         ),
                         child: CircleAvatar(
                           radius: onlineIndicatorSize,
-                          backgroundColor: Colors.blue,
+                          backgroundColor: AppColors.primaryBlue,
                         ),
                       ),
                   ],
@@ -249,7 +253,7 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
                             sessionService: sessionService
                         ),
                     child: Text(
-                      name ?? '',
+                      name ?? AppStrings.empty,
                       style: TextStyle(
                         fontSize: fontSize,
                         fontWeight: FontWeight.bold,
@@ -264,7 +268,8 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
                           style: TextStyle(fontSize: fontSize * 0.75),
                         ),
                         Icon(
-                          PublicConstants.postStatuses[state ?? ''],
+                          PublicConstants.postStatuses[state ??
+                              AppStrings.empty],
                           size: iconSize,
                         ),
                       ],
@@ -276,7 +281,7 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
           if (!postModel.userTextIsEmpty &&
               postModel.userText != null)
             Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+              padding: AppPaddings.textContent,
               child: Text(postModel.userText!),
             ),
         ],
@@ -291,9 +296,9 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
             image: NetworkImage(postModel.userPost),
             fit: BoxFit.cover,
           ),
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: AppBorders.borderRadius_8,
         ),
-        height: 400.0,
+        height: AppSizes.size400,
         width: double.infinity,
         child: InkWell(
           onTap: () {

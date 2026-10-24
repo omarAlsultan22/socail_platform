@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../converters/notification_data_converter.dart';
 import 'package:social_app/core/data/models/my_model.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
 import '../../domain/repositories/notifications_repository.dart';
 import '../../domain/data_sources/notifications_data_source.dart';
@@ -31,9 +32,9 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
 
     await Future.wait(
         notifications.map((notificationDoc) async {
-          final userId = notificationDoc['friendId'];
+          final userId = notificationDoc[AppStrings.friendId];
           final userAccount = await _dataSource.getDoc(
-            docId: userId, collectionPath: 'accounts',
+            docId: userId, collectionPath: AppStrings.accounts,
           );
 
           final notificationData = await NotificationsDataConverter
@@ -83,7 +84,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
       commentsWithLikes.map((doc) async {
         final commentData = doc.data();
         final commentUserDoc = await _dataSource.getDoc(
-            docId: commentData['userId'], collectionPath: 'accounts'
+            docId: commentData[AppStrings.userId], collectionPath: AppStrings.accounts
         );
 
         if (!commentUserDoc.exists) return null;
@@ -95,7 +96,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
         return CommentModel.fromJson({
           ...userAccount,
           ...commentData,
-          'likesNumber': commentData['likesNumber'],
+          AppStrings.likesNumber: commentData[AppStrings.likesNumber],
         });
       }),
     );
@@ -111,7 +112,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
       isMerge: false,
       docId: notificationData.myId,
       data: notificationData.toJson(),
-      collectionPath: 'notifications',
+      collectionPath: AppStrings.notifications,
     );
   }
 
@@ -121,8 +122,8 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
   }) async {
     await _dataSource.updateDoc(
         docId: docId,
-        data: {'isRead': true},
-        collectionPath: 'notifications'
+        data: {AppStrings.isRead: true},
+        collectionPath: AppStrings.notifications
     );
   }
 }

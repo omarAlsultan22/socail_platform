@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/data/models/post_model.dart';
 import '../../../../core/data/models/paginated_posts.dart';
 import 'package:social_app/core/data/models/message_result.dart';
@@ -81,7 +82,7 @@ class PhotosState extends MainAppSupState {
   // ✅ Post modification functions
 
   PaginatedPosts? addPost(PostModel postModel) {
-    if (postModel.pathType != 'image') return null;
+    if (postModel.pathType != AppStrings.image) return null;
     final currentPhotoSection = PhotoSection.byKey[postModel.postType];
     final paginatedPosts = paginatedPostsMap[currentPhotoSection];
     final photosList = paginatedPosts!.dataList;
@@ -99,7 +100,7 @@ class PhotosState extends MainAppSupState {
   }
 
   PaginatedPosts? removePost(PostModel postModel) {
-    if (postModel.pathType != 'image') return null;
+    if (postModel.pathType != AppStrings.image) return null;
     final currentPhotoSection = PhotoSection.byKey[postModel.postType];
     final postsData = paginatedPostsMap[currentPhotoSection];
     final dataList = postsData!.dataList.where((p) =>

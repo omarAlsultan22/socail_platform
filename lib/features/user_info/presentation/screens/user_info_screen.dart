@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service _locator.dart';
-import 'package:social_app/core/presentation/widgets/states/loading_state.dart';
-import 'package:social_app/core/presentation/widgets/states/initial_state.dart';
+import 'package:social_app/core/presentation/widgets/states/loading_state_widget.dart';
+import 'package:social_app/core/presentation/widgets/states/initial_state_widget.dart';
 import 'package:social_app/features/user_info/presentation/cubits/user_info_cubit.dart';
 import 'package:social_app/features/user_info/presentation/states/user_info_state.dart';
 import 'package:social_app/features/user_info/presentation/widgets/layouts/user_info_layout.dart';

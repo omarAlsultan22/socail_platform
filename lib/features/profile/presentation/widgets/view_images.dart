@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_colors.dart';
+import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/features/profile/presentation/widgets/photo_widget.dart';
@@ -31,22 +34,19 @@ class ViewImages extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(height: 1.0, color: Colors.grey),
+          Container(height: 1.0, color: AppColors.grey),
           Padding(
-            padding: const EdgeInsets.only(top: 20.0),
+            padding: AppPaddings.onlyTop20,
             child: Text(
               title,
-              style: const TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppTextStyles.boldLarge,
             ),
           ),
           Padding(
-              padding: const EdgeInsets.only(top: 20.0),
+              padding: AppPaddings.onlyTop20,
               child: imagesList.isEmpty
-                  ? const Padding(
-                padding: EdgeInsets.all(20.0),
+                  ? Padding(
+                padding: AppPaddings.all20,
                 child: Text('No images available in this album'),
               )
                   : GridView.count(

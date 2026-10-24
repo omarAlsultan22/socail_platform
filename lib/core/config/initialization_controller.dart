@@ -24,7 +24,6 @@ class InitializationController {
   late final IOnlineStatusService _onlineStatusService;
 
   bool _isInitialized = false;
-  RemoteMessage? _initialMessage;
 
   Future<void> _initializeServices() async {
     await Firebase.initializeApp(
