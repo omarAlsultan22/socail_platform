@@ -17,6 +17,7 @@ import 'package:social_app/core/presentation/widgets/skeleton_box.dart';
 import '../../../../core/presentation/mixins/message_result_mixin.dart';
 import '../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
+import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:social_app/features/public/presentation/states/public_state.dart';
@@ -261,7 +262,7 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                                     ),
                                   );
                                 } else {
-                                  return SizedBox.shrink();
+                                  return EmptyStateWidget();
                                 }
                               },
                             );
@@ -311,7 +312,7 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                               ),
                             )),
                           ) :
-                          const SizedBox.shrink();
+                          const EmptyStateWidget();
                         }
                       },
                     );

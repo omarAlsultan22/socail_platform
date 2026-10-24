@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 
 
 class InitialStateWidget extends StatelessWidget {
@@ -9,7 +10,7 @@ class InitialStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return text != null ? Center(child: Text(text!)) : const Center(
-        child: SizedBox.shrink()
+        child: EmptyStateWidget()
     );
   }
 }

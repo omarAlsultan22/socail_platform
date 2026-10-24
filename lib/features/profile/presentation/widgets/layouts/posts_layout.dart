@@ -13,6 +13,7 @@ import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
 import 'package:social_app/core/presentation/widgets/post_card.dart';
 import '../../../../../core/presentation/widgets/current_user_selector.dart';
+import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 import '../../../../../core/presentation/widgets/layouts/user_row_layout.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:social_app/core/presentation/widgets/create_post_input_widget.dart';
@@ -143,7 +144,7 @@ class _PostsLayoutState extends State<PostsLayout> {
               uId: widget.userId,
               onUpsert: widget.onUpsert,
               messageResult: widget.messageResult,
-            ) : SizedBox.shrink(),
+            ) : EmptyStateWidget(),
             Container(height: 1.0, color: AppColors.grey),
             _postsBuilder(
               profileData: widget.postsList,
@@ -204,7 +205,7 @@ class _PostsLayoutState extends State<PostsLayout> {
                   ),
                 ),
               )
-                  : const SizedBox.shrink();
+                  : const EmptyStateWidget();
             }
           },
           separatorBuilder: (context, index) =>
@@ -290,7 +291,7 @@ class _PostsLayoutState extends State<PostsLayout> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(displayCount, (index) {
           int friendIndex = startIndex + index;
-          if (friendIndex >= length) return SizedBox.shrink();
+          if (friendIndex >= length) return EmptyStateWidget();
 
           final friendModel = friends[friendIndex];
           final userId = friendModel.myId;

@@ -5,7 +5,7 @@ import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 
 
-class CommentForm extends StatelessWidget { // notifications & post components
+class CommentForm extends StatelessWidget {
   final void Function(String) onPressed;
 
   const CommentForm({

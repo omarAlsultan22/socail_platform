@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
+import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 
 
 class StateLineWidget extends StatelessWidget {
@@ -33,7 +34,7 @@ class StateLineWidget extends StatelessWidget {
             size: Size(double.infinity, 2.0),
             painter: StatusLoading(startLine: startLine),
           )
-              : SizedBox.shrink(),
+              : const EmptyStateWidget(),
         ),
       ),
     );

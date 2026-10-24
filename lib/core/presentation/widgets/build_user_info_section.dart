@@ -4,6 +4,7 @@ import 'package:social_app/core/constants/app_spaces.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../features/public/constants/public_constants.dart';
+import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 
 
 class BuildUserInfoSection extends StatefulWidget {
@@ -45,7 +46,7 @@ class _BuildUserInfoSectionState extends State<BuildUserInfoSection> {
               ),
             ),
             child: hasImage ?
-            SizedBox.shrink() : Icon(Icons.person),
+            EmptyStateWidget() : Icon(Icons.person),
           ),
         ),
         Column(

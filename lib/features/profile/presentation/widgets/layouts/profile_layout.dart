@@ -22,6 +22,7 @@ import 'package:social_app/features/profile/constants/profile_lists.dart';
 import 'package:social_app/core/presentation/screens/view_post_screen.dart';
 import '../../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
+import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
 
 
@@ -187,7 +188,7 @@ class _ProfileLayoutState extends State<ProfileLayout> {
             Image.network(
               widget.userInfoModel.coverImageUrl,
               fit: BoxFit.cover,
-            ) : const SizedBox.shrink(),
+            ) : const EmptyStateWidget(),
           ),
         ),
         _uId == _currentUid ?
@@ -201,7 +202,7 @@ class _ProfileLayoutState extends State<ProfileLayout> {
                   titleName: 'Create cover photo',
                 )
         )
-            : const SizedBox.shrink(),
+            : const EmptyStateWidget(),
         _buildProfileImage(userDetails),
         _uId == _currentUid ?
         BuildCameraIcon(
@@ -221,7 +222,7 @@ class _ProfileLayoutState extends State<ProfileLayout> {
             radius: AppSizes.onlineIndicatorLarge,
             backgroundColor: AppColors.primaryBlue,
           ),
-        ) : const SizedBox.shrink(),
+        ) : const EmptyStateWidget(),
       ],
     );
   }
@@ -290,12 +291,12 @@ class _ProfileLayoutState extends State<ProfileLayout> {
         ),
         AppSpaces.horizontal_10,
         _uId != _currentUid ?
-        friendshipButton() : SizedBox.shrink(),
+        friendshipButton() : EmptyStateWidget(),
       ],
     );
   }
 
   Widget friendshipButton() {
-    return _friendshipButton[widget.friendshipButtonKey] ?? SizedBox.shrink();
+    return _friendshipButton[widget.friendshipButtonKey] ?? EmptyStateWidget();
   }
 }

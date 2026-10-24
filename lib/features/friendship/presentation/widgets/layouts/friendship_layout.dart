@@ -8,6 +8,7 @@ import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/constants/app_text_styles.dart';
 import '../../../../profile/presentation/screens/user_profile_screen.dart';
 import '../../../../../core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 
 
 class FriendshipLayout extends StatelessWidget {
@@ -120,7 +121,7 @@ class FriendshipLayout extends StatelessWidget {
               friendshipType.title,
               style: AppTextStyles.boldXLarge,
             )
-        ) : SizedBox.shrink(),
+        ) : EmptyStateWidget(),
         ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),

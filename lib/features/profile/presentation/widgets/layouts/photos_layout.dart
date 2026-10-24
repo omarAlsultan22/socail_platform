@@ -13,6 +13,7 @@ import 'package:social_app/core/data/models/post_model.dart';
 import '../../../../../core/data/models/paginated_posts.dart';
 import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/features/profile/constants/photo_section.dart';
+import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 
 
 class PhotosLayout extends StatefulWidget {
@@ -225,7 +226,7 @@ class AlbumLayout extends StatelessWidget {
                       );
                     },
                   )
-                      : SizedBox.shrink(),
+                      : EmptyStateWidget(),
                 ),
               ),
             ),

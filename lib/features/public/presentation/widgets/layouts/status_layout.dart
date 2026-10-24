@@ -20,6 +20,7 @@ import '../../../../../core/presentation/mixins/more_options_mixin.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
 import '../../../../../core/services/domain/i_online_status_service.dart';
 import 'package:social_app/features/public/constants/public_constants.dart';
+import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 import '../../../../../core/presentation/widgets/states/loading_state_widget.dart';
 import 'package:social_app/features/public/presentation/widgets/state_line_widget.dart';
 
@@ -470,7 +471,7 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
       case AppStrings.video:
         return _buildVideoContent(currentStatus);
       default:
-        return SizedBox.shrink();
+        return EmptyStateWidget();
     }
   }
 
