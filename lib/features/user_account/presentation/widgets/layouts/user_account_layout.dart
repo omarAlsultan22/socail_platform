@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_spaces.dart';
-import 'package:social_app/core/utils/validate_input.dart';
+import 'package:social_app/shared/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/constants/app_paddings.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../screens/sign_in_screen.dart';
 import '../../../../../core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_spaces.dart';
-import 'package:social_app/core/utils/validate_input.dart';
+import 'package:social_app/shared/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/services/data/session_service.dart';
