@@ -7,7 +7,6 @@ import 'package:social_app/core/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/services/data/session_service.dart';
-import 'package:social_app/core/presentation/widgets/ltr_wrapper.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 import '../../../../../core/presentation/widgets/states/loading_state_widget.dart';
@@ -99,7 +98,8 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
 
   @override
   Widget build(BuildContext context) {
-    return LtrWrapper(
+    return Directionality(
+      textDirection: TextDirection.ltr,
       child: Scaffold(
         backgroundColor: AppColors.grey900,
         appBar: AppBar(

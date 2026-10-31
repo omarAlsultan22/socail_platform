@@ -1,9 +1,9 @@
-import '../../themes/app_theme.dart';
 import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
-import '../../constants/app_borders.dart';
-import '../../constants/app_shadows.dart';
-import '../../constants/app_durations.dart';
+import '../../../../core/themes/app_theme.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_borders.dart';
+import '../../../../core/constants/app_shadows.dart';
+import '../../../../core/constants/app_durations.dart';
 
 
 class SkeletonBox extends StatelessWidget {

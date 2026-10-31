@@ -13,7 +13,7 @@ import 'package:social_app/core/constants/app_durations.dart';
 import '../../../../core/presentation/widgets/post_card.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/services/data/session_service.dart';
-import 'package:social_app/core/presentation/widgets/skeleton_box.dart';
+import 'package:social_app/features/public/presentation/widgets/skeleton_box.dart';
 import '../../../../core/presentation/mixins/message_result_mixin.dart';
 import '../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';

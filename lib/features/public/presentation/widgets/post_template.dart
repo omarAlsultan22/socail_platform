@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:social_app/core/constants/app_sizes.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
-import 'package:social_app/core/presentation/widgets/skeleton_box.dart';
+import 'package:social_app/features/public/presentation/widgets/skeleton_box.dart';
 
 
 class PostTemplate extends StatelessWidget {

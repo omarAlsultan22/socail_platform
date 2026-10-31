@@ -4,7 +4,7 @@ import '../../../../core/constants/app_borders.dart';
 import '../../../../core/constants/app_paddings.dart';
 import 'package:social_app/core/themes/app_theme.dart';
 import 'package:social_app/core/constants/app_text_styles.dart';
-import '../../../../core/presentation/widgets/loading_widget.dart';
+import '../widgets/loading_widget.dart';
 
 
 mixin AuthMixin<T extends StatefulWidget> on State<T>{
