@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/constants/firestore_schema.dart';
 import '../../domain/repositories/profile_repository.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_strings.dart';
@@ -37,7 +38,7 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
       String uId) async {
     final results = await Future.wait([
       dataSource.getDoc(docId: uId, collectionPath: AppStrings.info),
-      dataSource.getDoc(docId: uId, collectionPath: AppStrings.accounts),
+      dataSource.getDoc(docId: uId, collectionPath: FirestoreSchema.accounts),
     ]);
 
     final infoDoc = results[0] as DocumentSnapshot;
@@ -76,7 +77,7 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   @override
   Future<Map<String, dynamic>> getAccountData(String userId) async {
     final doc = await dataSource.getDoc(
-        docId: userId, collectionPath: AppStrings.accounts
+        docId: userId, collectionPath: FirestoreSchema.accounts
     );
     return await _userAccountService.getAccountMap(userDoc: doc);
   }
@@ -84,10 +85,12 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   @override
   Future<({int? comments, int? likes})> getPostCounts(String postId) async {
     final postRef = dataSource.getDocRef(
-        docId: postId, collectionPath: AppStrings.posts);
+        docId: postId, collectionPath: FirestoreSchema.posts);
     final results = await Future.wait([
-      dataSource.getCount(docRef: postRef, collectionPath: AppStrings.likesList),
-      dataSource.getCount(docRef: postRef, collectionPath: AppStrings.commentsList)
+      dataSource.getCount(
+          docRef: postRef, collectionPath: AppStrings.likesList),
+      dataSource.getCount(
+          docRef: postRef, collectionPath: AppStrings.commentsList)
     ]);
     return (likes: results[0].count, comments: results[1].count);
   }
@@ -109,21 +112,21 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   @override
   Future<void> sendFriendRequest(String userId, MyModel friendInfo) async {
     await dataSource.setSubDoc(
-      supDocId: userId,
-      subDocId: friendInfo.myId,
-      data: friendInfo.toJson(),
-      supCollectionPath: AppStrings.users,
-      subCollectionPath: AppStrings.requests
+        supDocId: userId,
+        subDocId: friendInfo.myId,
+        data: friendInfo.toJson(),
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.requests
     );
   }
 
   @override
   Future<void> deleteFriendRequest(String userId) async {
     await dataSource.deleteSubDoc(
-      supDoc: userId,
-      subDoc: sessionService.currentUid,
-      supCollectionPath: AppStrings.users,
-      subCollectionPath: AppStrings.requests
+        supDoc: userId,
+        subDoc: sessionService.currentUid,
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.requests
 
     );
   }
@@ -134,14 +137,14 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
       dataSource.deleteSubDoc(
           subDoc: userId,
           supDoc: sessionService.currentUid,
-          supCollectionPath: AppStrings.users,
-          subCollectionPath: AppStrings.friends
+          supCollectionPath: FirestoreSchema.users,
+          subCollectionPath: FirestoreSchema.friends
       ),
       dataSource.deleteSubDoc(
           supDoc: userId,
           subDoc: sessionService.currentUid,
-          supCollectionPath: AppStrings.users,
-          subCollectionPath: AppStrings.friends
+          supCollectionPath: FirestoreSchema.users,
+          subCollectionPath: FirestoreSchema.friends
       ),
     ]);
   }
@@ -152,8 +155,8 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
         subDocId: docId,
         data: friendInfo.toJson(),
         supDocId: friendInfo.myId,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.friends
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.friends
     );
   }
 
@@ -161,8 +164,8 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
   Future<List<MyModel>> getFriends(String userId) async {
     final snapshot = await dataSource.getSubCollection(
         docId: userId,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.friends
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.friends
     );
 
     final List<MyModel> friends = [];
@@ -178,8 +181,8 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
     final doc = await dataSource.getSubDoc(
         subDoc: userId,
         supDoc: sessionService.currentUid,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.requests
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.requests
     );
     return doc.exists;
   }
@@ -189,8 +192,8 @@ class ProfileRepositoryImpl with BaseLikeMixinImpl implements ProfileRepository 
     final doc = await dataSource.getSubDoc(
         subDoc: userId,
         supDoc: sessionService.currentUid,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.friends
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.friends
     );
     return doc.exists;
   }

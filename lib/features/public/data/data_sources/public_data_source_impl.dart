@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/constants/firestore_schema.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../core/data/posts/constants/posts_collection.dart';
+import 'package:social_app/features/public/constants/public_constants.dart';
 import 'package:social_app/core/data/posts/queries/posts_query_builder.dart';
 import 'package:social_app/features/public/domain/data_sources/public_data_source.dart';
 import '../../../../core/data/data_sources/remote/firestore/firestore_service_impl.dart';
@@ -33,7 +35,7 @@ class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSou
     required String userId,
   }) async {
     return await firestore
-        .collection(AppStrings.status)
+        .collection(PublicConstants.status)
         .where(AppStrings.userId, isEqualTo: userId)
         .orderBy(AppStrings.dateTime, descending: true)
         .get()
@@ -47,7 +49,7 @@ class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSou
     required int limit,
   }) async {
     var query = firestore
-        .collection(AppStrings.posts)
+        .collection(FirestoreSchema.posts)
         .where(AppStrings.userId, whereIn: friendsUIds)
         .where(AppStrings.postType, whereIn: PostsCollection.postTypesList);
 
@@ -63,7 +65,7 @@ class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSou
       String postId) async {
     final postRef = getDocRef(
         docId: postId,
-        collectionPath: AppStrings.posts
+        collectionPath: FirestoreSchema.posts
     );
     final results = await Future.wait([
       getCount(docRef: postRef, collectionPath: AppStrings.likesList),

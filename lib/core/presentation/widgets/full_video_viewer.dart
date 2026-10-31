@@ -100,7 +100,7 @@ class _FullVideoViewerState extends State<FullVideoViewer> {
                       ),
                       child: const Icon(
                         Icons.play_arrow,
-                        size: AppSizes.xl,
+                        size: AppSizes.size50,
                         color: AppColors.white,
                       ),
                     ),

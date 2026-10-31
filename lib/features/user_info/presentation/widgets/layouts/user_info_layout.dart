@@ -127,7 +127,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                               return ValidateInput.validator(
                                   value: value, text: 'state');
                             },
-                            label: 'state',
+                            labelText: 'state',
                             icon: Icons.mode_edit,
                           ),
                           AppSpaces.vertical_16,
@@ -138,7 +138,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                               return ValidateInput.validator(
                                   value: value, text: 'Work');
                             },
-                            label: 'Work',
+                            labelText: 'Work',
                             icon: Icons.work,
                           ),
                           AppSpaces.vertical_16,
@@ -149,7 +149,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                               return ValidateInput.validator(
                                   value: value, text: 'Lives');
                             },
-                            label: 'Lives',
+                            labelText: 'Lives',
                             icon: Icons.home_filled,
                           ),
                           AppSpaces.vertical_16,
@@ -160,7 +160,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                               return ValidateInput.validator(
                                   value: value, text: 'From');
                             },
-                            label: 'From',
+                            labelText: 'From',
                             icon: Icons.location_on,
                           ),
                           AppSpaces.vertical_16,
@@ -171,7 +171,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                               return ValidateInput.validator(
                                   value: value, text: 'Relational');
                             },
-                            label: 'Relational',
+                            labelText: 'Relational',
                             icon: Icons.favorite,
                           ),
                           AppSpaces.vertical_24,
@@ -181,7 +181,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                               color: AppColors.amber700,
                             ),
                             width: double.infinity,
-                            height: AppSizes.xl,
+                            height: AppSizes.size50,
                             child: ElevatedButton(
                                 style: buttonStyle(),
                                 onPressed: _isLocked ? null : _submitForm,

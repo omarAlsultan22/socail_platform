@@ -30,7 +30,7 @@ class CommentForm extends StatelessWidget {
                     }
                     return null;
                   },
-                  hint: 'Let a comment here',
+                  hintText: 'Let a comment here',
                 ),
               ),
             ),

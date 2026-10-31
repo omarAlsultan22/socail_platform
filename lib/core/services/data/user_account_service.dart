@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import '../../constants/firestore_schema.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_strings.dart';
@@ -61,7 +62,7 @@ class UserAccountService implements IUserAccountService {
   }) async {
     final userDoc = await _dataSource.getDoc(
         docId: id,
-        collectionPath: AppStrings.accounts
+        collectionPath: FirestoreSchema.accounts
     );
     final data = await getAccountMap(userDoc: userDoc);
     return MyModel.fromJson(data);
@@ -70,7 +71,7 @@ class UserAccountService implements IUserAccountService {
   @override
   Future<MyModel> getUserAccountData() async {
     final docData = await _dataSource.getDoc(
-        collectionPath: AppStrings.accounts,
+        collectionPath: FirestoreSchema.accounts,
         docId: _sessionService.currentUid
     );
     final userAccount = await getAccountMap(userDoc: docData);

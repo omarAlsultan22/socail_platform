@@ -7,7 +7,6 @@ import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
 import '../../../../../core/presentation/widgets/layouts/user_row_layout.dart';
 import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
-import '../../../../../core/presentation/widgets/states/loading_state_widget.dart';
 
 
 class AddNewFriendsLayout extends StatefulWidget {
@@ -56,7 +55,6 @@ class _AddNewFriendsLayoutState extends State<AddNewFriendsLayout> {
                       userRow: friend,
                       onPressed: () => widget.onAdd(friend),
                     ),
-                fallback: LoadingStateWidget()
             ),
           ),
           Container(

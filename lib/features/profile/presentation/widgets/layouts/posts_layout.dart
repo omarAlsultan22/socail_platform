@@ -163,7 +163,6 @@ class _PostsLayoutState extends State<PostsLayout> {
             list: widget.friendsList,
             object: (friend) =>
                 UserRowLayout(userRow: friend, userId: widget.userId),
-            fallback: Text('There no any friends yet')
         ),
       );
 

@@ -85,7 +85,7 @@ class _buildVideoContentState extends State<VideoContentWidget> {
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                  Icons.play_arrow, size: AppSizes.xl, color: AppColors.white
+                  Icons.play_arrow, size: AppSizes.size50, color: AppColors.white
               ),
             ),
         ],

@@ -1,3 +1,4 @@
+import '../../../../constants/firestore_schema.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
@@ -17,7 +18,8 @@ class PostOperationsImpl extends FirestoreServiceImpl implements PostOperations 
     required String postId,
     required String userId,
   }) async {
-    final docRef = getDocRef(docId: postId, collectionPath: AppStrings.posts);
+    final docRef = getDocRef(
+        docId: postId, collectionPath: FirestoreSchema.posts);
 
     if (userId == _sessionService.currentUid) {
       await docRef.update({AppStrings.isActive: true});
@@ -37,7 +39,8 @@ class PostOperationsImpl extends FirestoreServiceImpl implements PostOperations 
     required String postId,
     required String userId,
   }) async {
-    final docRef = getDocRef(docId: postId, collectionPath: AppStrings.posts);
+    final docRef = getDocRef(
+        docId: postId, collectionPath: FirestoreSchema.posts);
 
     if (userId == _sessionService.currentUid) {
       await docRef.update({AppStrings.isActive: false});
@@ -52,7 +55,8 @@ class PostOperationsImpl extends FirestoreServiceImpl implements PostOperations 
     required String postId,
     required String userId,
   }) async {
-    final docRef = getDocRef(docId: postId, collectionPath: AppStrings.posts);
+    final docRef = getDocRef(
+        docId: postId, collectionPath: FirestoreSchema.posts);
 
     if (userId == _sessionService.currentUid) {
       await docRef.update({AppStrings.isActive: true});
@@ -72,7 +76,8 @@ class PostOperationsImpl extends FirestoreServiceImpl implements PostOperations 
     required String postId,
     required String userId,
   }) async {
-    final docRef = getDocRef(docId: postId, collectionPath: AppStrings.posts);
+    final docRef = getDocRef(
+        docId: postId, collectionPath: FirestoreSchema.posts);
 
     if (userId == _sessionService.currentUid) {
       await docRef.update({AppStrings.isActive: false});

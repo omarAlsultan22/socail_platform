@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/constants/app_strings.dart';
+import '../../../../core/constants/firestore_schema.dart';
 import '../../domain/data_sources/user_details_data_source.dart';
 import 'package:social_app/features/user_details/domain/repositories/user_details_repository.dart';
 
@@ -28,8 +28,8 @@ class UserDetailsRepositoryImpl implements UserDetailsRepository {
       String currentUid) {
     return _dataSource.getSubCollectionStream(
         docId: currentUid,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.friends
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.friends
     );
   }
 }

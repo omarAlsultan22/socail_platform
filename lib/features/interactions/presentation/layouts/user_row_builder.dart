@@ -27,11 +27,6 @@ class UserRowBuilder extends StatelessWidget {
               userId: userId,
               userRow: userRow,
             ),
-        fallback: Center(
-          child: Text(
-            'There are no any likes',
-          ),
-        ),
       ),
     );
   }

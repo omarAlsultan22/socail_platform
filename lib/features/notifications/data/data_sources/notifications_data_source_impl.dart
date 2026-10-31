@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/firestore_schema.dart';
 import '../../domain/data_sources/notifications_data_source.dart';
 import '../../../../core/data/data_sources/remote/firestore/firestore_service_impl.dart';
 
@@ -11,7 +12,7 @@ class NotificationsDataSourceImpl extends FirestoreServiceImpl implements Notifi
     required String userId,
   }) {
     return firestore
-        .collection(AppStrings.notifications)
+        .collection(FirestoreSchema.notifications)
         .where(AppStrings.userId, isEqualTo: userId)
         .orderBy(AppStrings.dateTime, descending: true)
         .snapshots()
@@ -27,11 +28,11 @@ class NotificationsDataSourceImpl extends FirestoreServiceImpl implements Notifi
     required String postId,
     required String userId,
   }) async {
-    final postRef = firestore.collection(AppStrings.posts).doc(postId);
+    final postRef = firestore.collection(FirestoreSchema.posts).doc(postId);
 
     final results = await Future.wait([
       postRef.get().timeout(duration),
-      getDoc(docId: userId, collectionPath: AppStrings.accounts),
+      getDoc(docId: userId, collectionPath: FirestoreSchema.accounts),
       postRef.collection(AppStrings.commentsList).get().timeout(duration),
     ]);
 
@@ -47,7 +48,7 @@ class NotificationsDataSourceImpl extends FirestoreServiceImpl implements Notifi
     required String postId,
   }) async {
     final likesCount = await firestore
-        .collection(AppStrings.posts)
+        .collection(FirestoreSchema.posts)
         .doc(postId)
         .collection(AppStrings.likesList)
         .count()
@@ -65,7 +66,7 @@ class NotificationsDataSourceImpl extends FirestoreServiceImpl implements Notifi
     final commentsWithLikes = await Future.wait(
       commentsDocs.docs.map((doc) async {
         final likesCount = await firestore
-            .collection(AppStrings.posts)
+            .collection(FirestoreSchema.posts)
             .doc(postId)
             .collection(AppStrings.commentsList)
             .doc(doc.id)

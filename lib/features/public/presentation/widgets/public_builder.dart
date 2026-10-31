@@ -196,7 +196,7 @@ class _PublicBuilderState extends State<PublicBuilder> with WidgetsBindingObserv
                                               return Container(
                                                   color: AppColors.grey);
                                             },
-                                          ) : Icon(Icons.person, size: AppSizes.xl),
+                                          ) : Icon(Icons.person, size: AppSizes.size50),
                                         ),
                                       ),
                                       Positioned(

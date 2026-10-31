@@ -5,7 +5,6 @@ import '../../../../../core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_spaces.dart';
 import 'package:social_app/core/constants/app_assets.dart';
-import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/services/data/session_service.dart';
@@ -55,7 +54,7 @@ class UserRowLayout extends StatelessWidget {
                 ),
                 AppSpaces.horizontal_8,
                 Text(
-                  userRow.myName ?? AppStrings.unknownUser,
+                  userRow.myName,
                   style: AppTextStyles.boldMedium,
                 ),
               ],
@@ -65,10 +64,10 @@ class UserRowLayout extends StatelessWidget {
               Padding(
                 padding: AppPaddings.onlyRight8,
                 child: FriendButton(
-                  buttonName: AppStrings.addFriend,
-                  backgroundColor: AppColors.primaryBlue,
-                  textColor: AppColors.white,
-                  onPressed: onPressed!,
+                    onPressed: onPressed!,
+                    buttonName: 'Add Friend',
+                    textColor: AppColors.white,
+                    backgroundColor: AppColors.primaryBlue
                 ),
               ),
           ],

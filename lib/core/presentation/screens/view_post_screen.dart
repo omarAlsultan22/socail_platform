@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
+import '../constants/presentation_strings.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/utils/time_ago_helper.dart';
@@ -47,7 +48,7 @@ class _ViewPostScreenState extends State<ViewPostScreen> with SingleTickerProvid
   String get postType => AppStrings.post;
 
   @override
-  String get titleName => AppStrings.updatePost;
+  String get titleName => PresentationStrings.updatePost;
 
   @override
   String? get userId => widget.userId;

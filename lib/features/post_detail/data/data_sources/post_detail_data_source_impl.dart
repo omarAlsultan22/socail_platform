@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/data_sources/post_detail_data_source.dart';
+import 'package:social_app/core/constants/firestore_schema.dart';
 import '../../../../core/data/data_sources/remote/firestore/firestore_service_impl.dart';
 
 
@@ -15,11 +16,11 @@ class PostDetailDataSourceImpl extends FirestoreServiceImpl implements PostDetai
     required String postId,
     required String userId,
   }) async {
-    final postRef = getDocRef(docId: postId, collectionPath: AppStrings.posts);
+    final postRef = getDocRef(docId: postId, collectionPath: FirestoreSchema.posts);
 
     final results = await Future.wait([
       postRef.get().timeout(duration),
-      getDoc(docId: userId, collectionPath: AppStrings.accounts),
+      getDoc(docId: userId, collectionPath: FirestoreSchema.accounts),
       postRef.collection(AppStrings.commentsList).get().timeout(duration),
     ]);
 
@@ -39,7 +40,7 @@ class PostDetailDataSourceImpl extends FirestoreServiceImpl implements PostDetai
     final commentsWithLikes = await Future.wait(
       commentsDocs.docs.map((doc) async {
         final postRef = getDocRef(
-            docId: postId, collectionPath: AppStrings.posts);
+            docId: postId, collectionPath: FirestoreSchema.posts);
         final commentRef = getSpecificDocRef(
             docId: doc.id,
             collectionPath: AppStrings.commentsList,

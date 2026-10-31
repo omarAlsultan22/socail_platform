@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../mixins/more_options_mixin.dart';
 import '../../data/models/post_model.dart';
 import '../mixins/post_components_mixin.dart';
+import '../constants/presentation_strings.dart';
 import 'package:social_app/core/themes/app_theme.dart';
 import 'package:social_app/core/constants/app_sizes.dart';
 import 'package:social_app/core/constants/app_colors.dart';
@@ -59,7 +60,7 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
   String get postType => AppStrings.post;
 
   @override
-  String get titleName => AppStrings.updatePost;
+  String get titleName => PresentationStrings.updatePost;
 
   @override
   String? get userId => widget.userId;
@@ -166,7 +167,7 @@ class _PostCardState extends State<PostCard> with SingleTickerProviderStateMixin
   }) {
     final sizeFactor = isRealUser ? 1.0 : 0.8;
     final position = isRealUser ? 3.0 : 2.0;
-    final avatarSize = AppSizes.xl * sizeFactor;
+    final avatarSize = AppSizes.size50 * sizeFactor;
     final fontSize = 20.0 * sizeFactor;
     final iconSize = 20.0 * sizeFactor;
     final onlineIndicatorSize = AppSizes.onlineIndicator * sizeFactor;

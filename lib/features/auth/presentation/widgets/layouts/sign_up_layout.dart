@@ -1,3 +1,5 @@
+import '../../../constants/auth_hints_texts.dart';
+import '../../../constants/auth_lables_texts.dart';
 import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_spaces.dart';
@@ -139,7 +141,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                                 value: value,
                                                 text: 'First Name');
                                           },
-                                          label: 'First Name',
+                                          labelText: 'First Name',
                                           icon: Icons.person,
                                         ),
                                       ),
@@ -154,7 +156,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                                 value: value,
                                                 text: 'Second Name');
                                           },
-                                          label: 'Second Name',
+                                          labelText: 'Second Name',
                                           icon: Icons.person,
                                         ),
                                       ),
@@ -171,8 +173,9 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                       return ValidateInput.validator(
                                           value: value, text: 'Email');
                                     },
-                                    label: 'Email',
                                     icon: Icons.email_outlined,
+                                    hintText: AuthHintsTexts.emailHintText,
+                                    labelText: AuthLabelsTexts.emailLabelText,
                                   ),
                                   AppSpaces.vertical_20,
 
@@ -192,8 +195,9 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                             _isObscure = !_isObscure
                                             )
                                     ),
-                                    label: 'Password',
                                     icon: Icons.lock_outline,
+                                    hintText: AuthHintsTexts.passwordHintText,
+                                    labelText: AuthLabelsTexts.passwordLabelText,
                                   ),
                                   AppSpaces.vertical_30,
                                   Container(
@@ -203,7 +207,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                       boxShadow: AppShadows.amber,
                                     ),
                                     width: double.infinity,
-                                    height: AppSizes.xl,
+                                    height: AppSizes.size50,
                                     child: ElevatedButton(
                                       style: buttonStyle(),
                                       onPressed: _isLocked ? null : _submitForm,

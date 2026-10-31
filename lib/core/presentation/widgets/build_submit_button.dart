@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
 import '../../services/domain/i_media_upload_service.dart';
 import 'package:social_app/core/constants/app_colors.dart';
-import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/user_model.dart';
 import 'package:social_app/core/constants/app_constants.dart';
 import 'package:social_app/core/data/models/message_result.dart';
@@ -38,6 +37,7 @@ class BuildSubmitButton extends StatefulWidget {
 
 class _BuildSubmitButtonState extends State<BuildSubmitButton> {
   // ===== ثوابت خاصة بالملف =====
+  static const String _shareNow = 'Share Now';
   static const Color _errorColor = AppColors.red700;
 
   late String _textValue;
@@ -69,7 +69,7 @@ class _BuildSubmitButtonState extends State<BuildSubmitButton> {
     }
 
     if (widget.postModel!.myId == widget.currentId &&
-        widget.buttonName == AppStrings.shareNow) {
+        widget.buttonName == _shareNow) {
       BuildSnackBar.show(
         context: context,
         backgroundColor: _errorColor,
@@ -79,7 +79,7 @@ class _BuildSubmitButtonState extends State<BuildSubmitButton> {
     }
 
     if (widget.postModel!.myId != widget.currentId &&
-        widget.buttonName == AppStrings.shareNow) {
+        widget.buttonName == _shareNow) {
       late PostModel newPostModel;
       setState(() =>
       newPostModel = PostModel(

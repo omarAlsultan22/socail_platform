@@ -1,3 +1,5 @@
+import '../../../constants/auth_hints_texts.dart';
+import '../../../constants/auth_lables_texts.dart';
 import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../screens/sign_up_screen.dart';
@@ -160,8 +162,9 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                           return ValidateInput.validator(
                               value: value, text: 'Email');
                         },
-                        label: 'Email',
                         icon: Icons.email_outlined,
+                        hintText: AuthHintsTexts.emailHintText,
+                        labelText: AuthLabelsTexts.emailLabelText,
                       ),
                       AppSpaces.vertical_20,
 
@@ -180,9 +183,10 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                                 setState(() => _isObscure = !_isObscure
                                 )
                         ),
-                        label: 'Password',
-                        icon: Icons.lock_outline,
                         isPassword: true,
+                        icon: Icons.lock_outline,
+                        hintText: AuthHintsTexts.passwordHintText,
+                        labelText: AuthLabelsTexts.passwordLabelText,
                       ),
                       AppSpaces.vertical_30,
 
@@ -195,7 +199,7 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                           boxShadow: AppShadows.amber,
                         ),
                         width: double.infinity,
-                        height: AppSizes.xl,
+                        height: AppSizes.size50,
                         child: ElevatedButton(
                           style: buttonStyle(),
                           onPressed: _isLocked ? null : _submitForm,

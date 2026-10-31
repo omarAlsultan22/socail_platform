@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import '../repositories/profile_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/constants/app_sizes.dart';
 import '../../../../core/data/models/paginated_posts.dart';
 import 'package:social_app/core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_constants.dart';
 
 
 class VideosUseCase {
@@ -19,7 +19,7 @@ class VideosUseCase {
     final snapshot = await _repository.getVideos(
       userId: userId,
       lastDoc: lastDoc,
-      limit: AppSizes.limit,
+      limit: AppConstants.limit,
     );
 
     if (snapshot.docs.isEmpty) {
@@ -58,7 +58,7 @@ class VideosUseCase {
     return PaginatedPosts(
         dataList: videos,
         lastPostDoc: newLastDoc,
-        hasMoreData: snapshot.docs.length == AppSizes.limit
+        hasMoreData: snapshot.docs.length == AppConstants.limit
     );
   }
 }

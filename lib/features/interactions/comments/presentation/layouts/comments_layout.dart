@@ -59,7 +59,6 @@ class CommentsLayout extends StatelessWidget {
                     messageResult: messageResult,
                     sessionService: sl<SessionService>(),
                   ),
-              fallback: Text('There are no any comments'),
             ),
           ),
           CommentForm(onPressed: (commentText) =>

@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/core/constants/firestore_schema.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../features/main/presentation/cubits/main_cubit.dart';
 import '../../../features/main/presentation/screens/main_screen.dart';
@@ -249,7 +250,7 @@ class NotificationService implements INotificationService {
     try {
       await _dataSource.updateDoc(
           data: {'fcmToken': token},
-          collectionPath: AppStrings.users,
+          collectionPath: FirestoreSchema.users,
           docId: _sessionService.currentUid
       );
       debugPrint('FCM token saved successfully');

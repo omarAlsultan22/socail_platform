@@ -1,18 +1,9 @@
 enum NotificationType {
   thumbUp('thumb_up'),
-  modeComment('mode_comment'),
-  share('share'),
   friendRequest('friend_request');
 
   final String value;
   const NotificationType(this.value);
-
-  static NotificationType? fromValue(String? value) {
-    for (final t in values) {
-      if (t.value == value) return t;
-    }
-    return null;
-  }
 }
 
 abstract final class NotificationKeys {

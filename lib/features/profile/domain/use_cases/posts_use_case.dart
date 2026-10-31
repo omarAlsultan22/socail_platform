@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import '../repositories/profile_repository.dart';
 import '../../../../core/data/models/my_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/constants/app_sizes.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/data/models/paginated_posts.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/post_model.dart';
@@ -20,7 +20,7 @@ class PostsUseCase {
     final snapshot = await _repository.getPosts(
       userId: userId,
       postType: AppStrings.post,
-      limit: AppSizes.limit,
+      limit: AppConstants.limit,
       lastDoc: lastDoc
     );
 
@@ -71,7 +71,7 @@ class PostsUseCase {
     return PaginatedPosts(
         dataList: posts,
         lastPostDoc: newLastDoc,
-        hasMoreData: snapshot.docs.length == AppSizes.limit
+        hasMoreData: snapshot.docs.length == AppConstants.limit
     );
   }
 

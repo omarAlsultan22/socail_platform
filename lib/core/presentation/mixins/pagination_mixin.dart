@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../constants/app_constants.dart';
+import '../../constants/app_sizes.dart';
 
 
 mixin PaginationMixin<T extends StatefulWidget> on State<T> {
@@ -17,7 +17,7 @@ mixin PaginationMixin<T extends StatefulWidget> on State<T> {
 
   void _onScroll() {
     if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent - AppConstants.scrollThreshold &&
+        scrollController.position.maxScrollExtent - AppSizes.scrollThreshold &&
         hasMoreData &&
         !isLoadingMore) {
       _loadMore();

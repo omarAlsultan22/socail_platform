@@ -92,8 +92,8 @@ class _BuildImageUploadSection<T> extends State<BuildImageUploadSection<T>> {
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.photo_library, size: AppSizes.xl),
-                    Icon(Icons.video_collection, size: AppSizes.xl),
+                    Icon(Icons.photo_library, size: AppSizes.size50),
+                    Icon(Icons.video_collection, size: AppSizes.size50),
                   ],
                 ),
                 const Text('Add photos/videos'),

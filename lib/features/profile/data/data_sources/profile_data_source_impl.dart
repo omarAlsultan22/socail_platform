@@ -1,5 +1,6 @@
 import '../../../../core/data/models/post_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/constants/firestore_schema.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../core/data/posts/constants/posts_collection.dart';
 import 'package:social_app/core/data/posts/queries/posts_query_builder.dart';
@@ -52,7 +53,7 @@ class ProfileDataSourceImpl extends FirestoreServiceImpl implements ProfileDataS
     required DocumentSnapshot? lastPostDoc,
   }) async {
     var query = firestore
-        .collection(AppStrings.posts)
+        .collection(FirestoreSchema.posts)
         .where(AppStrings.userId, isEqualTo: userId)
         .where(
         AppStrings.postType, whereIn: [postType ?? PostsCollection.postTypesList]);
@@ -71,7 +72,7 @@ class ProfileDataSourceImpl extends FirestoreServiceImpl implements ProfileDataS
     required PostModel postModel,
     required String collectionPath,
   }) async {
-    final docRef = createDoc(collectionPath: AppStrings.posts);
+    final docRef = createDoc(collectionPath: FirestoreSchema.posts);
     await setSupDoc(
         isMerge: true,
         docId: currentUid,

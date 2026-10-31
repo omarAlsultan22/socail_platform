@@ -153,7 +153,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
               children: [
                 BuildInputField.build(
                   controller: _newEmailController,
-                  hint: "New Email",
+                  hintText: "New Email",
                   icon: Icons.email,
                   validator: (value) =>
                       ValidateInput.validator(value: value!, text: 'New Email'),
@@ -161,7 +161,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
                 AppSpaces.vertical_16,
                 BuildInputField.build(
                   controller: _currentPasswordController,
-                  hint: "Current Password",
+                  hintText: "Current Password",
                   icon: Icons.lock,
                   obscureText: _isObscureCurrent,
                   suffixIcon: buildPasswordVisibilityToggle(
@@ -176,7 +176,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
                 AppSpaces.vertical_16,
                 BuildInputField.build(
                   controller: _newPasswordController,
-                  hint: "New Password",
+                  hintText: "New Password",
                   icon: Icons.lock,
                   obscureText: _isObscureNew,
                   suffixIcon: buildPasswordVisibilityToggle(
@@ -190,7 +190,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
                 AppSpaces.vertical_16,
                 BuildInputField.build(
                   controller: _repeatNewPasswordController,
-                  hint: "Confirm the new password",
+                  hintText: "Confirm the new password",
                   icon: Icons.lock_reset,
                   obscureText: _isObscureConfirm,
                   suffixIcon: buildPasswordVisibilityToggle(

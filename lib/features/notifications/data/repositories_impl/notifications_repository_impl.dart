@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../converters/notification_data_converter.dart';
+import '../../../../core/constants/firestore_schema.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
@@ -34,7 +35,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
         notifications.map((notificationDoc) async {
           final userId = notificationDoc[AppStrings.friendId];
           final userAccount = await _dataSource.getDoc(
-            docId: userId, collectionPath: AppStrings.accounts,
+            docId: userId, collectionPath: FirestoreSchema.accounts,
           );
 
           final notificationData = await NotificationsDataConverter
@@ -84,7 +85,8 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
       commentsWithLikes.map((doc) async {
         final commentData = doc.data();
         final commentUserDoc = await _dataSource.getDoc(
-            docId: commentData[AppStrings.userId], collectionPath: AppStrings.accounts
+            docId: commentData[AppStrings.userId],
+            collectionPath: FirestoreSchema.accounts
         );
 
         if (!commentUserDoc.exists) return null;
@@ -112,7 +114,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
       isMerge: false,
       docId: notificationData.myId,
       data: notificationData.toJson(),
-      collectionPath: AppStrings.notifications,
+      collectionPath: FirestoreSchema.notifications,
     );
   }
 
@@ -123,7 +125,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
     await _dataSource.updateDoc(
         docId: docId,
         data: {AppStrings.isRead: true},
-        collectionPath: AppStrings.notifications
+        collectionPath: FirestoreSchema.notifications
     );
   }
 }

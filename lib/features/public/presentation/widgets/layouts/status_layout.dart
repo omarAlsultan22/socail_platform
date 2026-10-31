@@ -13,7 +13,6 @@ import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/constants/app_durations.dart';
 import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/data/models/message_result.dart';
-import 'package:social_app/core/constants/status_constants.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 import '../../../../../core/presentation/mixins/more_options_mixin.dart';
@@ -49,6 +48,10 @@ class StatusLayout extends StatefulWidget {
 
 class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderStateMixin, MoreOptionsMixin<StatusLayout> {
 
+  //constants
+  static const _framesPerSecond = 60.0;
+  static const _displayDurationSeconds = 5.0;
+
   // Values
   int timeLeft = 2;
   int currentIndex = 0;
@@ -59,8 +62,8 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
   bool _isDisposed = false;
 
   double startLine = 0.0;
-  double totalDuration = StatusConstants.displayDurationSeconds;
-  double totalFrames = StatusConstants.displayDurationSeconds * StatusConstants.framesPerSecond;
+  double totalDuration = _displayDurationSeconds;
+  double totalFrames = _displayDurationSeconds * _framesPerSecond;
 
   // Timer
   Timer? _timer;
@@ -73,10 +76,10 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
   late IOnlineStatusService _onlineStatusService;
 
   @override
-  String get postType => AppStrings.postStatus;
+  String get postType => 'status';
 
   @override
-  String get titleName => AppStrings.updateStatus;
+  String get titleName => 'UpdateStatus';
 
   @override
   PostModel get postModel => _firstStatus;
@@ -126,20 +129,21 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
 
       final controller = widget.statusesList[currentIndex].videoController!;
       totalDuration = controller.value.duration.inSeconds.toDouble();
-      totalFrames = totalDuration * StatusConstants.framesPerSecond;
+      totalFrames = totalDuration * _framesPerSecond;
       startLine =
           controller.value.position.inSeconds.toDouble() / totalDuration;
 
       controller.removeListener(_updateProgress);
       controller.addListener(_updateProgress);
     } else {
-      totalDuration = StatusConstants.displayDurationSeconds;
-      totalFrames = totalDuration * StatusConstants.framesPerSecond;
+      totalDuration = _displayDurationSeconds;
+      totalFrames = totalDuration * _framesPerSecond;
       startLine = 0.0;
       remainingFrames = totalFrames.toInt();
 
       _timer = Timer.periodic(
-        Duration(milliseconds: (1000 / StatusConstants.framesPerSecond).round()),
+        Duration(
+            milliseconds: (1000 / _framesPerSecond).round()),
             (timer) {
           if (!isPaused && mounted) {
             setState(() {
@@ -378,15 +382,15 @@ class _StatusLayoutState extends State<StatusLayout> with SingleTickerProviderSt
                                                 .sessionService
                                         ),
                                     child: SizedBox(
-                                      width: AppSizes.xl,
-                                      height: AppSizes.xl,
+                                      width: AppSizes.size50,
+                                      height: AppSizes.size50,
                                       child: Image.network(
                                         widget.userDetails.myImageUrl,
                                         fit: BoxFit.cover,
                                         errorBuilder: (_, __, ___) =>
                                             Container(
-                                                width: AppSizes.xl,
-                                                height: AppSizes.xl,
+                                                width: AppSizes.size50,
+                                                height: AppSizes.size50,
                                                 decoration: BoxDecoration(
                                                     borderRadius: AppBorders
                                                         .borderRadius_50,

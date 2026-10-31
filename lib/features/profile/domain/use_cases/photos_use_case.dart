@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import '../repositories/profile_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/constants/app_sizes.dart';
 import '../../../../core/data/models/paginated_posts.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/post_model.dart';
+import 'package:social_app/core/constants/app_constants.dart';
 
 
 class PhotosUseCase {
   final ProfileRepository _repository;
-  static const _limit = AppSizes.limit;
+  static const _limit = AppConstants.limit;
 
   PhotosUseCase({
     required ProfileRepository repository,
@@ -127,7 +127,7 @@ class PhotosUseCase {
       limit: _limit,
       userId: userId,
       lastDoc: lastDoc,
-      postType: AppStrings.coverImage
+      postType: 'coverImage'
     );
 
     if (snapshot.docs.isEmpty) {

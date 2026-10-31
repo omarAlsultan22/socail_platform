@@ -72,13 +72,13 @@ class PostCreationWidget extends StatelessWidget {
                                   child: Material(
                                     color: AppColors.transparent,
                                     child: SizedBox(
-                                      width: AppSizes.xl,
-                                      height: AppSizes.xl,
+                                      width: AppSizes.size50,
+                                      height: AppSizes.size50,
                                       child: (!userDetails.myImageUrlIsEmpty) ?
                                       Image.network(
                                         userDetails.myImageUrl,
                                         fit: BoxFit.cover,
-                                      ) : Icon(Icons.person, size: AppSizes.xl),
+                                      ) : Icon(Icons.person, size: AppSizes.size50),
                                     ),
                                   ),
                                 ),
@@ -98,8 +98,8 @@ class PostCreationWidget extends StatelessWidget {
                                   child: Material(
                                     color: AppColors.grey700,
                                     child: SizedBox(
-                                      width: AppSizes.xl,
-                                      height: AppSizes.xl,
+                                      width: AppSizes.size50,
+                                      height: AppSizes.size50,
                                       child: Icon(
                                         Icons.image,
                                         size: AppSizes.size30,

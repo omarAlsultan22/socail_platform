@@ -1,6 +1,6 @@
 import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
-import '../../../constants/auth_strings.dart';
+import '../../../constants/auth_lables_texts.dart';
 import '../../../../../core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_spaces.dart';
 import '../../../../../core/data/models/message_result.dart';
@@ -22,7 +22,7 @@ class ForgetPasswordLayout extends StatefulWidget {
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMixin<ForgetPasswordLayout>, MessageResultMixin<ForgetPasswordLayout>{
+class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMixin<ForgetPasswordLayout>, MessageResultMixin<ForgetPasswordLayout> {
   bool _isLocked = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -79,7 +79,7 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
-                  labelText: AuthStrings.emailLabel,
+                  labelText: AuthLabelsTexts.emailLabelText,
                   border: const OutlineInputBorder(),
                 ),
               ),

@@ -29,7 +29,7 @@ class SmartImage extends StatelessWidget {
           width: width,
           height: height,
           color: AppColors.grey,
-          child: Icon(Icons.person, size: height ?? AppSizes.xl),
+          child: Icon(Icons.person, size: height ?? AppSizes.size50),
         );
 
     if (url == null || url!.isEmpty) return defaultFallback;

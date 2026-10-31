@@ -1,6 +1,8 @@
+import '../../constants/public_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:social_app/core/constants/app_strings.dart';
+import '../../../../core/constants/firestore_schema.dart';
 import '../../domain/data_sources/public_data_source.dart';
+import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../core/presentation/mixins/base_like_mixin_impl.dart';
@@ -33,8 +35,8 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
   Future<QuerySnapshot<Map<String, dynamic>>> getFriendsList() {
     return dataSource.getSubCollection(
       docId: sessionService.currentUid,
-      supCollectionPath: AppStrings.users,
-      subCollectionPath: AppStrings.friends
+      supCollectionPath: FirestoreSchema.users,
+      subCollectionPath: FirestoreSchema.friends
     );
   }
 
@@ -56,7 +58,7 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
     return dataSource.getSubCollection(
       subCollectionPath: _deletedPosts,
       docId: sessionService.currentUid,
-      supCollectionPath: AppStrings.users,
+      supCollectionPath: FirestoreSchema.users,
     );
   }
 
@@ -64,7 +66,7 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
   Future<DocumentSnapshot> getAccountData(String userId) async {
     return await dataSource.getDoc(
         docId: userId,
-        collectionPath: AppStrings.accounts
+        collectionPath: FirestoreSchema.accounts
     );
   }
 
@@ -82,8 +84,8 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
         limit: limit,
         lastStatusDoc: lastStatusDoc,
         docId: sessionService.currentUid,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.friends
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.friends
     );
   }
 
@@ -91,7 +93,7 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
   Future<QuerySnapshot<Map<String, dynamic>>> getDeletedStatuses() {
     return dataSource.getSubCollection(
         docId: sessionService.currentUid,
-        supCollectionPath: AppStrings.users,
+        supCollectionPath: FirestoreSchema.users,
         subCollectionPath: _deletedStatuses
     );
   }
@@ -109,7 +111,7 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
       isMerge: true,
       docId: postModel.myDocId,
       data: postModel.toJson(),
-      collectionPath: AppStrings.posts
+      collectionPath: FirestoreSchema.posts
     );
   }
 
@@ -119,13 +121,13 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
       isMerge: true,
       docId: statusModel.myDocId,
       data: statusModel.toJson(),
-      collectionPath: AppStrings.status
+      collectionPath: PublicConstants.status
     );
   }
 
   @override
   Future<void> deletePostFromFirestore(String postId) async {
-    await dataSource.deleteSupDoc(collectionPath: AppStrings.posts, docId: postId);
+    await dataSource.deleteSupDoc(collectionPath: FirestoreSchema.posts, docId: postId);
   }
 
   @override
@@ -134,14 +136,14 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
         data: {},
         subDocId: postId,
         subCollectionPath: _deletedPosts,
-        supCollectionPath: AppStrings.users,
+        supCollectionPath: FirestoreSchema.users,
         supDocId: sessionService.currentUid
     );
   }
 
   @override
   Future<void> deleteStatusFromFirestore(String statusId) async {
-    await dataSource.deleteSupDoc(collectionPath: AppStrings.status, docId: statusId);
+    await dataSource.deleteSupDoc(collectionPath: PublicConstants.status, docId: statusId);
   }
 
   @override
@@ -149,7 +151,7 @@ class PublicRepositoryImpl with BaseLikeMixinImpl implements PublicRepository {
     await dataSource.setSubDoc(
         data: {},
         subDocId: statusId,
-        supCollectionPath: AppStrings.users,
+        supCollectionPath: FirestoreSchema.users,
         subCollectionPath: _deletedStatuses,
         supDocId: sessionService.currentUid
     );

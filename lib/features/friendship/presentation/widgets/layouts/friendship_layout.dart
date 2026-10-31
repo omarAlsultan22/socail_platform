@@ -45,8 +45,8 @@ class FriendshipLayout extends StatelessWidget {
         child: Row(
           children: [
             SizedBox(
-              width: AppSizes.xl,
-              height: AppSizes.xl,
+              width: AppSizes.size50,
+              height: AppSizes.size50,
               child: ClipOval(
                 child: Image.network(
                     userModel.myImageUrl,

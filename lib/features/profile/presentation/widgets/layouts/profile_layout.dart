@@ -198,7 +198,7 @@ class _ProfileLayoutState extends State<ProfileLayout> {
             onTap: () =>
                 _createPost(
                   userDetails: userDetails,
-                  folderName: AppStrings.coverImage,
+                  folderName: 'coverImage',
                   titleName: 'Create cover photo',
                 )
         )
@@ -258,7 +258,7 @@ class _ProfileLayoutState extends State<ProfileLayout> {
               Image.network(
                 widget.userInfoModel.profileImageUrl,
                 fit: BoxFit.cover,
-              ) : Icon(Icons.person, size: AppSizes.xl),
+              ) : Icon(Icons.person, size: AppSizes.size50),
             ),
           ),
         ),

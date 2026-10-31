@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/data_sources/main_data_source.dart';
+import '../../../../core/constants/firestore_schema.dart';
 import 'package:social_app/core/data/models/my_model.dart';
-import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/features/main/domain/repositories/main_repository.dart';
 
@@ -20,8 +20,8 @@ class MainRepositoryImpl implements MainRepository{
   Future<QuerySnapshot> getFriendsList({required String uId}) async {
     return await _dataSource.getSubCollection(
         docId: uId,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.friends
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.friends
     );
   }
 
@@ -51,8 +51,8 @@ class MainRepositoryImpl implements MainRepository{
   Future<QuerySnapshot> getFriendRequests() async {
     return await _dataSource.getSubCollection(
       docId: _sessionService.currentUid,
-      supCollectionPath: AppStrings.users,
-      subCollectionPath: AppStrings.requests,
+      supCollectionPath: FirestoreSchema.users,
+      subCollectionPath: FirestoreSchema.requests,
     );
   }
 
@@ -60,8 +60,8 @@ class MainRepositoryImpl implements MainRepository{
   Stream<QuerySnapshot> getFriendRequestsStream() {
     return _dataSource.getSubCollectionStream(
         docId: _sessionService.currentUid,
-        supCollectionPath: AppStrings.users,
-      subCollectionPath: AppStrings.requests
+        supCollectionPath: FirestoreSchema.users,
+      subCollectionPath: FirestoreSchema.requests
     );
   }
 }

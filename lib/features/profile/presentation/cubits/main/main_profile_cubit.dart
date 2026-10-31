@@ -6,6 +6,7 @@ import '../../../domain/use_cases/profile_use_case.dart';
 import '../../../../../core/data/models/post_model.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../../core/data/models/message_result.dart';
+import '../../../../../core/constants/firestore_schema.dart';
 import '../../../../../core/data/models/user_info_model.dart';
 import '../../../../../core/domain/use_cases/like_use_case.dart';
 import '../../../../../core/domain/use_cases/post_use_case.dart';
@@ -167,8 +168,8 @@ abstract class MainProfileCubit extends Cubit<ProfileState> with PostOperationsM
     if (postModel.postType == AppStrings.profileImage) {
       await _useCases.executeUploadImage(
         postModel: postModel,
-        collection: AppStrings.accounts,
-        imageType: AppStrings.userImage
+        imageType: AppStrings.userImage,
+        collection: FirestoreSchema.accounts
       );
       final userInfoModel = state.updateProfileInfo(profileImage: postModel);
       _setState(userInfoModel);

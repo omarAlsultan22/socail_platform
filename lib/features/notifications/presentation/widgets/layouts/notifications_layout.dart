@@ -35,8 +35,8 @@ class NotificationsLayout extends StatelessWidget {
               alignment: AlignmentDirectional.bottomEnd,
               children: [
                 SizedBox(
-                  width: AppSizes.xl,
-                  height: AppSizes.xl,
+                  width: AppSizes.size50,
+                  height: AppSizes.size50,
                   child: ClipOval(
                     child: CachedNetworkImage(
                       fit: BoxFit.cover,

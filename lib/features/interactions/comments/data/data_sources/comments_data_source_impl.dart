@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_strings.dart';
+import '../../../../../core/constants/firestore_schema.dart';
 import '../../domain/data_sources/comments_data_source.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
 import 'package:social_app/core/services/data/session_service.dart';
@@ -11,7 +12,7 @@ import '../../../../../core/domain/data_sources/remote/firestore/firestore_servi
 import 'package:social_app/core/data/data_sources/remote/firestore/firestore_service_impl.dart';
 
 
-class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl implements CommentsDataSource{
+class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl implements CommentsDataSource {
   final SessionService _sessionService;
   final IUserAccountService _userAccountService;
 
@@ -32,7 +33,8 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
   SessionService get sessionService => _sessionService;
 
   CollectionReference<Map<String, dynamic>> _commentsRef(String postId) =>
-      firestore.collection(AppStrings.posts).doc(postId).collection(AppStrings.commentsList);
+      firestore.collection(FirestoreSchema.posts).doc(postId).collection(
+          AppStrings.commentsList);
 
   @override
   Stream<List<CommentModel>> getCommentsStream(String postId) async* {
@@ -54,14 +56,14 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
 
           if (userId == null) continue;
 
-    final likesCount = await getCount(
+          final likesCount = await getCount(
               collectionPath: AppStrings.commentsLikes,
               docRef: commentsRef.doc(commentId)
           );
           final hasMeLiked_ = await hasMeLiked(comment.id);
 
           final accountDoc = await getDoc(
-              docId: userId, collectionPath: AppStrings.accounts);
+              docId: userId, collectionPath: FirestoreSchema.accounts);
           if (!accountDoc.exists) continue;
 
           final userAccount = await _userAccountService.getAccountMap(
@@ -93,7 +95,8 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
     required String comment,
   }) async {
     final accountDoc = await getDoc(
-        docId: _sessionService.currentUid, collectionPath: AppStrings.accounts);
+        docId: _sessionService.currentUid,
+        collectionPath: FirestoreSchema.accounts);
     if (!accountDoc.exists) return;
 
     final docRef = _commentsRef(postId).doc();

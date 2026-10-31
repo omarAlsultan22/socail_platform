@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_strings.dart';
+import '../../../../../core/constants/firestore_schema.dart';
 import '../../domain/data_sources/comments_likes_data_source.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/services/domain/i_user_account_service.dart';
@@ -25,19 +26,19 @@ class CommentsLikesDataSourceImpl extends FirestoreServiceImpl implements Commen
   }) async* {
     final friendsSnapshot = await getSubCollection(
         docId: _sessionService.currentUid,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.friends
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.friends
     );
     await getSubCollection(
         docId: _sessionService.currentUid,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.friends
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.friends
     );
 
     final friendsList = friendsSnapshot.docs.map((doc) => doc.id).toSet();
 
     final docRef = firestore
-        .collection(AppStrings.posts)
+        .collection(FirestoreSchema.posts)
         .doc(postId)
         .collection(AppStrings.commentsList)
         .doc(commentId)
@@ -55,7 +56,7 @@ class CommentsLikesDataSourceImpl extends FirestoreServiceImpl implements Commen
         try {
           final userId = commentLike.id;
           final accountDoc = await getDoc(
-              docId: userId, collectionPath: AppStrings.accounts);
+              docId: userId, collectionPath: FirestoreSchema.accounts);
           if (!accountDoc.exists) continue;
 
           final accountData = accountDoc.data() as Map<String, dynamic>;

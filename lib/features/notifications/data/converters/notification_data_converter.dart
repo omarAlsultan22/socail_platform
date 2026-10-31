@@ -51,8 +51,8 @@ class NotificationsDataConverter {
 
       // Validate required fields
       if (!userAccountMap.containsKey(AppStrings.userImage) ||
-          !userAccountMap.containsKey(AppStrings.firstName) ||
-          !userAccountMap.containsKey(AppStrings.lastName)) {
+          !userAccountMap.containsKey('firstName') ||
+          !userAccountMap.containsKey('lastName')) {
         debugPrint('Missing required fields in user account');
         return _notificationModel;
       }

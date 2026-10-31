@@ -1,5 +1,5 @@
+import '../../constants/firestore_schema.dart';
 import '../../domain/repositories/post_repository.dart';
-import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/post_model.dart';
 import '../../domain/data_sources/remote/firestore/post_operations.dart';
 
@@ -40,7 +40,7 @@ class PostRepositoryImpl extends PostRepository {
     await _repository.getRefAndSetDoc(
       isMerge: true,
       docId: postModel.myDocId,
-      collectionPath: AppStrings.posts,
+      collectionPath: FirestoreSchema.posts,
       data: postModel.toJson(),
     );
   }
@@ -51,14 +51,14 @@ class PostRepositoryImpl extends PostRepository {
       data: {},
       subDocId: postId,
       supDocId: currentUid,
-      supCollectionPath: AppStrings.users,
-      subCollectionPath: AppStrings.deletedPosts,
+      supCollectionPath: FirestoreSchema.users,
+      subCollectionPath: 'deleted_posts',
     );
   }
 
   @override
   Future<void> deletePostFromFirestore(String postId) async {
     await _repository.deleteSupDoc(
-        collectionPath: AppStrings.posts, docId: postId);
+        collectionPath: FirestoreSchema.posts, docId: postId);
   }
 }

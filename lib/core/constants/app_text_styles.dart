@@ -1,16 +1,20 @@
-import 'app_colors.dart';
 import 'package:flutter/material.dart';
 
 
 abstract class AppTextStyles {
-  static const TextStyle boldSmall = TextStyle(
-    fontSize: 12.0, fontWeight: FontWeight.bold,
-  );
+  // ═══════════════════════════════════════════════════════════════
+  // 📏 Base Font Size Scale
+  // ═══════════════════════════════════════════════════════════════
+  static const double _md = 16.0;
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🔠 Bold Text Styles
+  // ═══════════════════════════════════════════════════════════════
   static const TextStyle boldBody = TextStyle(
     fontSize: 15.0, fontWeight: FontWeight.bold,
   );
   static const TextStyle boldMedium = TextStyle(
-    fontSize: 16.0, fontWeight: FontWeight.bold,
+    fontSize: _md, fontWeight: FontWeight.bold,
   );
   static const TextStyle boldLarge = TextStyle(
     fontSize: 18.0, fontWeight: FontWeight.bold,
@@ -24,23 +28,21 @@ abstract class AppTextStyles {
   static const TextStyle boldHeader = TextStyle(
     fontSize: 28.0, fontWeight: FontWeight.bold,
   );
-  static const TextStyle boldDisplay = TextStyle(
-    fontSize: 30.0, fontWeight: FontWeight.bold,
-  );
-  static const TextStyle boldDisplayLarge = TextStyle(
-    fontSize: 40.0, fontWeight: FontWeight.bold,
-  );
 
+  // ═══════════════════════════════════════════════════════════════
+  // 📄 Body Text Styles
+  // ═══════════════════════════════════════════════════════════════
   static const TextStyle bodySmall = TextStyle(fontSize: 12.0);
-  static const TextStyle body = TextStyle(fontSize: 14.0);
   static const TextStyle bodyLarge = TextStyle(fontSize: 15.0);
-  static const TextStyle bodyXLarge = TextStyle(fontSize: 16.0);
-  static const TextStyle bodyXXLarge = TextStyle(fontSize: 18.0);
+  static const TextStyle bodyXLarge = TextStyle(fontSize: _md);
 
-  static const TextStyle boldMediumWhite = TextStyle(
-    fontSize: 16.0, fontWeight: FontWeight.bold, color: AppColors.white,
-  );
-  static const TextStyle bodyWhite = TextStyle(
-    fontSize: 15.0, color: AppColors.white,
+  // ═══════════════════════════════════════════════════════════════
+  // 🔘 Button Text Style
+  // ═══════════════════════════════════════════════════════════════
+  static const TextStyle buttonText = TextStyle(
+    fontSize: _md,
+    letterSpacing: 1.2,
+    color: Colors.white,
+    fontWeight: FontWeight.bold,
   );
 }

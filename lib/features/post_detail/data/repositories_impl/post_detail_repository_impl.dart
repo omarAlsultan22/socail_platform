@@ -4,6 +4,7 @@ import 'package:social_app/core/constants/app_strings.dart';
 import '../../domain/repositories/post_detail_repository.dart';
 import 'package:social_app/core/data/models/comment_model.dart';
 import '../../domain/data_sources/post_detail_data_source.dart';
+import 'package:social_app/core/constants/firestore_schema.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../core/presentation/mixins/base_like_mixin_impl.dart';
 
@@ -48,7 +49,7 @@ class PostDetailRepositoryImpl with BaseLikeMixinImpl implements PostDetailRepos
     {
       final postRef = dataSource.getDocRef(
           docId: postId,
-          collectionPath: AppStrings.posts
+          collectionPath: FirestoreSchema.posts
       );
       final likesCount = await dataSource.getCount(
           docRef: postRef, collectionPath: AppStrings.likesList);
@@ -70,7 +71,7 @@ class PostDetailRepositoryImpl with BaseLikeMixinImpl implements PostDetailRepos
       commentsWithLikes.map((doc) async {
         final commentData = doc.data();
         final commentUserDoc = await dataSource.getDoc(
-            docId: commentData[AppStrings.userId], collectionPath: AppStrings.accounts
+            docId: commentData[AppStrings.userId], collectionPath: FirestoreSchema.accounts
         );
 
         if (!commentUserDoc.exists) return null;
@@ -98,7 +99,7 @@ class PostDetailRepositoryImpl with BaseLikeMixinImpl implements PostDetailRepos
       isMerge: false,
       docId: notificationData.myId,
       data: notificationData.toJson(),
-      collectionPath: AppStrings.notifications,
+      collectionPath: FirestoreSchema.notifications,
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/constants/firestore_schema.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/services/data/session_service.dart';
@@ -27,7 +28,7 @@ class SetupFriendsRepositoryImpl implements SetupFriendsRepository {
   }
 
   Future<QuerySnapshot> _getAllUsersFromFirebase() async {
-    return await _dataSource.getSupCollection(collectionPath: AppStrings.users);
+    return await _dataSource.getSupCollection(collectionPath: FirestoreSchema.users);
   }
 
   Future<List<MyModel?>> _fetchAccountsData(QuerySnapshot users,
@@ -36,7 +37,7 @@ class SetupFriendsRepositoryImpl implements SetupFriendsRepository {
       if (doc.id == currentUserId) return null;
 
       final account = await _dataSource.getDoc(
-          collectionPath: AppStrings.accounts, docId: doc.id);
+          collectionPath: FirestoreSchema.accounts, docId: doc.id);
 
       if (!account.exists) return null;
 
@@ -56,15 +57,15 @@ class SetupFriendsRepositoryImpl implements SetupFriendsRepository {
   }) async {
     await Future.wait([
       _dataSource.setSubDoc(
-          supCollectionPath: AppStrings.users,
-          subCollectionPath: AppStrings.friends,
+          supCollectionPath: FirestoreSchema.users,
+          subCollectionPath: FirestoreSchema.friends,
           subDocId: friendId,
           supDocId: _sessionService.currentUid,
           data: {AppStrings.uId: friendId}
       ),
       _dataSource.setSubDoc(
-          supCollectionPath: AppStrings.users,
-          subCollectionPath: AppStrings.friends,
+          supCollectionPath: FirestoreSchema.users,
+          subCollectionPath: FirestoreSchema.friends,
           supDocId: friendId,
           subDocId: _sessionService.currentUid,
           data: {AppStrings.uId: _sessionService.currentUid}

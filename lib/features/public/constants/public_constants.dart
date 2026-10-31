@@ -3,6 +3,7 @@ import '../data/models/status_element.dart';
 
 
 class PublicConstants {
+  static const String status = 'status';
   static const String onlyMe  = 'only_me';
   static const String public  = 'public';
   static const String friends = 'friends';

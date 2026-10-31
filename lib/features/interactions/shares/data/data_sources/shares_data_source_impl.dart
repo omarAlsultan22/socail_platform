@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import '../../domain/data_sources/shares_data_source.dart';
 import 'package:social_app/core/constants/app_strings.dart';
+import '../../../../../core/constants/firestore_schema.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/services/domain/i_user_account_service.dart';
 import '../../../../../core/data/data_sources/remote/firestore/firestore_service_impl.dart';
@@ -22,13 +23,13 @@ class SharesDataSourceImpl extends FirestoreServiceImpl implements SharesDataSou
   Stream<List<MyModel>> getSharesStream(String postId) async* {
     final friendsSnapshot = await getSubCollection(
         docId: _sessionService.currentUid,
-        supCollectionPath: AppStrings.users,
-        subCollectionPath: AppStrings.friends
+        supCollectionPath: FirestoreSchema.users,
+        subCollectionPath: FirestoreSchema.friends
     );
 
     final friendsList = friendsSnapshot.docs.map((doc) => doc.id).toList();
     await for (final sharesSnapshot in getSubCollectionStream(docId: postId,
-        supCollectionPath: AppStrings.posts,
+        supCollectionPath: FirestoreSchema.posts,
         subCollectionPath: AppStrings.sharesList)) {
       if (sharesSnapshot.docs.isEmpty) {
         yield [];
@@ -40,7 +41,7 @@ class SharesDataSourceImpl extends FirestoreServiceImpl implements SharesDataSou
         try {
           final userId = share.id;
           final accountDoc = await getDoc(
-              docId: userId, collectionPath: AppStrings.accounts);
+              docId: userId, collectionPath: FirestoreSchema.accounts);
           if (!accountDoc.exists) continue;
 
           final accountData = accountDoc.data() as Map<String, dynamic>;

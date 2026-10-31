@@ -9,8 +9,8 @@ class BuildInputField {
 
   static Widget build({
     required TextEditingController controller,
-    String? hint,
-    String? label,
+    String? hintText,
+    String? labelText,
     IconData? icon,
     TextInputType? keyboardType,
     bool obscureText = false,
@@ -43,9 +43,9 @@ class BuildInputField {
             width: 2.2,
           ),
         ),
-        hintText: hint,
+        hintText: hintText,
         hintStyle: TextStyle(color: _amberColor),
-        labelText: label,
+        labelText: labelText,
         labelStyle: TextStyle(color: _amberColor),
         prefixIcon: icon != null
             ? Icon(icon, color: _amberColor)

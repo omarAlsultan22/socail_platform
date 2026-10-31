@@ -33,7 +33,7 @@ class MenuButton extends StatelessWidget {
               Icon(
                 icon,
                 color: AppColors.white,
-                size: AppSizes.xl,
+                size: AppSizes.size50,
               ),
               Text(
                 text,

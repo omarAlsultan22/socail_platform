@@ -25,8 +25,8 @@ class PostTemplate extends StatelessWidget {
               child: InkWell(
                 child: SkeletonBox(
                   animationToggle: animationToggle,
-                  width: AppSizes.xl,
-                  height: AppSizes.xl,
+                  width: AppSizes.size50,
+                  height: AppSizes.size50,
                   borderRadius: AppBorders.borderRadius_50,
                 ),
               ),

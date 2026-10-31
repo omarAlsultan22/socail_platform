@@ -8,6 +8,7 @@ import '../widgets/build_image_upload_section.dart';
 import '../../services/domain/i_media_upload_service.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/core/constants/firestore_schema.dart';
 import 'package:social_app/core/presentation/screens/split_screen.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
 
@@ -71,7 +72,7 @@ class _CreatePostState extends State<CreatePostScreen> {
         onTap: (postModel) => setState(() => _postModel = postModel),
       ),
       buildSubmitButton: BuildSubmitButton(
-        folderName: AppStrings.posts,
+        folderName: FirestoreSchema.posts,
         state: selectedValue,
         postModel: _postModel,
         currentId: widget.currentId,
