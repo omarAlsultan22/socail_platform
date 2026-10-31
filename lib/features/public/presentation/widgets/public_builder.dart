@@ -19,7 +19,7 @@ import '../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import 'package:social_app/features/public/presentation/states/public_state.dart';
 import 'package:social_app/features/public/presentation/widgets/post_template.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';

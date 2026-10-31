@@ -4,7 +4,7 @@ import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../post_detail/presentation/screens/post_detail_screen.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import 'package:social_app/features/notifications/data/models/notification_model.dart';
 
 

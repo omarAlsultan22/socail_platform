@@ -7,6 +7,7 @@ import 'package:social_app/core/constants/app_borders.dart';
 import '../../../../public/presentation/screens/public_screen.dart';
 import '../../../../search/presentation/screens/search_screen.dart';
 import '../../../../profile/presentation/screens/my_profile_screen.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import '../../../../notifications/presentation/screens/notifications_screen.dart';
 import 'package:social_app/features/settings/presentation/screens/settings_screen.dart';
 import 'package:social_app/features/friendship/presentation/screens/friendship_screen.dart';
@@ -101,20 +102,17 @@ class MainLayout extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () =>
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SearchScreen()),
+                BuildNavigator.build(
+                  context: context,
+                  link: const SearchScreen(),
                 ),
             icon: const Icon(Icons.search, size: 30.0),
           ),
           IconButton(
             onPressed: () =>
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SettingsScreen()
-                  ),
+                BuildNavigator.build(
+                  context: context,
+                  link: const SettingsScreen(),
                 ),
             icon: const Icon(Icons.menu_outlined),
           ),

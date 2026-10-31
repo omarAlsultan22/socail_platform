@@ -3,7 +3,7 @@ import '../../data/models/post_model.dart';
 import '../widgets/small_menu_widget.dart';
 import '../screens/create_post_screen.dart';
 import '../widgets/exit_dialog_helper.dart';
-import '../widgets/navigation/navigator.dart';
+import '../../navigation/navigator_push.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/presentation/mixins/post_context.dart';

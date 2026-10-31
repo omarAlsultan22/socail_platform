@@ -8,9 +8,9 @@ import 'package:social_app/core/constants/theme_values.dart';
 import '../../../../auth/presentation/screens/sign_in_screen.dart';
 import '../../../../../core/domain/data_sources/local/cache_helper.dart';
 import '../../../../user_account/presentation/screens/user_account_screen.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import 'package:social_app/features/user_info/presentation/screens/user_info_screen.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator_with_delay.dart';
+import 'package:social_app/shared/navigation/navigator_with_delay.dart';
 
 
 class SettingsLayout extends StatefulWidget {

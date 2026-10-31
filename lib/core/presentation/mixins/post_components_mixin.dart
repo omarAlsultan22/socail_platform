@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/models/post_model.dart';
 import '../screens/create_post_screen.dart';
 import '../widgets/icon_button_widget.dart';
-import '../widgets/navigation/navigator.dart';
+import '../../navigation/navigator_push.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_spaces.dart';
 import 'package:social_app/core/constants/app_borders.dart';

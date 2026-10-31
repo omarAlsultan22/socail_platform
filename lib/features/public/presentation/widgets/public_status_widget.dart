@@ -11,7 +11,7 @@ import 'package:social_app/core/data/models/post_model.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 
 
 class PublicStateWidget extends StatefulWidget {

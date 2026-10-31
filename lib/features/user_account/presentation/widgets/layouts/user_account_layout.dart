@@ -10,7 +10,7 @@ import 'package:social_app/core/constants/app_text_styles.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import 'package:social_app/features/auth/presentation/screens/change_email_and_password_screen.dart';
 
 

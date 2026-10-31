@@ -1,16 +1,16 @@
-import '../../../constants/auth_hints_texts.dart';
-import '../../../constants/auth_lables_texts.dart';
 import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../screens/sign_up_screen.dart';
+import '../../../constants/auth_hints_texts.dart';
+import '../../../constants/auth_lables_texts.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:social_app/core/constants/app_sizes.dart';
-import 'package:social_app/shared/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_spaces.dart';
 import 'package:social_app/core/constants/app_shadows.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/constants/app_strings.dart';
+import 'package:social_app/shared/utils/validate_input.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/constants/app_gradients.dart';
 import '../../../../main/presentation/screens/main_screen.dart';
@@ -18,8 +18,9 @@ import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../../core/domain/data_sources/local/cache_helper.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import '../../../../setup_friends/presentation/screens/setup_friends_screen.dart';
+import 'package:social_app/shared/navigation/navigator_with_delay.dart';
 import 'package:social_app/features/auth/presentation/screens/forget_password_screen.dart';
 
 
@@ -59,10 +60,12 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
       if (!mounted) return;
 
       final link = friendsNumber ? const MainScreen() : AddNewFriendsScreen(
-          cacheHelper: widget.cacheHelper);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => link),
+          cacheHelper: widget.cacheHelper
+      );
+
+      NavigatorWithDelay.build(
+        context: context,
+        link: link,
       );
     }
   }
@@ -128,7 +131,8 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: AppBorders.borderRadius_5,
-                        color: AppColors.primaryAmber, // تغيير لون الخلفية إلى Amber
+                        color: AppColors
+                            .primaryAmber, // تغيير لون الخلفية إلى Amber
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

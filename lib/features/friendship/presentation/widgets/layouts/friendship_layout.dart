@@ -7,7 +7,7 @@ import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/constants/app_text_styles.dart';
 import '../../../../profile/presentation/screens/user_profile_screen.dart';
-import '../../../../../core/presentation/widgets/navigation/navigator.dart';
+import '../../../../../core/navigation/navigator_push.dart';
 import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 
 

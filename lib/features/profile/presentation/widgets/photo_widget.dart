@@ -8,7 +8,7 @@ import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import '../../../../core/presentation/screens/view_post_screen.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 
 
 class PhotoWidget extends StatelessWidget {

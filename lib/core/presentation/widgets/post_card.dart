@@ -17,7 +17,7 @@ import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 import 'package:social_app/features/public/data/models/user_details.dart';
 import 'package:social_app/features/public/constants/public_constants.dart';
 import 'package:social_app/core/presentation/screens/view_post_screen.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 
 
 class PostCard extends StatefulWidget {

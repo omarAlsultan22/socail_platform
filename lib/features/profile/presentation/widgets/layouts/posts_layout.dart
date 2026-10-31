@@ -15,7 +15,7 @@ import 'package:social_app/core/presentation/widgets/post_card.dart';
 import '../../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
 import '../../../../../core/presentation/widgets/layouts/user_row_layout.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import 'package:social_app/core/presentation/widgets/create_post_input_widget.dart';
 import 'package:social_app/features/profile/presentation/screens/user_profile_screen.dart';
 

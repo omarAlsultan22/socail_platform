@@ -23,7 +23,7 @@ import 'package:social_app/core/presentation/screens/view_post_screen.dart';
 import '../../../../../core/presentation/widgets/current_user_selector.dart';
 import 'package:social_app/core/presentation/screens/create_post_screen.dart';
 import 'package:social_app/core/presentation/widgets/empty_state_widget.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 
 
 class ProfileLayout extends StatefulWidget {

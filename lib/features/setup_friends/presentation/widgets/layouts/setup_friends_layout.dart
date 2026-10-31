@@ -6,7 +6,7 @@ import '../../../../main/presentation/screens/main_screen.dart';
 import 'package:social_app/core/data/models/message_result.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
 import '../../../../../core/presentation/widgets/layouts/user_row_layout.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 
 
 class AddNewFriendsLayout extends StatefulWidget {

@@ -15,7 +15,7 @@ import '../../../../../core/presentation/widgets/comment_form.dart';
 import '../../../../../core/presentation/widgets/list_builder.dart';
 import 'package:social_app/core/helpers/friend_profile_navigator.dart';
 import 'package:social_app/core/presentation/widgets/exit_dialog_helper.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import '../../../comments_likes/presentation/screens/comments_likes_screens.dart';
 
 

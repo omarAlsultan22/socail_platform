@@ -4,7 +4,7 @@ import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/constants/app_text_styles.dart';
 import '../../../../profile/presentation/screens/user_profile_screen.dart';
-import 'package:social_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 
 
 class SearchLayout extends StatelessWidget {
