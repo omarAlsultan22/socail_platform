@@ -4,8 +4,11 @@ import 'package:social_app/core/domain/data_sources/remote/firestore/firestore_s
 
 
 class FirestoreServiceImpl implements FirestoreService{
-  final firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore;
   final duration = AppDurations.seconds;
+
+  FirestoreServiceImpl({FirebaseFirestore? firestore})
+      : firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Future<String> getRefAndSetDoc({

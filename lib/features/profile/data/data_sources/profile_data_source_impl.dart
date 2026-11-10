@@ -9,6 +9,8 @@ import 'package:social_app/features/profile/domain/data_sources/profile_data_sou
 
 
 class ProfileDataSourceImpl extends FirestoreServiceImpl implements ProfileDataSource {
+  final FirebaseFirestore _firestore;
+  ProfileDataSourceImpl({super.firestore}) : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Future<String> createAndSetDoc({
@@ -27,7 +29,7 @@ class ProfileDataSourceImpl extends FirestoreServiceImpl implements ProfileDataS
   DocumentReference<Map<String, dynamic>> createDoc({
     required String collectionPath
   }) {
-    final docRef = firestore.collection(collectionPath).doc();
+    final docRef = _firestore.collection(collectionPath).doc();
     return docRef;
   }
 
@@ -38,7 +40,7 @@ class ProfileDataSourceImpl extends FirestoreServiceImpl implements ProfileDataS
     required String supCollectionPath,
     required String subCollectionPath,
   }) async {
-    return await firestore.collection(supCollectionPath).doc(supDoc)
+    return await _firestore.collection(supCollectionPath).doc(supDoc)
         .collection(
         subCollectionPath).doc(subDoc).get()
         .timeout(
@@ -52,7 +54,7 @@ class ProfileDataSourceImpl extends FirestoreServiceImpl implements ProfileDataS
     required String userId,
     required DocumentSnapshot? lastPostDoc,
   }) async {
-    var query = firestore
+    var query = _firestore
         .collection(FirestoreSchema.posts)
         .where(AppStrings.userId, isEqualTo: userId)
         .where(

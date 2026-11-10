@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_spaces.dart';
-import 'package:social_app/shared/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../../auth/presentation/mixins/auth_mixin.dart';
 import 'package:social_app/core/data/models/user_account.dart';
 import 'package:social_app/core/constants/app_text_styles.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import 'package:social_app/shared/validations/input_validation.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
-import 'package:social_app/core/navigation/navigator_push.dart';
 import 'package:social_app/features/auth/presentation/screens/change_email_and_password_screen.dart';
 
 
@@ -122,7 +122,7 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
                 hint: "User Name",
                 icon: Icons.person,
                 validator: (value) =>
-                    ValidateInput.validator(value: value, text: 'User Name'),
+                    InputValidation.validator(value: value, text: 'User Name'),
               ),
               AppSpaces.vertical_16,
               _buildInputField(
@@ -132,7 +132,7 @@ class _UserAccountLayoutState extends State<UserAccountLayout> with AuthMixin<Us
                 icon: Icons.person,
                 keyboardType: TextInputType.phone,
                 validator: (value) =>
-                    ValidateInput.validator(value: value, text: 'Last Name'),
+                    InputValidation.validator(value: value, text: 'Last Name'),
               ),
               AppSpaces.vertical_24,
               _buildChangePasswordButton(),

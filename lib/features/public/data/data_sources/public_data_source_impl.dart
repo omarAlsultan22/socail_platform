@@ -9,6 +9,8 @@ import '../../../../core/data/data_sources/remote/firestore/firestore_service_im
 
 
 class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSource {
+  final FirebaseFirestore _firestore;
+  PublicDataSourceImpl({super.firestore}) : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getQuery({
@@ -18,7 +20,7 @@ class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSou
     required String subCollectionPath,
     required DocumentSnapshot? lastStatusDoc,
   }) async {
-    Query<Map<String, dynamic>> query = firestore
+    Query<Map<String, dynamic>> query = _firestore
         .collection(supCollectionPath)
         .doc(docId)
         .collection(subCollectionPath);
@@ -34,7 +36,7 @@ class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSou
   Future<QuerySnapshot<Map<String, dynamic>>> getStatusesByUser({
     required String userId,
   }) async {
-    return await firestore
+    return await _firestore
         .collection(PublicConstants.status)
         .where(AppStrings.userId, isEqualTo: userId)
         .orderBy(AppStrings.dateTime, descending: true)
@@ -48,7 +50,7 @@ class PublicDataSourceImpl extends FirestoreServiceImpl implements PublicDataSou
     required List<String> friendsUIds,
     required int limit,
   }) async {
-    var query = firestore
+    var query = _firestore
         .collection(FirestoreSchema.posts)
         .where(AppStrings.userId, whereIn: friendsUIds)
         .where(AppStrings.postType, whereIn: PostsCollection.postTypesList);

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../../core/constants/firestore_schema.dart';
@@ -9,15 +10,18 @@ import '../../../../../core/data/data_sources/remote/firestore/firestore_service
 
 
 class CommentsLikesDataSourceImpl extends FirestoreServiceImpl implements CommentsLikesDataSource {
+  final FirebaseFirestore _firestore;
   final SessionService _sessionService;
   final IUserAccountService _userAccountService;
 
   CommentsLikesDataSourceImpl({
+    super.firestore,
     required SessionService sessionService,
-    required IUserAccountService userAccountService
+    required IUserAccountService userAccountService,
   })
       : _sessionService = sessionService,
-        _userAccountService = userAccountService;
+        _userAccountService = userAccountService,
+        _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Stream<List<MyModel>> getCommentLikesStream({
@@ -37,7 +41,7 @@ class CommentsLikesDataSourceImpl extends FirestoreServiceImpl implements Commen
 
     final friendsList = friendsSnapshot.docs.map((doc) => doc.id).toSet();
 
-    final docRef = firestore
+    final docRef = _firestore
         .collection(FirestoreSchema.posts)
         .doc(postId)
         .collection(AppStrings.commentsList)

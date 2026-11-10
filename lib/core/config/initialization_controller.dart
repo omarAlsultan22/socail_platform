@@ -5,7 +5,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../errors/exceptions/components_exception.dart';
 import '../services/domain/i_notification_service.dart';
-import '../domain/data_sources/local/cache_helper.dart';
 import '../services/domain/i_online_status_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -18,7 +17,6 @@ class InitializationController {
 
   InitializationController._internal();
 
-  late final CacheHelper _cacheHelper;
   late final SessionService _sessionService;
   late final INotificationService _notificationService;
   late final IOnlineStatusService _onlineStatusService;
@@ -34,9 +32,6 @@ class InitializationController {
         persistenceEnabled: true,
         cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED
     );
-
-    _cacheHelper = sl<CacheHelper>();
-    await _cacheHelper.init();
 
     _sessionService = sl<SessionService>();
     await _sessionService.loadFromStorage();

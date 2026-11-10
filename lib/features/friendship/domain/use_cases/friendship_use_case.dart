@@ -1,8 +1,10 @@
+import '../../../../core/di/service _locator.dart';
 import '../repositories/friendship_repository.dart';
 import '../../data/converters/friends_info_converter.dart';
 import 'package:social_app/core/data/models/my_model.dart';
 import 'package:social_app/core/services/data/session_service.dart';
 import 'package:social_app/core/errors/exceptions/validation_exception.dart';
+import 'package:social_app/core/services/domain/i_user_account_service.dart';
 
 
 class FriendshipUseCase {
@@ -79,7 +81,9 @@ class FriendshipUseCase {
         .fromQuerySnapshotSuggests(
         data.friends,
         data.requests,
-        data.allUsers
+        data.allUsers,
+        sessionService: sl<SessionService>(),
+        userAccountService: sl<IUserAccountService>()
     );
     return friendsInfo.data;
   }

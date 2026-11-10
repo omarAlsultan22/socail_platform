@@ -10,17 +10,17 @@ import 'package:social_app/core/constants/app_spaces.dart';
 import 'package:social_app/core/constants/app_shadows.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/constants/app_strings.dart';
-import 'package:social_app/shared/utils/validate_input.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/constants/app_gradients.dart';
+import 'package:social_app/core/navigation/navigator_push.dart';
 import '../../../../main/presentation/screens/main_screen.dart';
 import 'package:social_app/core/services/data/session_service.dart';
+import 'package:social_app/shared/validations/input_validation.dart';
+import 'package:social_app/shared/navigation/navigator_with_delay.dart';
 import '../../../../../core/domain/data_sources/local/cache_helper.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
-import 'package:social_app/core/navigation/navigator_push.dart';
 import '../../../../setup_friends/presentation/screens/setup_friends_screen.dart';
-import 'package:social_app/shared/navigation/navigator_with_delay.dart';
 import 'package:social_app/features/auth/presentation/screens/forget_password_screen.dart';
 
 
@@ -163,7 +163,7 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         validator: (String? value) {
-                          return ValidateInput.validator(
+                          return InputValidation.validator(
                               value: value, text: 'Email');
                         },
                         icon: Icons.email_outlined,
@@ -177,7 +177,7 @@ class _SignInScreenState extends State<SignInLayout> with AuthMixin<SignInLayout
                         controller: _passwordController,
                         keyboardType: TextInputType.text,
                         validator: (String? value) {
-                          return ValidateInput.validator(
+                          return InputValidation.validator(
                               value: value, text: 'Password');
                         },
                         obscureText: _isObscure,

@@ -13,15 +13,18 @@ import 'package:social_app/core/data/data_sources/remote/firestore/firestore_ser
 
 
 class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl implements CommentsDataSource {
+  final FirebaseFirestore _firestore;
   final SessionService _sessionService;
   final IUserAccountService _userAccountService;
 
   CommentsDataSourceImpl({
+    super.firestore,
     required SessionService sessionService,
-    required IUserAccountService userAccountService
+    required IUserAccountService userAccountService,
   })
-      : _sessionService = sessionService,
-        _userAccountService = userAccountService;
+      :_sessionService = sessionService,
+        _userAccountService = userAccountService,
+        _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   String get likeCollectionPath => AppStrings.commentsLikes;
@@ -33,7 +36,7 @@ class CommentsDataSourceImpl extends FirestoreServiceImpl with BaseLikeMixinImpl
   SessionService get sessionService => _sessionService;
 
   CollectionReference<Map<String, dynamic>> _commentsRef(String postId) =>
-      firestore.collection(FirestoreSchema.posts).doc(postId).collection(
+      _firestore.collection(FirestoreSchema.posts).doc(postId).collection(
           AppStrings.commentsList);
 
   @override

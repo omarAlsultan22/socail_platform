@@ -8,14 +8,14 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 
 class MediaUploadService implements IMediaUploadService {
-  // Singleton — متسق مع NotificationService.
-  static final MediaUploadService _instance = MediaUploadService._internal();
+  final FirebaseStorage _storage;
+  final ImagePicker _picker;
 
-  factory MediaUploadService() => _instance;
-
-  MediaUploadService._internal();
-
-  final ImagePicker _picker = ImagePicker();
+  MediaUploadService({
+    FirebaseStorage? storage,
+    ImagePicker? picker,
+  })  : _storage = storage ?? FirebaseStorage.instance,
+        _picker = picker ?? ImagePicker();
 
   // ==================== العقد العام ====================
 
@@ -71,7 +71,7 @@ class MediaUploadService implements IMediaUploadService {
     try {
       final fileName = path.basename(file.path);
       final storageReference =
-      FirebaseStorage.instance.ref().child('$folderName/$fileName');
+      _storage.ref().child('$folderName/$fileName');
 
       final uploadTask = storageReference.putFile(file);
       final snapshot = await uploadTask;

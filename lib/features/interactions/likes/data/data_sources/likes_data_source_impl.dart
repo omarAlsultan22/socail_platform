@@ -14,7 +14,7 @@ class LikesDataSourceImpl extends FirestoreServiceImpl implements LikesDataSourc
 
   LikesDataSourceImpl({
     required SessionService sessionService,
-    required IUserAccountService userAccountService
+    required IUserAccountService userAccountService,
   })
       : _sessionService = sessionService,
         _userAccountService = userAccountService;

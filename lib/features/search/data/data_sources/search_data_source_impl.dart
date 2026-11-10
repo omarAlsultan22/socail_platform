@@ -6,6 +6,7 @@ import 'package:social_app/core/data/data_sources/remote/firestore/firestore_ser
 
 
 class SearchDataSourceImpl extends FirestoreServiceImpl implements SearchDataSource {
+  SearchDataSourceImpl({super.firestore});
 
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getDataSearch({

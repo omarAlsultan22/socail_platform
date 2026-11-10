@@ -14,7 +14,7 @@ class SharesDataSourceImpl extends FirestoreServiceImpl implements SharesDataSou
 
   SharesDataSourceImpl({
     required SessionService sessionService,
-    required IUserAccountService userAccountService
+    required IUserAccountService userAccountService,
   })
       : _sessionService = sessionService,
         _userAccountService = userAccountService;

@@ -5,17 +5,22 @@ import 'package:social_app/features/user_details/domain/data_sources/user_detail
 
 
 class UserDetailsDataSourceImpl extends FirestoreServiceImpl implements UserDetailsDataSource {
+  final FirebaseFirestore _firestore;
+
+  UserDetailsDataSourceImpl({super.firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
+
+
   @override
   Stream<DocumentSnapshot<Map<String, dynamic>>> getMyDetailsStream({
     required String docId,
     required String collectionPath,
   }) {
-    return firestore.collection(collectionPath).doc(docId).snapshots().timeout(
+    return _firestore.collection(collectionPath).doc(docId).snapshots().timeout(
         duration);
   }
 
-  @override
-  Stream<QuerySnapshot<Map<String, dynamic>>> getSubCollectionStream({
+  Stream<QuerySnapshot<Map<String, dynamic>>> getSubCollectionStream_({
     required String docId,
     required String supCollectionPath,
     required String subCollectionPath,

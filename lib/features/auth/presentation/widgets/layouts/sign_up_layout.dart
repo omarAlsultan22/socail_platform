@@ -1,17 +1,17 @@
-import '../../../constants/auth_hints_texts.dart';
-import '../../../constants/auth_lables_texts.dart';
 import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
+import '../../../constants/auth_hints_texts.dart';
+import '../../../constants/auth_lables_texts.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:social_app/core/constants/app_sizes.dart';
-import 'package:social_app/shared/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/constants/app_shadows.dart';
 import 'package:social_app/core/constants/app_strings.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/constants/app_gradients.dart';
+import 'package:social_app/shared/validations/input_validation.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 
@@ -137,7 +137,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                           keyboardType: TextInputType
                                               .name,
                                           validator: (String? value) {
-                                            return ValidateInput.validator(
+                                            return InputValidation.validator(
                                                 value: value,
                                                 text: 'First Name');
                                           },
@@ -152,7 +152,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                           keyboardType: TextInputType
                                               .name,
                                           validator: (String? value) {
-                                            return ValidateInput.validator(
+                                            return InputValidation.validator(
                                                 value: value,
                                                 text: 'Second Name');
                                           },
@@ -170,7 +170,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                     keyboardType: TextInputType
                                         .emailAddress,
                                     validator: (String? value) {
-                                      return ValidateInput.validator(
+                                      return InputValidation.validator(
                                           value: value, text: 'Email');
                                     },
                                     icon: Icons.email_outlined,
@@ -184,7 +184,7 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                     controller: _passwordController,
                                     keyboardType: TextInputType.text,
                                     validator: (String? value) {
-                                      return ValidateInput.validator(
+                                      return InputValidation.validator(
                                           value: value, text: 'Password');
                                     },
                                     obscureText: _isObscure,
@@ -197,7 +197,8 @@ class _SignUpScreenState extends State<SignUpLayout> with AuthMixin<SignUpLayout
                                     ),
                                     icon: Icons.lock_outline,
                                     hintText: AuthHintsTexts.passwordHintText,
-                                    labelText: AuthLabelsTexts.passwordLabelText,
+                                    labelText: AuthLabelsTexts
+                                        .passwordLabelText,
                                   ),
                                   AppSpaces.vertical_30,
                                   Container(

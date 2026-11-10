@@ -93,36 +93,44 @@ class NotificationService implements INotificationService {
     }
   }
 
+  @visibleForTesting
+  ({String title, String body}) buildInteractionContent({
+    required String? type,
+    required String? senderName,
+  }) {
+    switch (type) {
+      case 'thumb_up':
+        return (title: 'New like', body: '$senderName liked your post');
+      case 'mode_comment':
+        return (
+        title: 'New comment',
+        body: '$senderName commented on your post',
+        );
+      case 'share':
+        return (title: 'New share', body: '$senderName shared your post');
+      default:
+        return (
+        title: 'New notification',
+        body: 'You have a new notification from $senderName',
+        );
+    }
+  }
+
   @override
   Future<void> sendInteractionNotification(Map<String, dynamic> data) async {
     try {
       final type = data[NotificationKeys.iconName];
       final senderName = data[NotificationKeys.friendName];
 
-      String title = 'New';
-      String body = '';
 
-      switch (type) {
-        case 'thumb_up':
-          title = 'New like';
-          body = '$senderName liked your post';
-          break;
-        case 'mode_comment':
-          title = 'New comment';
-          body = '$senderName commented on your post';
-          break;
-        case 'share':
-          title = 'New share';
-          body = '$senderName shared your post';
-          break;
-        default:
-          title = 'New notification';
-          body = 'You have a new notification from $senderName';
-      }
+      final content = buildInteractionContent(
+        type: type as String?,
+        senderName: senderName as String?,
+      );
 
       await _showLocalNotification(
-        title: title,
-        body: body,
+        title: content.title,
+        body: content.body,
         payload: {
           NotificationKeys.type: type,
           NotificationKeys.data: data,
@@ -348,7 +356,7 @@ class NotificationService implements INotificationService {
     required Map<String, dynamic> payload,
   }) async {
     try {
-      final processedPayload = _processPayload(payload);
+      final processedPayload = processPayload(payload);
 
       await _flutterLocalNotificationsPlugin.show(
         id: DateTime
@@ -365,7 +373,8 @@ class NotificationService implements INotificationService {
     }
   }
 
-  Map<String, dynamic> _processPayload(Map<String, dynamic> payload) {
+  @visibleForTesting
+  Map<String, dynamic> processPayload(Map<String, dynamic> payload) {
     final processed = <String, dynamic>{};
     payload.forEach((key, value) {
       if (value is DateTime) {
@@ -373,11 +382,11 @@ class NotificationService implements INotificationService {
       } else if (value is Timestamp) {
         processed[key] = value.toDate().toIso8601String();
       } else if (value is Map<String, dynamic>) {
-        processed[key] = _processPayload(value);
+        processed[key] = processPayload(value);
       } else if (value is List) {
         processed[key] = value.map((item) {
           if (item is Map<String, dynamic>) {
-            return _processPayload(item);
+            return processPayload(item);
           } else if (item is Timestamp) {
             return item.toDate().toIso8601String();
           } else if (item is DateTime) {

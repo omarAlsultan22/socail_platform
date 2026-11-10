@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../../screens/sign_in_screen.dart';
 import '../../../../../core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_spaces.dart';
-import 'package:social_app/shared/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import '../../../../../core/data/models/message_result.dart';
 import 'package:social_app/core/services/data/session_service.dart';
+import 'package:social_app/shared/validations/input_validation.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 import '../../../../../core/presentation/widgets/states/loading_state_widget.dart';
@@ -156,7 +156,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
                   hintText: "New Email",
                   icon: Icons.email,
                   validator: (value) =>
-                      ValidateInput.validator(value: value!, text: 'New Email'),
+                      InputValidation.validator(value: value!, text: 'New Email'),
                 ),
                 AppSpaces.vertical_16,
                 BuildInputField.build(
@@ -170,7 +170,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
                           setState(() =>
                           _isObscureCurrent = !_isObscureCurrent)),
                   validator: (value) =>
-                      ValidateInput.validator(
+                      InputValidation.validator(
                           value: value!, text: 'Current Password'),
                 ),
                 AppSpaces.vertical_16,
@@ -184,7 +184,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
                       onToggle: () =>
                           setState(() => _isObscureNew = !_isObscureNew)),
                   validator: (value) =>
-                      ValidateInput.validator(
+                      InputValidation.validator(
                           value: value!, text: 'New Password'),
                 ),
                 AppSpaces.vertical_16,
@@ -202,7 +202,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
                     if (value != _newPasswordController.text) {
                       return 'Passwords do not match';
                     }
-                    return ValidateInput.validator(
+                    return InputValidation.validator(
                         value: value, text: 'Please confirm your password');
                   },
                 ),

@@ -8,16 +8,20 @@ import 'package:social_app/core/presentation/mixins/base_like_mixin_impl.dart';
 import '../../../../core/domain/data_sources/remote/firestore/firestore_service.dart';
 
 
-class AccountDataConverter with BaseLikeMixinImpl{
+class AccountDataConverter with BaseLikeMixinImpl {
   final FirestoreService _repository;
   final SessionService _sessionService;
+  final FirebaseFirestore _firestore;
+
   static const String userState = 'userState';
-  const AccountDataConverter({
+
+  AccountDataConverter({
     required FirestoreService repository,
-    required SessionService sessionService
-  }) :
-        _repository = repository,
-        _sessionService = sessionService;
+    required SessionService sessionService,
+    FirebaseFirestore? firestore,
+  })  : _repository = repository,
+        _sessionService = sessionService,
+        _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   String get likeCollectionPath => AppStrings.likesList;
@@ -55,11 +59,10 @@ class AccountDataConverter with BaseLikeMixinImpl{
     required String image,
     required Map<String, dynamic> userAccount
   }) async {
-    final firestore = FirebaseFirestore.instance;
     if (userAccount[image] is DocumentReference) {
       final imageDocRef = userAccount[image] as DocumentReference;
       final imageDoc = await imageDocRef.get();
-      final postRef = firestore.collection(FirestoreSchema.posts).doc(imageDoc.id);
+      final postRef = _firestore.collection(FirestoreSchema.posts).doc(imageDoc.id);
 
       final interactions = await Future.wait([
         postRef.collection(AppStrings.likesList).count().get(),

@@ -7,13 +7,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class OnlineStatusService implements IOnlineStatusService{
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore;
+  final FirebaseAuth _auth;
   late StreamSubscription<User?> _authSubscription;
 
   static const _isOnline = 'isOnline';
   static const _lastSeen = 'lastSeen';
   static const _accounts = 'accounts';
+
+  OnlineStatusService({
+    FirebaseFirestore? firestore,
+    FirebaseAuth? auth,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _auth = auth ?? FirebaseAuth.instance;
 
   @override
   Future<void> initialize() async {
@@ -41,7 +47,7 @@ class OnlineStatusService implements IOnlineStatusService{
   Future<void> setOnline() async {
     if (_auth.currentUser == null) return;
 
-    await _firestore.collection(_accounts).doc(_auth.currentUser!.uid).update({
+    await _firestore.collection(_accounts).doc(_auth.currentUser!.uid).set({
       _isOnline: true,
       _lastSeen: FieldValue.serverTimestamp(),
     });
@@ -51,7 +57,7 @@ class OnlineStatusService implements IOnlineStatusService{
   Future<void> setOffline() async {
     if (_auth.currentUser == null) return;
 
-    await _firestore.collection(_accounts).doc(_auth.currentUser!.uid).update({
+    await _firestore.collection(_accounts).doc(_auth.currentUser!.uid).set({
       _isOnline: false,
       _lastSeen: FieldValue.serverTimestamp(),
     });
@@ -107,8 +113,8 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
         await detachCallBack();
         break;
       case AppLifecycleState.hidden:
-      // TODO: Handle this case.
-        throw UnimplementedError();
+        await detachCallBack();
+        break;
     }
   }
 }

@@ -6,6 +6,7 @@ import '../../../../core/data/data_sources/remote/firestore/firestore_service_im
 
 
 class PostDetailDataSourceImpl extends FirestoreServiceImpl implements PostDetailDataSource {
+  PostDetailDataSourceImpl({super.firestore});
 
   @override
   Future<({

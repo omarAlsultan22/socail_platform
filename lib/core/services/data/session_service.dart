@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import '../../domain/data_sources/local/cache_helper.dart';
 
 
@@ -20,6 +21,11 @@ class SessionService {
   String get currentUid => _currentUid;
 
   bool get isLoggedIn => _currentUid.isNotEmpty;
+
+  @visibleForTesting
+  static void resetForTesting() {
+    _instance = null;
+  }
 
   Future<void> loadFromStorage() async {
     _currentUid = await _cacheHelper.getString(key: _uId);

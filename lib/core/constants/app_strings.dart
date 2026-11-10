@@ -18,6 +18,7 @@ mixin AppStrings {
   static const String isActive = 'isActive';
   static const String userName = 'userName';
   static const String fullName = 'fullName';
+  static const String userText = 'userText';
   static const String userImage = 'userImage';
   static const String userCover = 'userCover';
   static const String profileImage = 'profileImage';

@@ -6,6 +6,7 @@ import '../../../../core/data/data_sources/remote/firestore/firestore_service_im
 
 
 class MainDataSourceImpl extends FirestoreServiceImpl implements MainDataSource{
+  MainDataSourceImpl({super.firestore});
 
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> getAllUsersExceptCurrent({

@@ -6,6 +6,8 @@ import '../../../../core/data/data_sources/remote/firestore/firestore_service_im
 
 
 class NotificationsDataSourceImpl extends FirestoreServiceImpl implements NotificationsDataSource {
+  NotificationsDataSourceImpl({super.firestore});
+
 
   @override
   Stream<QuerySnapshot<Map<String, dynamic>>> getNotificationsStream({

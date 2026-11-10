@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_spaces.dart';
-import '../../../../../shared/utils/validate_input.dart';
 import 'package:social_app/core/constants/app_sizes.dart';
 import 'package:social_app/core/constants/app_colors.dart';
 import 'package:social_app/core/constants/app_borders.dart';
 import 'package:social_app/core/constants/app_paddings.dart';
 import 'package:social_app/core/data/models/profile_info.dart';
 import 'package:social_app/core/data/models/message_result.dart';
+import '../../../../../shared/validations/input_validation.dart';
 import '../../../../../core/presentation/mixins/message_result_mixin.dart';
 import 'package:social_app/core/presentation/widgets/build_input_field.dart';
 import 'package:social_app/features/auth/presentation/mixins/auth_mixin.dart';
@@ -124,7 +124,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                             controller: _stateController,
                             keyboardType: TextInputType.text,
                             validator: (String? value) {
-                              return ValidateInput.validator(
+                              return InputValidation.validator(
                                   value: value, text: 'state');
                             },
                             labelText: 'state',
@@ -135,7 +135,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                             controller: _workController,
                             keyboardType: TextInputType.text,
                             validator: (String? value) {
-                              return ValidateInput.validator(
+                              return InputValidation.validator(
                                   value: value, text: 'Work');
                             },
                             labelText: 'Work',
@@ -146,7 +146,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                             controller: _livesController,
                             keyboardType: TextInputType.text,
                             validator: (String? value) {
-                              return ValidateInput.validator(
+                              return InputValidation.validator(
                                   value: value, text: 'Lives');
                             },
                             labelText: 'Lives',
@@ -157,7 +157,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                             controller: _fromController,
                             keyboardType: TextInputType.text,
                             validator: (String? value) {
-                              return ValidateInput.validator(
+                              return InputValidation.validator(
                                   value: value, text: 'From');
                             },
                             labelText: 'From',
@@ -168,7 +168,7 @@ class _UserInfoLayoutState extends State<UserInfoLayout> with AuthMixin<UserInfo
                             controller: _relationalController,
                             keyboardType: TextInputType.text,
                             validator: (String? value) {
-                              return ValidateInput.validator(
+                              return InputValidation.validator(
                                   value: value, text: 'Relational');
                             },
                             labelText: 'Relational',

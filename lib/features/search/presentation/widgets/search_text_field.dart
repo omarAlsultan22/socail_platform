@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/search_debouncer.dart';
+import '../utils/search_debouncer.dart';
 
 
 class SearchTextField extends StatelessWidget {

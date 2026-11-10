@@ -10,8 +10,9 @@ class PostOperationsImpl extends FirestoreServiceImpl implements PostOperations 
   final SessionService _sessionService;
 
   PostOperationsImpl({
-    required SessionService sessionService
-  }) : _sessionService = sessionService;
+    required SessionService sessionService,
+  })
+      : _sessionService = sessionService;
 
   @override
   Future<void> addLike({

@@ -10,6 +10,7 @@ class UserInfoModel extends MyModel {
     super.myId,
     super.myState,
     this.coverImage,
+    super.myDateTime,
     super.meIsOnline,
     this.profileImage,
   });
